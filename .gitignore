@@ -1,0 +1,9 @@
+*.root
+*.h5
+*.json
+__pycache__
+/build/
+/bin/
+/dict/
+/test/
+
