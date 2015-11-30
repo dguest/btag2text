@@ -14,10 +14,10 @@ class Jets
 {
 public:
   Jets(TChain& chain);
-  void select(int);
+  std::string asString(int) const;
   int number() const;
 private:
-  friend std::ostream& operator<<(std::ostream&, Jets&);
+  TChain* m_chain;
 };
 
 std::ostream& operator<<(std::ostream&, Jets&);
@@ -26,7 +26,7 @@ std::ostream& operator<<(std::ostream&, Jets&);
 // class implementation
 
 Jets::Jets(TChain& chain) {
-
+  
 }
 
 // _____________________________________________________________________
