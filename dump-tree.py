@@ -10,6 +10,7 @@ PyConfig.IgnoreCommandLineOptions = True
 
 from ROOT import TFile
 from argparse import ArgumentParser
+import re
 
 _name_map = {
     'Int_t': 'int',
@@ -29,15 +30,22 @@ class Branch(object):
             type_name = _name_map[leafs.At(0).GetTypeName()]
         self.type_name = type_name
         self.name = branch.GetName()
+        self._std_regex = re.compile('(vector)')
+
     def declare_line(self):
         star = '*' if self._class else ''
-        return ''.join([self.type_name, star, ' ', self.name, ';'])
+        std_type = self._std_regex.sub(r'std::\1', self.type_name)
+        return ''.join([std_type, star, ' ', self.name, ';'])
+
     def branch_line(self, chain_name, ptr=True):
         dref = '->' if ptr else '.'
         return '{c}{d}SetBranchAddress("{n}", &{n});'.format(
             c=chain_name, d=dref, n=self.name)
+
     def __str__(self):
         return '{} {}'.format(self.type_name,self.name)
+
+
 
 def get_args():
     d = 'default: %(default)s'
