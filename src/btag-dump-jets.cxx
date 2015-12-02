@@ -11,13 +11,203 @@
 // const double MAX_PT = 1000*GeV;
 
 // ______________________________________________________________________
+// silly templates to make out stream thing work right
+template<typename T>
+class OutJet: public T
+{};
+
+class JetLabels
+{
+public:
+#define STATIC_LAB(label) const std::string label = #label
+  STATIC_LAB(jet_pt);
+  STATIC_LAB(jet_eta);
+  STATIC_LAB(jet_phi);
+  STATIC_LAB(jet_E);
+  STATIC_LAB(jet_m);
+
+  STATIC_LAB(jet_truthflav);
+
+  STATIC_LAB(jet_ip2d_pb);
+  STATIC_LAB(jet_ip2d_pc);
+  STATIC_LAB(jet_ip2d_pu);
+  STATIC_LAB(jet_ip3d_pb);
+  STATIC_LAB(jet_ip3d_pc);
+  STATIC_LAB(jet_ip3d_pu);
+
+  STATIC_LAB(jet_sv1_ntrkj);
+  STATIC_LAB(jet_sv1_ntrkv);
+  STATIC_LAB(jet_sv1_n2t);
+  STATIC_LAB(jet_sv1_m);
+  STATIC_LAB(jet_sv1_efc);
+  STATIC_LAB(jet_sv1_normdist);
+  STATIC_LAB(jet_sv1_Nvtx);
+  STATIC_LAB(jet_sv1_sig3d);
+#undef STATIC_LAB
+};
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
+  out << j.jet_pt;
+  out << j.jet_eta;
+  out << j.jet_phi;
+  out << j.jet_E;
+  out << j.jet_m;
+
+  // flavor label
+  out << j.jet_truthflav;
+
+  // high level
+  // ip2d, ip3d
+  out << j.jet_ip2d_pb;
+  out << j.jet_ip2d_pc;
+  out << j.jet_ip2d_pu;
+  out << j.jet_ip3d_pb;
+  out << j.jet_ip3d_pc;
+  out << j.jet_ip3d_pu;
+  // sv1
+  out << j.jet_sv1_ntrkj;
+  out << j.jet_sv1_ntrkv;
+  out << j.jet_sv1_n2t;
+  out << j.jet_sv1_m;
+  out << j.jet_sv1_efc;
+  out << j.jet_sv1_normdist;
+  out << j.jet_sv1_Nvtx;
+  out << j.jet_sv1_sig3d;
+  // med-level sv1
+  // out << j.jet_sv1_vtx_x;
+  // out << j.jet_sv1_vtx_y;
+  // out << j.jet_sv1_vtx_z;
+  // jetfitter
+  // out << j.jet_jf_m;
+  // out << j.jet_jf_efc;
+  // out << j.jet_jf_deta;
+  // out << j.jet_jf_dphi;
+  // out << j.jet_jf_ntrkAtVx;
+  // out << j.jet_jf_nvtx;
+  // out << j.jet_jf_sig3d;
+  // out << j.jet_jf_nvtx1t;
+  // out << j.jet_jf_n2t;
+  // out << j.jet_jf_VTXsize;
+  // // med-level jetfitter
+  // out << j.jet_jf_vtx_chi2;
+  // out << j.jet_jf_vtx_ndf;
+  // out << j.jet_jf_vtx_ntrk;
+  // out << j.jet_jf_vtx_L3D;
+  // out << j.jet_jf_vtx_sig3D;
+
+  // // MV2
+  // out << j.jet_mv2c00;
+  // out << j.jet_mv2c10;
+  // out << j.jet_mv2c20;
+  // out << j.jet_mv2c100;
+
+  // // track level
+  // out << j.jet_trk_pt;
+  // out << j.jet_trk_eta;
+  // out << j.jet_trk_theta;
+  // out << j.jet_trk_phi;
+  // out << j.jet_trk_dr;
+  // out << j.jet_trk_chi2;
+  // out << j.jet_trk_ndf;
+  // // metrics
+  // out << j.jet_trk_d0;
+  // out << j.jet_trk_z0;
+  // out << j.jet_trk_ip3d_d0;
+  // // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
+  // out << j.jet_trk_ip3d_z0;
+  // out << j.jet_trk_ip3d_d0sig;
+  // out << j.jet_trk_ip3d_z0sig;
+  // out << j.jet_trk_jf_Vertex;
+  return out;
+}
+
+
+// ______________________________________________________________________
 // define classes
+
+struct Jet
+{
+  // kinematics
+  float jet_pt;
+  float jet_eta;
+  float jet_phi;
+  float jet_E;
+  float jet_m;
+
+  // flavor label
+  int jet_truthflav;
+
+  // high level
+  // ip2d, ip3d
+  float jet_ip2d_pb;
+  float jet_ip2d_pc;
+  float jet_ip2d_pu;
+  float jet_ip3d_pb;
+  float jet_ip3d_pc;
+  float jet_ip3d_pu;
+  // sv1
+  int jet_sv1_ntrkj;
+  int jet_sv1_ntrkv;
+  int jet_sv1_n2t;
+  float jet_sv1_m;
+  float jet_sv1_efc;
+  float jet_sv1_normdist;
+  int jet_sv1_Nvtx;
+  float jet_sv1_sig3d;
+  // med-level sv1
+  std::vector<float> jet_sv1_vtx_x;
+  std::vector<float> jet_sv1_vtx_y;
+  std::vector<float> jet_sv1_vtx_z;
+  // jetfitter
+  float jet_jf_m;
+  float jet_jf_efc;
+  float jet_jf_deta;
+  float jet_jf_dphi;
+  float jet_jf_ntrkAtVx;
+  int jet_jf_nvtx;
+  float jet_jf_sig3d;
+  int jet_jf_nvtx1t;
+  int jet_jf_n2t;
+  int jet_jf_VTXsize;
+  // med-level jetfitter
+  std::vector<float> jet_jf_vtx_chi2;
+  std::vector<float> jet_jf_vtx_ndf;
+  std::vector<int> jet_jf_vtx_ntrk;
+  std::vector<float> jet_jf_vtx_L3D;
+  std::vector<float> jet_jf_vtx_sig3D;
+
+  // MV2
+  double jet_mv2c00;
+  double jet_mv2c10;
+  double jet_mv2c20;
+  double jet_mv2c100;
+
+  // track level
+  std::vector<float> jet_trk_pt;
+  std::vector<float> jet_trk_eta;
+  std::vector<float> jet_trk_theta;
+  std::vector<float> jet_trk_phi;
+  std::vector<float> jet_trk_dr;
+  std::vector<float> jet_trk_chi2;
+  std::vector<float> jet_trk_ndf;
+  // metrics
+  std::vector<float> jet_trk_d0;
+  std::vector<float> jet_trk_z0;
+  std::vector<float> jet_trk_ip3d_d0;
+  // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
+  std::vector<float> jet_trk_ip3d_z0;
+  std::vector<float> jet_trk_ip3d_d0sig;
+  std::vector<float> jet_trk_ip3d_z0sig;
+  std::vector<int> jet_trk_jf_Vertex;
+};
+
 class Jets
 {
 public:
   Jets(SmartChain& chain);
-  std::string asString(int) const;
-  int number() const;
+  OutJet<Jet> getJet(int) const;
+  int size() const;
 private:
   SmartChain* m_chain;
 
@@ -176,21 +366,90 @@ Jets::Jets(SmartChain& chain):
 
 
 }
-int Jets::number() const {
+int Jets::size() const {
   return jet_pt->size();
 }
-std::string Jets::asString(int number) const {
-  return std::to_string(jet_pt->at(number));
-}
+OutJet<Jet> Jets::getJet(int pos) const {
+  OutJet<Jet> o;
+  // kinematics                   // kinematics
+  o.jet_pt = jet_pt->at(pos);
+  o.jet_eta = jet_eta->at(pos);
+  o.jet_phi = jet_phi->at(pos);
+  o.jet_E = jet_E->at(pos);
+  o.jet_m = jet_m->at(pos);
+
+  // flavor label                 // flavor label
+  o.jet_truthflav = jet_truthflav->at(pos);
+
+  // high level                   // high level
+  // ip2d, ip3d                   // ip2d, ip3d
+  o.jet_ip2d_pb = jet_ip2d_pb->at(pos);
+  o.jet_ip2d_pc = jet_ip2d_pc->at(pos);
+  o.jet_ip2d_pu = jet_ip2d_pu->at(pos);
+  o.jet_ip3d_pb = jet_ip3d_pb->at(pos);
+  o.jet_ip3d_pc = jet_ip3d_pc->at(pos);
+  o.jet_ip3d_pu = jet_ip3d_pu->at(pos);
+  // sv1                          // sv1
+  o.jet_sv1_ntrkj = jet_sv1_ntrkj->at(pos);
+  o.jet_sv1_ntrkv = jet_sv1_ntrkv->at(pos);
+  o.jet_sv1_n2t = jet_sv1_n2t->at(pos);
+  o.jet_sv1_m = jet_sv1_m->at(pos);
+  o.jet_sv1_efc = jet_sv1_efc->at(pos);
+  o.jet_sv1_normdist = jet_sv1_normdist->at(pos);
+  o.jet_sv1_Nvtx = jet_sv1_Nvtx->at(pos);
+  o.jet_sv1_sig3d = jet_sv1_sig3d->at(pos);
+  // med-level sv1                // med-level sv1
+  o.jet_sv1_vtx_x = jet_sv1_vtx_x->at(pos);
+  o.jet_sv1_vtx_y = jet_sv1_vtx_y->at(pos);
+  o.jet_sv1_vtx_z = jet_sv1_vtx_z->at(pos);
+  // jetfitter                    // jetfitter
+  o.jet_jf_m = jet_jf_m->at(pos);
+  o.jet_jf_efc = jet_jf_efc->at(pos);
+  o.jet_jf_deta = jet_jf_deta->at(pos);
+  o.jet_jf_dphi = jet_jf_dphi->at(pos);
+  o.jet_jf_ntrkAtVx = jet_jf_ntrkAtVx->at(pos);
+  o.jet_jf_nvtx = jet_jf_nvtx->at(pos);
+  o.jet_jf_sig3d = jet_jf_sig3d->at(pos);
+  o.jet_jf_nvtx1t = jet_jf_nvtx1t->at(pos);
+  o.jet_jf_n2t = jet_jf_n2t->at(pos);
+  o.jet_jf_VTXsize = jet_jf_VTXsize->at(pos);
+  // med-level jetfitter          // med-level jetfitter
+  o.jet_jf_vtx_chi2 = jet_jf_vtx_chi2->at(pos);
+  o.jet_jf_vtx_ndf = jet_jf_vtx_ndf->at(pos);
+  o.jet_jf_vtx_ntrk = jet_jf_vtx_ntrk->at(pos);
+  o.jet_jf_vtx_L3D = jet_jf_vtx_L3D->at(pos);
+  o.jet_jf_vtx_sig3D = jet_jf_vtx_sig3D->at(pos);
+
+  // MV2                          // MV2
+  o.jet_mv2c00 = jet_mv2c00->at(pos);
+  o.jet_mv2c10 = jet_mv2c10->at(pos);
+  o.jet_mv2c20 = jet_mv2c20->at(pos);
+  o.jet_mv2c100 = jet_mv2c100->at(pos);
+
+  // track level                  // track level
+  o.jet_trk_pt = jet_trk_pt->at(pos);
+  o.jet_trk_eta = jet_trk_eta->at(pos);
+  o.jet_trk_theta = jet_trk_theta->at(pos);
+  o.jet_trk_phi = jet_trk_phi->at(pos);
+  o.jet_trk_dr = jet_trk_dr->at(pos);
+  o.jet_trk_chi2 = jet_trk_chi2->at(pos);
+  o.jet_trk_ndf = jet_trk_ndf->at(pos);
+  // metrics                      // metrics
+  o.jet_trk_d0 = jet_trk_d0->at(pos);
+  o.jet_trk_z0 = jet_trk_z0->at(pos);
+  o.jet_trk_ip3d_d0 = jet_trk_ip3d_d0->at(pos);
+  o.jet_trk_ip3d_z0 = jet_trk_ip3d_z0->at(pos);
+  o.jet_trk_ip3d_d0sig = jet_trk_ip3d_d0sig->at(pos);
+  o.jet_trk_ip3d_z0sig = jet_trk_ip3d_z0sig->at(pos);
+  o.jet_trk_jf_Vertex = jet_trk_jf_Vertex->at(pos);
+  return o;
+};
 
 // _____________________________________________________________________
 // main function
 
 int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
-  // printf("%s", argv[0]);
-  // gROOT->GetInterpreter()->GenerateDictionary("vector<vector<float> >");
-  // gROOT->GetInterpreter()->GenerateDictionary("vector<vector<int> >");
   FileCLI cli(argc, argv);
 
   SmartChain chain("bTag_AntiKt4EMTopoJets");
@@ -200,11 +459,16 @@ int main(int argc, char* argv[]) {
   Jets jets(chain);
   int n_entries = chain.GetEntries();
   std::cout << n_entries << " entries in chain" << std::endl;
+
+  OutJet<JetLabels> labels;
+  std::cout << labels << std::endl;
+
   for (int iii = 0; iii < 10; iii++) {
     chain.GetEntry(iii);
-    int n_jets = jets.number();
+    int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
-      std::cout << jets.asString(jjj) << std::endl;
+      auto jet = jets.getJet(jjj);
+      std::cout << jet << std::endl;
     }
   }
 }
