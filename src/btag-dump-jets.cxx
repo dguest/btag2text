@@ -19,106 +19,108 @@ class OutJet: public T
 class JetLabels
 {
 public:
-#define STATIC_LAB(label) const std::string label = #label
-  STATIC_LAB(jet_pt);
-  STATIC_LAB(jet_eta);
-  STATIC_LAB(jet_phi);
-  STATIC_LAB(jet_E);
-  STATIC_LAB(jet_m);
+#define LABELED(label) const std::string label = #label
+  LABELED(jet_pt);
+  LABELED(jet_eta);
+  LABELED(jet_phi);
+  LABELED(jet_E);
+  LABELED(jet_m);
 
-  STATIC_LAB(jet_truthflav);
+  LABELED(jet_truthflav);
 
-  STATIC_LAB(jet_ip2d_pb);
-  STATIC_LAB(jet_ip2d_pc);
-  STATIC_LAB(jet_ip2d_pu);
-  STATIC_LAB(jet_ip3d_pb);
-  STATIC_LAB(jet_ip3d_pc);
-  STATIC_LAB(jet_ip3d_pu);
+  LABELED(jet_ip2d_pb);
+  LABELED(jet_ip2d_pc);
+  LABELED(jet_ip2d_pu);
+  LABELED(jet_ip3d_pb);
+  LABELED(jet_ip3d_pc);
+  LABELED(jet_ip3d_pu);
 
-  STATIC_LAB(jet_sv1_ntrkj);
-  STATIC_LAB(jet_sv1_ntrkv);
-  STATIC_LAB(jet_sv1_n2t);
-  STATIC_LAB(jet_sv1_m);
-  STATIC_LAB(jet_sv1_efc);
-  STATIC_LAB(jet_sv1_normdist);
-  STATIC_LAB(jet_sv1_Nvtx);
-  STATIC_LAB(jet_sv1_sig3d);
-#undef STATIC_LAB
+  LABELED(jet_sv1_ntrkj);
+  LABELED(jet_sv1_ntrkv);
+  LABELED(jet_sv1_n2t);
+  LABELED(jet_sv1_m);
+  LABELED(jet_sv1_efc);
+  LABELED(jet_sv1_normdist);
+  LABELED(jet_sv1_Nvtx);
+  LABELED(jet_sv1_sig3d);
+#undef LABELED
 };
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
-  out << j.jet_pt;
-  out << j.jet_eta;
-  out << j.jet_phi;
-  out << j.jet_E;
-  out << j.jet_m;
+#define OUT_COMMA(NAME) out << j.NAME << ", "
+  OUT_COMMA(jet_pt);
+  OUT_COMMA(jet_eta);
+  OUT_COMMA(jet_phi);
+  OUT_COMMA(jet_E);
+  OUT_COMMA(jet_m);
 
   // flavor label
-  out << j.jet_truthflav;
+  OUT_COMMA(jet_truthflav);
 
   // high level
   // ip2d, ip3d
   out << j.jet_ip2d_pb;
-  out << j.jet_ip2d_pc;
-  out << j.jet_ip2d_pu;
-  out << j.jet_ip3d_pb;
-  out << j.jet_ip3d_pc;
-  out << j.jet_ip3d_pu;
+  OUT_COMMA(jet_ip2d_pc);
+  OUT_COMMA(jet_ip2d_pu);
+  OUT_COMMA(jet_ip3d_pb);
+  OUT_COMMA(jet_ip3d_pc);
+  OUT_COMMA(jet_ip3d_pu);
   // sv1
-  out << j.jet_sv1_ntrkj;
-  out << j.jet_sv1_ntrkv;
-  out << j.jet_sv1_n2t;
-  out << j.jet_sv1_m;
-  out << j.jet_sv1_efc;
-  out << j.jet_sv1_normdist;
-  out << j.jet_sv1_Nvtx;
-  out << j.jet_sv1_sig3d;
+  OUT_COMMA(jet_sv1_ntrkj);
+  OUT_COMMA(jet_sv1_ntrkv);
+  OUT_COMMA(jet_sv1_n2t);
+  OUT_COMMA(jet_sv1_m);
+  OUT_COMMA(jet_sv1_efc);
+  OUT_COMMA(jet_sv1_normdist);
+  OUT_COMMA(jet_sv1_Nvtx);
+  OUT_COMMA(jet_sv1_sig3d);
   // med-level sv1
-  // out << j.jet_sv1_vtx_x;
-  // out << j.jet_sv1_vtx_y;
-  // out << j.jet_sv1_vtx_z;
+  // OUT_COMMA(jet_sv1_vtx_x);
+  // OUT_COMMA(jet_sv1_vtx_y);
+  // OUT_COMMA(jet_sv1_vtx_z);
   // jetfitter
-  // out << j.jet_jf_m;
-  // out << j.jet_jf_efc;
-  // out << j.jet_jf_deta;
-  // out << j.jet_jf_dphi;
-  // out << j.jet_jf_ntrkAtVx;
-  // out << j.jet_jf_nvtx;
-  // out << j.jet_jf_sig3d;
-  // out << j.jet_jf_nvtx1t;
-  // out << j.jet_jf_n2t;
-  // out << j.jet_jf_VTXsize;
+  // OUT_COMMA(jet_jf_m);
+  // OUT_COMMA(jet_jf_efc);
+  // OUT_COMMA(jet_jf_deta);
+  // OUT_COMMA(jet_jf_dphi);
+  // OUT_COMMA(jet_jf_ntrkAtVx);
+  // OUT_COMMA(jet_jf_nvtx);
+  // OUT_COMMA(jet_jf_sig3d);
+  // OUT_COMMA(jet_jf_nvtx1t);
+  // OUT_COMMA(jet_jf_n2t);
+  // OUT_COMMA(jet_jf_VTXsize);
   // // med-level jetfitter
-  // out << j.jet_jf_vtx_chi2;
-  // out << j.jet_jf_vtx_ndf;
-  // out << j.jet_jf_vtx_ntrk;
-  // out << j.jet_jf_vtx_L3D;
-  // out << j.jet_jf_vtx_sig3D;
+  // OUT_COMMA(jet_jf_vtx_chi2);
+  // OUT_COMMA(jet_jf_vtx_ndf);
+  // OUT_COMMA(jet_jf_vtx_ntrk);
+  // OUT_COMMA(jet_jf_vtx_L3D);
+  // OUT_COMMA(jet_jf_vtx_sig3D);
 
   // // MV2
-  // out << j.jet_mv2c00;
-  // out << j.jet_mv2c10;
-  // out << j.jet_mv2c20;
-  // out << j.jet_mv2c100;
+  // OUT_COMMA(jet_mv2c00);
+  // OUT_COMMA(jet_mv2c10);
+  // OUT_COMMA(jet_mv2c20);
+  // OUT_COMMA(jet_mv2c100);
 
   // // track level
-  // out << j.jet_trk_pt;
-  // out << j.jet_trk_eta;
-  // out << j.jet_trk_theta;
-  // out << j.jet_trk_phi;
-  // out << j.jet_trk_dr;
-  // out << j.jet_trk_chi2;
-  // out << j.jet_trk_ndf;
+  // OUT_COMMA(jet_trk_pt);
+  // OUT_COMMA(jet_trk_eta);
+  // OUT_COMMA(jet_trk_theta);
+  // OUT_COMMA(jet_trk_phi);
+  // OUT_COMMA(jet_trk_dr);
+  // OUT_COMMA(jet_trk_chi2);
+  // OUT_COMMA(jet_trk_ndf);
   // // metrics
-  // out << j.jet_trk_d0;
-  // out << j.jet_trk_z0;
-  // out << j.jet_trk_ip3d_d0;
+  // OUT_COMMA(jet_trk_d0);
+  // OUT_COMMA(jet_trk_z0);
+  // OUT_COMMA(jet_trk_ip3d_d0);
   // // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
-  // out << j.jet_trk_ip3d_z0;
-  // out << j.jet_trk_ip3d_d0sig;
-  // out << j.jet_trk_ip3d_z0sig;
-  // out << j.jet_trk_jf_Vertex;
+  // OUT_COMMA(jet_trk_ip3d_z0);
+  // OUT_COMMA(jet_trk_ip3d_d0sig);
+  // OUT_COMMA(jet_trk_ip3d_z0sig);
+  // OUT_COMMA(jet_trk_jf_Vertex);
+#undef OUT_COMMA
   return out;
 }
 
