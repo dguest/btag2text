@@ -1,4 +1,5 @@
 #include "FileCLI.hh"
+#include "constants.hh"
 
 #include "SmartChain.hh"
 #include "TROOT.h"
@@ -6,9 +7,12 @@
 #include <ostream>
 #include <iostream>
 #include <vector>
+#include <algorithm> // sort
+#include <limits>
 
 // const double GeV = 1000;
 // const double MAX_PT = 1000*GeV;
+
 
 // ______________________________________________________________________
 // silly templates to make out stream thing work right
@@ -43,53 +47,118 @@ public:
   LABELED(jet_sv1_normdist);
   LABELED(jet_sv1_Nvtx);
   LABELED(jet_sv1_sig3d);
+
+  LABELED(jet_jf_m);
+  LABELED(jet_jf_efc);
+  LABELED(jet_jf_deta);
+  LABELED(jet_jf_dphi);
+  LABELED(jet_jf_ntrkAtVx);
+  LABELED(jet_jf_nvtx);
+  LABELED(jet_jf_sig3d);
+  LABELED(jet_jf_nvtx1t);
+  LABELED(jet_jf_n2t);
+  LABELED(jet_jf_VTXsize);
+
+  LABELED(jet_mv2c00);
+  LABELED(jet_mv2c10);
+  LABELED(jet_mv2c20);
+  LABELED(jet_mv2c100);
+
+  LABELED(track_2_d0_significance);
+  LABELED(track_3_d0_significance);
+  LABELED(track_2_z0_significance);
+  LABELED(track_3_z0_significance);
+  LABELED(n_tracks_over_d0_threshold);
+
 #undef LABELED
 };
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
+
+  // make up some grammar for the output
+#define OUT(NAME) out << j.NAME
 #define OUT_COMMA(NAME) out << j.NAME << ", "
+#define OPEN out << "{";
+#define CLOSE out << "}"
+#define OUT_CLOSE(NAME) out << j.NAME << "}"
+#define CS out << ", "
+
   OUT_COMMA(jet_pt);
   OUT_COMMA(jet_eta);
-  OUT_COMMA(jet_phi);
-  OUT_COMMA(jet_E);
-  OUT_COMMA(jet_m);
-
-  // flavor label
   OUT_COMMA(jet_truthflav);
 
-  // high level
-  // ip2d, ip3d
-  out << j.jet_ip2d_pb;
-  OUT_COMMA(jet_ip2d_pc);
-  OUT_COMMA(jet_ip2d_pu);
-  OUT_COMMA(jet_ip3d_pb);
-  OUT_COMMA(jet_ip3d_pc);
-  OUT_COMMA(jet_ip3d_pu);
-  // sv1
-  OUT_COMMA(jet_sv1_ntrkj);
-  OUT_COMMA(jet_sv1_ntrkv);
-  OUT_COMMA(jet_sv1_n2t);
-  OUT_COMMA(jet_sv1_m);
-  OUT_COMMA(jet_sv1_efc);
-  OUT_COMMA(jet_sv1_normdist);
-  OUT_COMMA(jet_sv1_Nvtx);
-  OUT_COMMA(jet_sv1_sig3d);
-  // med-level sv1
-  // OUT_COMMA(jet_sv1_vtx_x);
-  // OUT_COMMA(jet_sv1_vtx_y);
-  // OUT_COMMA(jet_sv1_vtx_z);
-  // jetfitter
-  // OUT_COMMA(jet_jf_m);
-  // OUT_COMMA(jet_jf_efc);
-  // OUT_COMMA(jet_jf_deta);
-  // OUT_COMMA(jet_jf_dphi);
-  // OUT_COMMA(jet_jf_ntrkAtVx);
-  // OUT_COMMA(jet_jf_nvtx);
-  // OUT_COMMA(jet_jf_sig3d);
-  // OUT_COMMA(jet_jf_nvtx1t);
-  // OUT_COMMA(jet_jf_n2t);
-  // OUT_COMMA(jet_jf_VTXsize);
+  // OUT_COMMA(jet_phi);
+  // OUT_COMMA(jet_E);
+  // OUT_COMMA(jet_m);
+
+  // MV2
+  OPEN {
+    OUT_COMMA(jet_mv2c00);
+    OUT_COMMA(jet_mv2c10);
+    OUT_COMMA(jet_mv2c20);
+    OUT(jet_mv2c100);
+  } CLOSE;
+  CS;
+
+  // high level tracking
+  OPEN {
+    // OUT_COMMA(jet_ip2d_pb);
+    // OUT_COMMA(jet_ip2d_pc);
+    // OUT_COMMA(jet_ip2d_pu);
+
+    // ip2d, ip3d
+    OPEN {
+      OUT_COMMA(jet_ip3d_pb);
+      OUT_COMMA(jet_ip3d_pc);
+      OUT(jet_ip3d_pu);
+    } CLOSE;
+    CS;
+
+    // track significance
+    OPEN {
+      OUT_COMMA(track_2_d0_significance);
+      OUT_COMMA(track_3_d0_significance);
+      OUT_COMMA(track_2_z0_significance);
+      OUT_COMMA(track_3_d0_significance);
+      OUT(n_tracks_over_d0_threshold);
+    } CLOSE;
+  } CLOSE;
+  CS;
+
+  // high level vertex
+  OPEN {
+    // sv1
+    OPEN {
+      OUT_COMMA(jet_sv1_ntrkj);
+      OUT_COMMA(jet_sv1_ntrkv);
+      OUT_COMMA(jet_sv1_n2t);
+      OUT_COMMA(jet_sv1_m);
+      OUT_COMMA(jet_sv1_efc);
+      OUT_COMMA(jet_sv1_normdist);
+      OUT_COMMA(jet_sv1_Nvtx);
+      OUT(jet_sv1_sig3d);
+    } CLOSE;
+    CS;
+    // med-level sv1
+    // OUT_COMMA(jet_sv1_vtx_x);
+    // OUT_COMMA(jet_sv1_vtx_y);
+    // OUT_COMMA(jet_sv1_vtx_z);
+    // jetfitter
+    OPEN {
+      OUT_COMMA(jet_jf_m);
+      OUT_COMMA(jet_jf_efc);
+      OUT_COMMA(jet_jf_deta);
+      OUT_COMMA(jet_jf_dphi);
+      OUT_COMMA(jet_jf_ntrkAtVx);
+      OUT_COMMA(jet_jf_nvtx);
+      OUT_COMMA(jet_jf_sig3d);
+      OUT_COMMA(jet_jf_nvtx1t);
+      OUT_COMMA(jet_jf_n2t);
+      OUT(jet_jf_VTXsize);
+    } CLOSE;
+  } CLOSE;
+
   // // med-level jetfitter
   // OUT_COMMA(jet_jf_vtx_chi2);
   // OUT_COMMA(jet_jf_vtx_ndf);
@@ -97,11 +166,6 @@ std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
   // OUT_COMMA(jet_jf_vtx_L3D);
   // OUT_COMMA(jet_jf_vtx_sig3D);
 
-  // // MV2
-  // OUT_COMMA(jet_mv2c00);
-  // OUT_COMMA(jet_mv2c10);
-  // OUT_COMMA(jet_mv2c20);
-  // OUT_COMMA(jet_mv2c100);
 
   // // track level
   // OUT_COMMA(jet_trk_pt);
@@ -120,7 +184,11 @@ std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
   // OUT_COMMA(jet_trk_ip3d_d0sig);
   // OUT_COMMA(jet_trk_ip3d_z0sig);
   // OUT_COMMA(jet_trk_jf_Vertex);
+#undef CS
 #undef OUT_COMMA
+#undef OPEN
+#undef CLOSE
+#undef OUT_CLOSE
   return out;
 }
 
@@ -202,7 +270,40 @@ struct Jet
   std::vector<float> jet_trk_ip3d_d0sig;
   std::vector<float> jet_trk_ip3d_z0sig;
   std::vector<int> jet_trk_jf_Vertex;
+
+  // derived quantities
+  float track_2_d0_significance;
+  float track_3_d0_significance;
+  float track_2_z0_significance;
+  float track_3_z0_significance;
+  int   n_tracks_over_d0_threshold;
 };
+
+namespace {
+  std::vector<float> sort_and_pad(std::vector<float> in, int number) {
+    typedef decltype(in)::value_type vtype;
+    std::sort(in.begin(), in.end(), std::greater<vtype>());
+    int needed = number - in.size();
+    if (needed > 0) in.insert(in.end(), needed,
+                              std::numeric_limits<vtype>::infinity());
+    return in;
+  }
+  void fill_derived(Jet& jet) {
+    auto sorted_d0 = sort_and_pad(jet.jet_trk_ip3d_d0sig, 3);
+    jet.track_2_d0_significance = sorted_d0.at(1);
+    jet.track_3_d0_significance = sorted_d0.at(2);
+    auto sorted_z0 = sort_and_pad(jet.jet_trk_ip3d_z0sig, 3);
+    jet.track_2_z0_significance = sorted_z0.at(1);
+    jet.track_3_z0_significance = sorted_z0.at(2);
+
+    int n_over = 0;
+    for (const auto& d0: jet.jet_trk_ip3d_z0sig) {
+      if (d0 > D0_THRESHOLD) n_over++;
+    }
+    jet.n_tracks_over_d0_threshold = n_over;
+    // TODO: add jet width
+  }
+}
 
 class Jets
 {
@@ -444,6 +545,10 @@ OutJet<Jet> Jets::getJet(int pos) const {
   o.jet_trk_ip3d_d0sig = jet_trk_ip3d_d0sig->at(pos);
   o.jet_trk_ip3d_z0sig = jet_trk_ip3d_z0sig->at(pos);
   o.jet_trk_jf_Vertex = jet_trk_jf_Vertex->at(pos);
+
+  // derived stuff
+  fill_derived(o);
+
   return o;
 };
 
