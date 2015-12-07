@@ -2,6 +2,7 @@
 #define JETS_HH
 
 #include <vector>
+#include <ostream>
 
 class SmartChain;
 
@@ -89,12 +90,21 @@ struct Jet
   std::vector<float> jet_trk_ip3d_z0sig;
   std::vector<int> jet_trk_jf_Vertex;
 
-  // derived quantities
+  // --- derived quantities ---
+  // track counting
   float track_2_d0_significance;
   float track_3_d0_significance;
   float track_2_z0_significance;
   float track_3_z0_significance;
   int   n_tracks_over_d0_threshold;
+  // jetfitter vertices
+  // TODO: make these work
+  std::vector<float> jet_jf_trk_vtx_chi2;
+  std::vector<float> jet_jf_trk_vtx_ndf;
+  std::vector<int>   jet_jf_trk_vtx_ntrk;
+  std::vector<float> jet_jf_trk_vtx_L3D;
+  std::vector<float> jet_jf_trk_vtx_sig3D;
+
 };
 
 class Jets
@@ -182,5 +192,133 @@ private:
 };
 
 std::ostream& operator<<(std::ostream&, Jets&);
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutJet<T>& j);
+
+
+// _______________________________________________________________________
+// Implementation
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
+
+  // make up some grammar for the output
+#define OUT(NAME) out << j.NAME
+#define OUT_COMMA(NAME) out << j.NAME << ", "
+#define OPEN out << "{";
+#define CLOSE out << "}"
+#define OUT_CLOSE(NAME) out << j.NAME << "}"
+#define CS out << ", "
+
+  OUT_COMMA(jet_pt);
+  OUT_COMMA(jet_eta);
+  OUT_COMMA(jet_truthflav);
+
+  // OUT_COMMA(jet_phi);
+  // OUT_COMMA(jet_E);
+  // OUT_COMMA(jet_m);
+
+  // MV2
+  OPEN {
+    OUT_COMMA(jet_mv2c00);
+    OUT_COMMA(jet_mv2c10);
+    OUT_COMMA(jet_mv2c20);
+    OUT(jet_mv2c100);
+  } CLOSE;
+  CS;
+
+  // high level tracking
+  OPEN {
+    // OUT_COMMA(jet_ip2d_pb);
+    // OUT_COMMA(jet_ip2d_pc);
+    // OUT_COMMA(jet_ip2d_pu);
+
+    // ip2d, ip3d
+    OPEN {
+      OUT_COMMA(jet_ip3d_pb);
+      OUT_COMMA(jet_ip3d_pc);
+      OUT(jet_ip3d_pu);
+    } CLOSE;
+    CS;
+
+    // track significance
+    OPEN {
+      OUT_COMMA(track_2_d0_significance);
+      OUT_COMMA(track_3_d0_significance);
+      OUT_COMMA(track_2_z0_significance);
+      OUT_COMMA(track_3_d0_significance);
+      OUT(n_tracks_over_d0_threshold);
+    } CLOSE;
+  } CLOSE;
+  CS;
+
+  // high level vertex
+  OPEN {
+    // sv1
+    OPEN {
+      OUT_COMMA(jet_sv1_ntrkj);
+      OUT_COMMA(jet_sv1_ntrkv);
+      OUT_COMMA(jet_sv1_n2t);
+      OUT_COMMA(jet_sv1_m);
+      OUT_COMMA(jet_sv1_efc);
+      OUT_COMMA(jet_sv1_normdist);
+      OUT_COMMA(jet_sv1_Nvtx);
+      OUT(jet_sv1_sig3d);
+    } CLOSE;
+    CS;
+    OPEN {
+      OUT_COMMA(jet_jf_m);
+      OUT_COMMA(jet_jf_efc);
+      OUT_COMMA(jet_jf_deta);
+      OUT_COMMA(jet_jf_dphi);
+      OUT_COMMA(jet_jf_ntrkAtVx);
+      OUT_COMMA(jet_jf_nvtx);
+      OUT_COMMA(jet_jf_sig3d);
+      OUT_COMMA(jet_jf_nvtx1t);
+      OUT_COMMA(jet_jf_n2t);
+      OUT(jet_jf_VTXsize);
+    } CLOSE;
+  } CLOSE;
+
+  // // med-level jetfitter
+  // OUT_COMMA(jet_jf_vtx_chi2);
+  // OUT_COMMA(jet_jf_vtx_ndf);
+  // OUT_COMMA(jet_jf_vtx_ntrk);
+  // OUT_COMMA(jet_jf_vtx_L3D);
+  // OUT_COMMA(jet_jf_vtx_sig3D);
+
+    // med-level sv1
+    // OUT_COMMA(jet_sv1_vtx_x);
+    // OUT_COMMA(jet_sv1_vtx_y);
+    // OUT_COMMA(jet_sv1_vtx_z);
+    // jetfitter
+
+  // // track level
+  // OUT_COMMA(jet_trk_pt);
+  // OUT_COMMA(jet_trk_eta);
+  // OUT_COMMA(jet_trk_theta);
+  // OUT_COMMA(jet_trk_phi);
+  // OUT_COMMA(jet_trk_dr);
+  // OUT_COMMA(jet_trk_chi2);
+  // OUT_COMMA(jet_trk_ndf);
+  // // metrics
+  // OUT_COMMA(jet_trk_d0);
+  // OUT_COMMA(jet_trk_z0);
+  // OUT_COMMA(jet_trk_ip3d_d0);
+  // // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
+  // OUT_COMMA(jet_trk_ip3d_z0);
+  // OUT_COMMA(jet_trk_ip3d_d0sig);
+  // OUT_COMMA(jet_trk_ip3d_z0sig);
+  // OUT_COMMA(jet_trk_jf_Vertex);
+#undef CS
+#undef OUT_COMMA
+#undef OPEN
+#undef CLOSE
+#undef OUT_CLOSE
+  return out;
+}
+
+
 
 #endif // JETS_HH

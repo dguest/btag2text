@@ -194,3 +194,8 @@ OutJet<Jet> Jets::getJet(int pos) const {
 
   return o;
 };
+
+
+// ______________________________________________________________________
+// jet labeling and printing to text
+
