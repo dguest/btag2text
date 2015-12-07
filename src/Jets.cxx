@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <algorithm> // sort
+#include <cassert>
 
 
 // ________________________________________________________________________
@@ -33,6 +34,13 @@ namespace {
     }
     jet.n_tracks_over_d0_threshold = n_over;
     // TODO: add jet width
+  }
+
+  bool pass_checks(Jet& jet) {
+    size_t n_trk = jet.jet_trk_pt.size();
+    if (n_trk != jet.jet_trk_ip3d_d0sig.size()) return false;
+    if (n_trk != jet.jet_trk_jf_Vertex.size()) return false;
+    return true;
   }
 }
 
@@ -191,6 +199,8 @@ OutJet<Jet> Jets::getJet(int pos) const {
 
   // derived stuff
   fill_derived(o);
+
+  assert(pass_checks(o));
 
   return o;
 };
