@@ -6,7 +6,7 @@
 #include <vector>
 #include <algorithm> // sort
 #include <cassert>
-
+#include <iostream>
 
 // ________________________________________________________________________
 // forward declare some utility functions
@@ -34,6 +34,21 @@ namespace {
     }
     jet.n_tracks_over_d0_threshold = n_over;
     // TODO: add jet width
+
+    // fill track-level stuff
+    int n_tracks = jet.jet_trk_ip3d_z0.size();
+    for (int nnn = 0; nnn < n_tracks; nnn++) {
+      int vx_idx = jet.jet_trk_jf_Vertex.at(nnn);
+
+#define PB(EXT, DEF) jet.jet_jf_trk_vtx_ ## EXT.push_back(  \
+        vx_idx == -1 ? DEF : jet.jet_jf_vtx_ ## EXT.at(vx_idx) )
+      PB(chi2, 0);
+      PB(ndf, 0);
+      PB(ntrk, 0);
+      PB(L3D, 0);
+      PB(sig3D, 0);
+#undef PB
+    }
   }
 
   bool pass_checks(Jet& jet) {

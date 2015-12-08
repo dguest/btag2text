@@ -60,6 +60,7 @@ TDICTS         := $(notdir $(DICT_FILES:.h=Dict.o))
 TDICT_PATHS    := $(TDICTS:%=$(BUILD)/%)
 # ALL_TOP_LEVEL  += $(TDICT_PATHS)
 GEN_OBJ_PATHS  += $(TDICT_PATHS)
+.SECONDARY: $(TDICT_PATHS)
 
 # _______________________________________________________________
 # Add Libraries
