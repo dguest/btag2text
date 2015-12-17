@@ -1,6 +1,7 @@
 #include "FileCLI.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
+#include "tools.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -29,6 +30,7 @@ private:
   Histogram mv2c10;
 };
 
+
 // _____________________________________________________________________
 // main function
 
@@ -44,7 +46,9 @@ int main(int argc, char* argv[]) {
   int n_entries = chain.GetEntries();
   std::cout << n_entries << " entries in chain" << std::endl;
 
+  FlavorPtEtaDistributions pt_eta_reweight("kinematics.h5");
   JetHists hists;
+  JetHists reweighted_hists;
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
