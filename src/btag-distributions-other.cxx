@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
   int n_entries = chain.GetEntries();
   std::cout << n_entries << " entries in chain" << std::endl;
 
-  FlavorPtEtaDistributions pt_eta_reweight("kinematics.h5");
+  FlavorPtEtaDistributions pt_eta_reweight("reweight.h5");
   JetHists hists;
   JetHists reweighted_hists;
 
