@@ -21,7 +21,7 @@ def run():
     args = _get_args()
     with File(args.input, 'r') as h5in:
         rw_hists = {n: Hist(ds) for n, ds in h5in.items()}
-    total = sum(rw_hists.values())
+    total = rw_hists['5']
     for name, hist in rw_hists.items():
         nonzero = hist.hist != 0
         hist.hist[nonzero] = total.hist[nonzero] / hist.hist[nonzero]
