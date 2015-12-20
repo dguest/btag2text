@@ -10,9 +10,11 @@ import numpy as np
 _default_output = 'reweight.h5'
 
 def _get_args():
+    d = "default: %(default)s"
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('input')
-    parser.add_argument('output', nargs='?', default=_default_output)
+    parser.add_argument('output', nargs='?', default=_default_output,
+                        help=d)
     return parser.parse_args()
 
 def run():

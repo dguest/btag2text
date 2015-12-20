@@ -2,9 +2,10 @@
 *.h5
 *.json
 *.txt
+*.pdf
 __pycache__
 /build/
 /bin/
 /dict/
 /test/
-
+/plots/

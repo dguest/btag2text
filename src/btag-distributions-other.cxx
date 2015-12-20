@@ -121,7 +121,7 @@ void JetHists::save(H5::CommonFG& out, std::string subdir) const {
 
 void FlavoredHists::fill(const Jet& jet, double weight) {
   int ftl = jet.jet_truthflav;
-  m_hists[ftl].fill(jet);
+  m_hists[ftl].fill(jet, weight);
 }
 
 void FlavoredHists::save(H5::CommonFG& out) const {
