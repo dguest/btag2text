@@ -31,6 +31,7 @@ private:
   Histogram mv2c00;
   Histogram mv2c10;
   Histogram pt;
+  Histogram eta;
 };
 
 class FlavoredHists
@@ -73,7 +74,7 @@ int main(int argc, char* argv[]) {
       hists.fill(jet);
       std::map<std::string, double> pt_eta{
         {"pt", jet.jet_pt},
-        {"eta", jet.jet_eta}};
+        {"eta", std::abs(jet.jet_eta)}};
       double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
       reweighted_hists.fill(jet, weight);
     }
@@ -92,7 +93,8 @@ int main(int argc, char* argv[]) {
 
 JetHists::JetHists():
   mv2c00(N_BINS, 0, 1), mv2c10(N_BINS, 0, 1),
-  pt(PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX)
+  pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, "MeV"} }),
+  eta({ {"eta", N_BINS, -2.8, 2.8 }})
 {
 }
 
@@ -101,6 +103,7 @@ void JetHists::fill(const Jet& jet, double weight) {
   BYNAME(mv2c00);
   BYNAME(mv2c10);
   BYNAME(pt);
+  BYNAME(eta);
 #undef BYNAME
 }
 
@@ -109,6 +112,7 @@ void JetHists::save(H5::CommonFG& out) const {
   BYNAME(mv2c00);
   BYNAME(mv2c10);
   BYNAME(pt);
+  BYNAME(eta);
 #undef BYNAME
 }
 void JetHists::save(H5::CommonFG& out, std::string subdir) const {

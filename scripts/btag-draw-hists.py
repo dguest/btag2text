@@ -55,8 +55,9 @@ def run():
         raw_hists = _get_hists(h5in['raw'])
         reweighted = _get_hists(h5in['reweighted'])
 
-    _draw_hists(raw_hists, args.output_dir, prefix='raw')
-    _draw_hists(reweighted, args.output_dir, prefix='reweighted')
+    _draw_hists(raw_hists, args.output_dir, 'pt', prefix='raw')
+    _draw_hists(reweighted, args.output_dir, 'pt', prefix='reweighted')
+    _draw_hists(reweighted, args.output_dir, 'eta')
 
 if __name__ == '__main__':
     run()

@@ -3,9 +3,11 @@
 *.json
 *.txt
 *.pdf
+.DS_Store
 __pycache__
 /build/
 /bin/
 /dict/
 /test/
 /plots/
+/run/
