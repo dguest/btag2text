@@ -1,15 +1,12 @@
 #include "FileCLI.hh"
+#include "constants.hh"
 
 #include "ndhist/Histogram.hh"
-
 
 #include "TChain.h"
 
 #include "H5Cpp.h"
 #include <iostream>
-
-const double GeV = 1000;
-const double MAX_PT = 1000*GeV;
 
 class FlavorPtEtaHists
 {
@@ -32,7 +29,7 @@ FlavorPtEtaHists::FlavorPtEtaHists(double pt_max, double eta_max):
 void FlavorPtEtaHists::fill(int ftl, double pt, double eta, double weight) {
   if (!m_flavors.count(ftl)) {
     std::vector<Axis> axes{
-      {"pt", 100, 0, m_pt_max, "MeV"},
+      {"pt", PT_REWEIGHT_NBINS, 0, m_pt_max, "MeV"},
       {"eta", 1, 0, m_eta_max} };
     m_flavors.emplace(ftl, axes);
   }
@@ -70,7 +67,7 @@ int main(int argc, char* argv[]) {
   chain.SetBranchAddress("jet_truthflav", &kin.ftl);
 
   // setup histograms
-  FlavorPtEtaHists hists(MAX_PT);
+  FlavorPtEtaHists hists(PT_REWEIGHT_MAX);
 
   int entries = chain.GetEntries();
   for (int iii = 0; iii < entries; iii++) {

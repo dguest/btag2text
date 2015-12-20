@@ -2,6 +2,7 @@
 #include "Jets.hh"
 #include "SmartChain.hh"
 #include "tools.hh"
+#include "constants.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -14,22 +15,33 @@
 // const double GeV = 1000;
 // const double MAX_PT = 1000*GeV;
 
-const double GeV = 1000;
-const double MAX_PT = 1000*GeV;
+// const double GeV = 1000;
+// const double MAX_PT = 1000*GeV;
 const int N_BINS = 200;
+const std::string reweight_file = "reweight.h5";
 
 class JetHists
 {
 public:
   JetHists();
   void fill(const Jet& jet, double weight = 1);
-  void save(H5::CommonFG& out);
-  void save(H5::CommonFG& out, std::string subdir);
+  void save(H5::CommonFG& out) const;
+  void save(H5::CommonFG& out, std::string subdir) const;
 private:
   Histogram mv2c00;
   Histogram mv2c10;
+  Histogram pt;
 };
 
+class FlavoredHists
+{
+public:
+  void fill(const Jet& jet, double weight = 1);
+  void save(H5::CommonFG& out) const;
+  void save(H5::CommonFG& out, std::string subdir) const;
+private:
+  std::map<int, JetHists> m_hists;
+};
 
 // _____________________________________________________________________
 // main function
@@ -45,10 +57,13 @@ int main(int argc, char* argv[]) {
   Jets jets(chain);
   int n_entries = chain.GetEntries();
   std::cout << n_entries << " entries in chain" << std::endl;
-
-  FlavorPtEtaDistributions pt_eta_reweight("reweight.h5");
-  JetHists hists;
-  JetHists reweighted_hists;
+  if (!exists(reweight_file)) {
+    throw std::logic_error(reweight_file + " not found");
+  }
+  FlavorPtEtaDistributions pt_eta_reweight(
+    H5::H5File(reweight_file, H5F_ACC_RDONLY));
+  FlavoredHists hists;
+  FlavoredHists reweighted_hists;
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
@@ -56,12 +71,18 @@ int main(int argc, char* argv[]) {
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       hists.fill(jet);
+      std::map<std::string, double> pt_eta{
+        {"pt", jet.jet_pt},
+        {"eta", jet.jet_eta}};
+      double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
+      reweighted_hists.fill(jet, weight);
     }
   }
 
   // save histograms
   H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
-  hists.save(out_file);
+  hists.save(out_file, "raw");
+  reweighted_hists.save(out_file, "reweighted");
 
 }
 
@@ -70,7 +91,8 @@ int main(int argc, char* argv[]) {
 
 
 JetHists::JetHists():
-  mv2c00(N_BINS, 0, 1), mv2c10(N_BINS, 0, 1)
+  mv2c00(N_BINS, 0, 1), mv2c10(N_BINS, 0, 1),
+  pt(PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX)
 {
 }
 
@@ -78,16 +100,37 @@ void JetHists::fill(const Jet& jet, double weight) {
 #define BYNAME(name) name.fill(jet.jet_ ## name, weight)
   BYNAME(mv2c00);
   BYNAME(mv2c10);
+  BYNAME(pt);
 #undef BYNAME
 }
 
-void JetHists::save(H5::CommonFG& out) {
+void JetHists::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
   BYNAME(mv2c00);
   BYNAME(mv2c10);
+  BYNAME(pt);
 #undef BYNAME
 }
-void JetHists::save(H5::CommonFG& out, std::string subdir) {
+void JetHists::save(H5::CommonFG& out, std::string subdir) const {
   H5::Group group(out.createGroup(subdir));
+  save(group);
+}
+
+// ________________________________________________________________________
+// flavored hists
+
+void FlavoredHists::fill(const Jet& jet, double weight) {
+  int ftl = jet.jet_truthflav;
+  m_hists[ftl].fill(jet);
+}
+
+void FlavoredHists::save(H5::CommonFG& out) const {
+  for (const auto& flav_and_hist: m_hists) {
+    std::string fg_name = std::to_string(flav_and_hist.first);
+    flav_and_hist.second.save(out, fg_name);
+  }
+}
+void FlavoredHists::save(H5::CommonFG& out, std::string name) const {
+  H5::Group group(out.createGroup(name));
   save(group);
 }
