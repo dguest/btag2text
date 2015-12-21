@@ -27,6 +27,9 @@ FILL_OTHER=$HERE/bin/btag-distributions-other
 MAKE_RW=$HERE/scripts/btag-make-reweight-hists.py
 DRAW_OTHER=$HERE/scripts/btag-draw-hists.py
 
+# checks the to make sure:
+# - The first argument exists
+# - The first argument is newer than all the following ones
 function need_new() {
     if [[ ! -f $1 ]]; then
         return 0
@@ -40,8 +43,7 @@ function need_new() {
     return 1
 }
 
-
-
+# run the various routines if needed
 if need_new $KIN $INPUT $FILL_RW; then
     echo "filling RW hists"
     $FILL_RW -f $INPUT -o $KIN
