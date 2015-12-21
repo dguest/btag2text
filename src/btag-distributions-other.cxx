@@ -30,6 +30,31 @@ public:
 private:
   Histogram mv2c00;
   Histogram mv2c10;
+  Histogram mv2c20;
+  Histogram mv2c100;
+
+  Histogram ip3d_pu;
+  Histogram ip3d_pc;
+  Histogram ip3d_pb;
+  Histogram sv1_ntrkj;
+  Histogram sv1_ntrkv;
+  Histogram sv1_n2t;
+  Histogram sv1_m;
+  Histogram sv1_efc;
+  Histogram sv1_normdist;
+  Histogram sv1_Nvtx;
+  Histogram sv1_sig3d;
+  Histogram jf_m;
+  Histogram jf_efc;
+  Histogram jf_deta;
+  Histogram jf_dphi;
+  Histogram jf_ntrkAtVx;
+  Histogram jf_nvtx;
+  Histogram jf_sig3d;
+  Histogram jf_nvtx1t;
+  Histogram jf_n2t;
+  Histogram jf_VTXsize;
+
   Histogram pt;
   Histogram eta;
 };
@@ -90,9 +115,42 @@ int main(int argc, char* argv[]) {
 // ______________________________________________________________________
 // hist methods
 
+namespace {
+  std::vector<Axis> zero_to_one(std::string name) {
+    return { {name, N_BINS, 0, 1, ""} };
+  }
+}
 
 JetHists::JetHists():
-  mv2c00(N_BINS, 0, 1), mv2c10(N_BINS, 0, 1),
+#define BYNAME(name) name( zero_to_one( #name) )
+  BYNAME(mv2c00),
+  BYNAME(mv2c10),
+  BYNAME(mv2c20),
+  BYNAME(mv2c100),
+
+  BYNAME(ip3d_pu),
+  BYNAME(ip3d_pc),
+  BYNAME(ip3d_pb),
+  BYNAME(sv1_ntrkj),            // fux
+  BYNAME(sv1_ntrkv),            // fux
+  BYNAME(sv1_n2t),              // fux
+  BYNAME(sv1_m),                // fux
+  BYNAME(sv1_efc),
+  BYNAME(sv1_normdist),         // fux
+  BYNAME(sv1_Nvtx),             // fux
+  BYNAME(sv1_sig3d),            // fux
+  BYNAME(jf_m),             // fux
+  BYNAME(jf_efc),
+  BYNAME(jf_deta),          // fux
+  BYNAME(jf_dphi),          // fux
+  BYNAME(jf_ntrkAtVx),      // fux
+  BYNAME(jf_nvtx),          // fux
+  BYNAME(jf_sig3d),         // fux
+  BYNAME(jf_nvtx1t),        // fux
+  BYNAME(jf_n2t),           // fux
+  BYNAME(jf_VTXsize),       // fux
+#undef BYNAME
+
   pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, "MeV"} }),
   eta({ {"eta", N_BINS, -2.8, 2.8 }})
 {
@@ -102,8 +160,34 @@ void JetHists::fill(const Jet& jet, double weight) {
 #define BYNAME(name) name.fill(jet.jet_ ## name, weight)
   BYNAME(mv2c00);
   BYNAME(mv2c10);
+  BYNAME(mv2c20);
+  BYNAME(mv2c100);
+
   BYNAME(pt);
   BYNAME(eta);
+
+  BYNAME(ip3d_pu);
+  BYNAME(ip3d_pc);
+  BYNAME(ip3d_pb);
+  BYNAME(sv1_ntrkj);
+  BYNAME(sv1_ntrkv);
+  BYNAME(sv1_n2t);
+  BYNAME(sv1_m);
+  BYNAME(sv1_efc);
+  BYNAME(sv1_normdist);
+  BYNAME(sv1_Nvtx);
+  BYNAME(sv1_sig3d);
+  BYNAME(jf_m);
+  BYNAME(jf_efc);
+  BYNAME(jf_deta);
+  BYNAME(jf_dphi);
+  BYNAME(jf_ntrkAtVx);
+  BYNAME(jf_nvtx);
+  BYNAME(jf_sig3d);
+  BYNAME(jf_nvtx1t);
+  BYNAME(jf_n2t);
+  BYNAME(jf_VTXsize);
+
 #undef BYNAME
 }
 
@@ -111,8 +195,34 @@ void JetHists::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
   BYNAME(mv2c00);
   BYNAME(mv2c10);
+  BYNAME(mv2c20);
+  BYNAME(mv2c100);
+
   BYNAME(pt);
   BYNAME(eta);
+
+  BYNAME(ip3d_pu);
+  BYNAME(ip3d_pc);
+  BYNAME(ip3d_pb);
+  BYNAME(sv1_ntrkj);
+  BYNAME(sv1_ntrkv);
+  BYNAME(sv1_n2t);
+  BYNAME(sv1_m);
+  BYNAME(sv1_efc);
+  BYNAME(sv1_normdist);
+  BYNAME(sv1_Nvtx);
+  BYNAME(sv1_sig3d);
+  BYNAME(jf_m);
+  BYNAME(jf_efc);
+  BYNAME(jf_deta);
+  BYNAME(jf_dphi);
+  BYNAME(jf_ntrkAtVx);
+  BYNAME(jf_nvtx);
+  BYNAME(jf_sig3d);
+  BYNAME(jf_nvtx1t);
+  BYNAME(jf_n2t);
+  BYNAME(jf_VTXsize);
+
 #undef BYNAME
 }
 void JetHists::save(H5::CommonFG& out, std::string subdir) const {
