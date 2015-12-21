@@ -6,6 +6,7 @@ from ndhist.hist import Hist
 from h5py import File
 from argparse import ArgumentParser
 import numpy as np
+import copy
 
 _default_output = 'reweight.h5'
 
@@ -21,7 +22,7 @@ def run():
     args = _get_args()
     with File(args.input, 'r') as h5in:
         rw_hists = {n: Hist(ds) for n, ds in h5in.items()}
-    total = rw_hists['5']
+    total = copy.deepcopy(rw_hists['5'])
     for name, hist in rw_hists.items():
         nonzero = hist.hist != 0
         hist.hist[nonzero] = total.hist[nonzero] / hist.hist[nonzero]
