@@ -11,8 +11,13 @@
 
 #include <iostream>
 
-const int N_BINS = 200;
 const std::string reweight_file = "reweight.h5";
+
+// various plotting constants
+const int N_BINS = 200;
+const double MAX_VX_MASS = 10*GeV;
+const double JET_WIDTH = 0.5;
+const double MAX_SIGNIFICANCE = 50;
 
 class JetHists
 {
@@ -30,7 +35,7 @@ private:
   Histogram ip3d_pu;
   Histogram ip3d_pc;
   Histogram ip3d_pb;
-  Histogram sv1_ntrkj;
+  // Histogram sv1_ntrkj; // never seems to exist...
   Histogram sv1_ntrkv;
   Histogram sv1_n2t;
   Histogram sv1_m;
@@ -123,41 +128,44 @@ namespace {
   }
 }
 
-const double MAX_VX_MASS = 10*GeV;
-
 JetHists::JetHists():
 #define ZERO_ONE(name) name( zero_to_one( #name) )
 #define COUNT(name, max) name( count( #name, max) )
 #define RANGE(name, low, high) name( range( #name, low, high) )
 #define ENERGY(name, high) name( range( #name, 0, high, BASE_UNITS) )
+  // MV2
   ZERO_ONE(mv2c00),
   ZERO_ONE(mv2c10),
   ZERO_ONE(mv2c20),
   ZERO_ONE(mv2c100),
 
+  // IP3D
   ZERO_ONE(ip3d_pu),
   ZERO_ONE(ip3d_pc),
   ZERO_ONE(ip3d_pb),
 
-  COUNT(sv1_ntrkj, 30),
+  // SV1
+  // COUNT(sv1_ntrkj, 30),
   COUNT(sv1_ntrkv, 20),
   COUNT(sv1_n2t, 20),
   ENERGY(sv1_m, MAX_VX_MASS),
   ZERO_ONE(sv1_efc),
-  RANGE(sv1_normdist, 0, 10),
-  COUNT(sv1_Nvtx, 10),
-  RANGE(sv1_sig3d, 0, 10),
+  RANGE(sv1_normdist, 0, MAX_SIGNIFICANCE),
+  COUNT(sv1_Nvtx, 2),
+  RANGE(sv1_sig3d, 0, MAX_SIGNIFICANCE),
 
+  // jetfitter
   ENERGY(jf_m, MAX_VX_MASS),
   ZERO_ONE(jf_efc),
-  RANGE(jf_deta, 0, 4),
-  RANGE(jf_dphi, 0, 3.2),
+  RANGE(jf_deta, 0, JET_WIDTH),
+  RANGE(jf_dphi, 0, JET_WIDTH),
   COUNT(jf_ntrkAtVx, 10),
   COUNT(jf_nvtx, 4),
-  RANGE(jf_sig3d, 0, 10),
+  RANGE(jf_sig3d, 0, MAX_SIGNIFICANCE),
   COUNT(jf_nvtx1t, 10),
-  COUNT(jf_n2t, 10),
+  COUNT(jf_n2t, 15),
   COUNT(jf_VTXsize, 10),
+
 #undef ZERO_ONE
 #undef COUNT
 #undef RANGE
@@ -181,7 +189,7 @@ void JetHists::fill(const Jet& jet, double weight) {
   BYNAME(ip3d_pu);
   BYNAME(ip3d_pc);
   BYNAME(ip3d_pb);
-  BYNAME(sv1_ntrkj);
+  // BYNAME(sv1_ntrkj);
   BYNAME(sv1_ntrkv);
   BYNAME(sv1_n2t);
   BYNAME(sv1_m);
@@ -216,7 +224,7 @@ void JetHists::save(H5::CommonFG& out) const {
   BYNAME(ip3d_pu);
   BYNAME(ip3d_pc);
   BYNAME(ip3d_pb);
-  BYNAME(sv1_ntrkj);
+  // BYNAME(sv1_ntrkj);
   BYNAME(sv1_ntrkv);
   BYNAME(sv1_n2t);
   BYNAME(sv1_m);

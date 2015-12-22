@@ -46,7 +46,7 @@ def _draw_hists(hist_dict, output_dir, var='pt', prefix=''):
         output_dir, prefix + "_" if prefix else '', var)
     with Canvas(name) as can:
         draw1d(can, hists)
-        can.ax.legend()
+        can.ax.legend(framealpha=0)
 
 def run():
     args = _get_args()

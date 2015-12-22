@@ -51,7 +51,6 @@ function need_new_dir() {
     local OUTPUT
     for OUTPUT in $2/*; do
         if [[ $OUTPUT -ot $1 ]]; then
-            echo "$OUTPUT is older than $1"
             return 0
         fi
     done
