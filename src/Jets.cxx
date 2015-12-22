@@ -57,6 +57,15 @@ namespace {
     if (n_trk != jet.jet_trk_jf_Vertex.size()) return false;
     return true;
   }
+
+  template<typename T>
+  std::vector<T> multiply(const std::vector<T>& vec, T mult) {
+    std::vector<T> out;
+    for (const auto entry: vec) {
+      out.push_back(entry*mult);
+    }
+    return out;
+  }
 }
 
 
@@ -141,11 +150,11 @@ int Jets::size() const {
 OutJet<Jet> Jets::getJet(int pos) const {
   OutJet<Jet> o;
   // kinematics                   // kinematics
-  o.jet_pt = jet_pt->at(pos);
+  o.jet_pt = jet_pt->at(pos)*MeV;
   o.jet_eta = jet_eta->at(pos);
   o.jet_phi = jet_phi->at(pos);
-  o.jet_E = jet_E->at(pos);
-  o.jet_m = jet_m->at(pos);
+  o.jet_E = jet_E->at(pos)*MeV;
+  o.jet_m = jet_m->at(pos)*MeV;
 
   // flavor label                 // flavor label
   o.jet_truthflav = jet_truthflav->at(pos);
@@ -162,17 +171,17 @@ OutJet<Jet> Jets::getJet(int pos) const {
   o.jet_sv1_ntrkj = jet_sv1_ntrkj->at(pos);
   o.jet_sv1_ntrkv = jet_sv1_ntrkv->at(pos);
   o.jet_sv1_n2t = jet_sv1_n2t->at(pos);
-  o.jet_sv1_m = jet_sv1_m->at(pos);
+  o.jet_sv1_m = jet_sv1_m->at(pos)*MeV;
   o.jet_sv1_efc = jet_sv1_efc->at(pos);
   o.jet_sv1_normdist = jet_sv1_normdist->at(pos);
   o.jet_sv1_Nvtx = jet_sv1_Nvtx->at(pos);
   o.jet_sv1_sig3d = jet_sv1_sig3d->at(pos);
   // med-level sv1                // med-level sv1
-  o.jet_sv1_vtx_x = jet_sv1_vtx_x->at(pos);
-  o.jet_sv1_vtx_y = jet_sv1_vtx_y->at(pos);
-  o.jet_sv1_vtx_z = jet_sv1_vtx_z->at(pos);
+  o.jet_sv1_vtx_x = jet_sv1_vtx_x->at(pos); // Units?
+  o.jet_sv1_vtx_y = jet_sv1_vtx_y->at(pos); // Units?
+  o.jet_sv1_vtx_z = jet_sv1_vtx_z->at(pos); // Units?
   // jetfitter                    // jetfitter
-  o.jet_jf_m = jet_jf_m->at(pos);
+  o.jet_jf_m = jet_jf_m->at(pos)*MeV;
   o.jet_jf_efc = jet_jf_efc->at(pos);
   o.jet_jf_deta = jet_jf_deta->at(pos);
   o.jet_jf_dphi = jet_jf_dphi->at(pos);
@@ -196,7 +205,7 @@ OutJet<Jet> Jets::getJet(int pos) const {
   o.jet_mv2c100 = jet_mv2c100->at(pos);
 
   // track level                  // track level
-  o.jet_trk_pt = jet_trk_pt->at(pos);
+  o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
   o.jet_trk_eta = jet_trk_eta->at(pos);
   o.jet_trk_theta = jet_trk_theta->at(pos);
   o.jet_trk_phi = jet_trk_phi->at(pos);
@@ -204,10 +213,10 @@ OutJet<Jet> Jets::getJet(int pos) const {
   o.jet_trk_chi2 = jet_trk_chi2->at(pos);
   o.jet_trk_ndf = jet_trk_ndf->at(pos);
   // metrics                      // metrics
-  o.jet_trk_d0 = jet_trk_d0->at(pos);
-  o.jet_trk_z0 = jet_trk_z0->at(pos);
-  o.jet_trk_ip3d_d0 = jet_trk_ip3d_d0->at(pos);
-  o.jet_trk_ip3d_z0 = jet_trk_ip3d_z0->at(pos);
+  o.jet_trk_d0 = jet_trk_d0->at(pos); // Units?
+  o.jet_trk_z0 = jet_trk_z0->at(pos); // Units?
+  o.jet_trk_ip3d_d0 = jet_trk_ip3d_d0->at(pos); // Units?
+  o.jet_trk_ip3d_z0 = jet_trk_ip3d_z0->at(pos); // Units?
   o.jet_trk_ip3d_d0sig = jet_trk_ip3d_d0sig->at(pos);
   o.jet_trk_ip3d_z0sig = jet_trk_ip3d_z0sig->at(pos);
   o.jet_trk_jf_Vertex = jet_trk_jf_Vertex->at(pos);

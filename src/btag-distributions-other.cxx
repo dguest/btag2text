@@ -10,13 +10,7 @@
 #include "TROOT.h"
 
 #include <iostream>
-// #include <limits>
 
-// const double GeV = 1000;
-// const double MAX_PT = 1000*GeV;
-
-// const double GeV = 1000;
-// const double MAX_PT = 1000*GeV;
 const int N_BINS = 200;
 const std::string reweight_file = "reweight.h5";
 
@@ -129,13 +123,13 @@ namespace {
   }
 }
 
-const double MAX_VX_MASS = 10;
+const double MAX_VX_MASS = 10*GeV;
 
 JetHists::JetHists():
 #define ZERO_ONE(name) name( zero_to_one( #name) )
 #define COUNT(name, max) name( count( #name, max) )
 #define RANGE(name, low, high) name( range( #name, low, high) )
-#define ENERGY(name, high) name( range( #name, 0, high, "MeV") )
+#define ENERGY(name, high) name( range( #name, 0, high, BASE_UNITS) )
   ZERO_ONE(mv2c00),
   ZERO_ONE(mv2c10),
   ZERO_ONE(mv2c20),
@@ -169,7 +163,7 @@ JetHists::JetHists():
 #undef RANGE
 #undef ENERGY
 
-  pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, "MeV"} }),
+  pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, BASE_UNITS} }),
   eta({ {"eta", N_BINS, -2.8, 2.8 }})
 {
 }

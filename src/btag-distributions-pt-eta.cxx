@@ -29,7 +29,7 @@ FlavorPtEtaHists::FlavorPtEtaHists(double pt_max, double eta_max):
 void FlavorPtEtaHists::fill(int ftl, double pt, double eta, double weight) {
   if (!m_flavors.count(ftl)) {
     std::vector<Axis> axes{
-      {"pt", PT_REWEIGHT_NBINS, 0, m_pt_max, "MeV"},
+      {"pt", PT_REWEIGHT_NBINS, 0, m_pt_max, BASE_UNITS},
       {"eta", 1, 0, m_eta_max} };
     m_flavors.emplace(ftl, axes);
   }
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
     chain.GetEntry(iii);
     int jets = kin.pt->size();
     for (int jjj = 0; jjj < jets; jjj++) {
-      hists.fill(kin.ftl->at(jjj), kin.pt->at(jjj), kin.eta->at(jjj));
+      hists.fill(kin.ftl->at(jjj), kin.pt->at(jjj)*MeV, kin.eta->at(jjj));
     }
   }
 

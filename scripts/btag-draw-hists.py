@@ -38,7 +38,7 @@ def _draw_hists(hist_dict, output_dir, var='pt', prefix=''):
     for ftl, name in _labels.items():
         hist = hist_dict[str(ftl)][var]
         hist.color = _colors[ftl]
-        hist.name = name
+        hist.label = name
         hists.append(hist)
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
@@ -46,6 +46,7 @@ def _draw_hists(hist_dict, output_dir, var='pt', prefix=''):
         output_dir, prefix + "_" if prefix else '', var)
     with Canvas(name) as can:
         draw1d(can, hists)
+        can.ax.legend()
 
 def run():
     args = _get_args()
