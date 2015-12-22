@@ -116,40 +116,58 @@ int main(int argc, char* argv[]) {
 // hist methods
 
 namespace {
+  std::vector<Axis> range(std::string name,
+                          double low, double high,
+                          std::string units = "") {
+    return { {name, N_BINS, low, high, units} };
+  }
   std::vector<Axis> zero_to_one(std::string name) {
-    return { {name, N_BINS, 0, 1, ""} };
+    return range(name, 0, 1.00001);
+  }
+  std::vector<Axis> count(std::string name, int max) {
+    return { {name, max + 1, -0.5, max + 0.5} };
   }
 }
 
-JetHists::JetHists():
-#define BYNAME(name) name( zero_to_one( #name) )
-  BYNAME(mv2c00),
-  BYNAME(mv2c10),
-  BYNAME(mv2c20),
-  BYNAME(mv2c100),
+const double MAX_VX_MASS = 10;
 
-  BYNAME(ip3d_pu),
-  BYNAME(ip3d_pc),
-  BYNAME(ip3d_pb),
-  BYNAME(sv1_ntrkj),            // fux
-  BYNAME(sv1_ntrkv),            // fux
-  BYNAME(sv1_n2t),              // fux
-  BYNAME(sv1_m),                // fux
-  BYNAME(sv1_efc),
-  BYNAME(sv1_normdist),         // fux
-  BYNAME(sv1_Nvtx),             // fux
-  BYNAME(sv1_sig3d),            // fux
-  BYNAME(jf_m),             // fux
-  BYNAME(jf_efc),
-  BYNAME(jf_deta),          // fux
-  BYNAME(jf_dphi),          // fux
-  BYNAME(jf_ntrkAtVx),      // fux
-  BYNAME(jf_nvtx),          // fux
-  BYNAME(jf_sig3d),         // fux
-  BYNAME(jf_nvtx1t),        // fux
-  BYNAME(jf_n2t),           // fux
-  BYNAME(jf_VTXsize),       // fux
-#undef BYNAME
+JetHists::JetHists():
+#define ZERO_ONE(name) name( zero_to_one( #name) )
+#define COUNT(name, max) name( count( #name, max) )
+#define RANGE(name, low, high) name( range( #name, low, high) )
+#define ENERGY(name, high) name( range( #name, 0, high, "MeV") )
+  ZERO_ONE(mv2c00),
+  ZERO_ONE(mv2c10),
+  ZERO_ONE(mv2c20),
+  ZERO_ONE(mv2c100),
+
+  ZERO_ONE(ip3d_pu),
+  ZERO_ONE(ip3d_pc),
+  ZERO_ONE(ip3d_pb),
+
+  COUNT(sv1_ntrkj, 30),
+  COUNT(sv1_ntrkv, 20),
+  COUNT(sv1_n2t, 20),
+  ENERGY(sv1_m, MAX_VX_MASS),
+  ZERO_ONE(sv1_efc),
+  RANGE(sv1_normdist, 0, 10),
+  COUNT(sv1_Nvtx, 10),
+  RANGE(sv1_sig3d, 0, 10),
+
+  ENERGY(jf_m, MAX_VX_MASS),
+  ZERO_ONE(jf_efc),
+  RANGE(jf_deta, 0, 4),
+  RANGE(jf_dphi, 0, 3.2),
+  COUNT(jf_ntrkAtVx, 10),
+  COUNT(jf_nvtx, 4),
+  RANGE(jf_sig3d, 0, 10),
+  COUNT(jf_nvtx1t, 10),
+  COUNT(jf_n2t, 10),
+  COUNT(jf_VTXsize, 10),
+#undef ZERO_ONE
+#undef COUNT
+#undef RANGE
+#undef ENERGY
 
   pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, "MeV"} }),
   eta({ {"eta", N_BINS, -2.8, 2.8 }})

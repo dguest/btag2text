@@ -19,8 +19,8 @@ def _get_args():
     d = "default: %(default)s"
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('input')
-    parser.add_argument('output_dir', nargs='?', default=_default_output,
-                        help=d)
+    parser.add_argument(
+        '-o', '--output-dir', nargs='?', default=_default_output, help=d)
     return parser.parse_args()
 
 def _get_hists(ds):
@@ -32,8 +32,6 @@ def _get_hists(ds):
         except HistError:
             hists[name] = _get_hists(ds)
     return hists
-
-
 
 def _draw_hists(hist_dict, output_dir, var='pt', prefix=''):
     hists = []
@@ -55,9 +53,10 @@ def run():
         raw_hists = _get_hists(h5in['raw'])
         reweighted = _get_hists(h5in['reweighted'])
 
-    _draw_hists(raw_hists, args.output_dir, 'pt', prefix='raw')
-    _draw_hists(reweighted, args.output_dir, 'pt', prefix='reweighted')
-    _draw_hists(reweighted, args.output_dir, 'eta')
+    for hname in raw_hists['0']:
+        print("drawing {}".format(hname))
+        _draw_hists(raw_hists, args.output_dir, hname, prefix='raw')
+        _draw_hists(reweighted, args.output_dir, hname, prefix='reweighted')
 
 if __name__ == '__main__':
     run()

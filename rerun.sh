@@ -42,6 +42,21 @@ function need_new() {
     done
     return 1
 }
+# check to see if second arg (a directory) has files that are older
+# than the first arg
+function need_new_dir() {
+    if ! [[ $(ls -A $2) ]]; then
+        return 0
+    fi
+    local OUTPUT
+    for OUTPUT in $2/*; do
+        if [[ $OUTPUT -ot $1 ]]; then
+            echo "$OUTPUT is older than $1"
+            return 0
+        fi
+    done
+    return 1
+}
 
 # run the various routines if needed
 if need_new $KIN $INPUT $FILL_RW; then
@@ -55,7 +70,7 @@ fi
 
 function draw() {
     echo "drawing..."
-    $DRAW_OTHER $HISTS
+    $DRAW_OTHER $HISTS -o $PLOTS
 }
 
 if need_new $HISTS $INPUT $RW $FILL_OTHER; then
@@ -63,6 +78,6 @@ if need_new $HISTS $INPUT $RW $FILL_OTHER; then
     $FILL_OTHER -f $INPUT -o $HISTS
     draw
 fi
-if [[ $DRAW_OTHER -nt $HISTS || ! -d $PLOTS  ]] ; then
+if [[ ! -d $PLOTS ]] || need_new_dir $DRAW_OTHER $PLOTS ; then
     draw
 fi
