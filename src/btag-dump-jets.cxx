@@ -1,7 +1,6 @@
 #include "FileCLI.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
-#include "JetLabels.hh"
 
 #include "TROOT.h"
 
@@ -26,9 +25,6 @@ int main(int argc, char* argv[]) {
   Jets jets(chain);
   int n_entries = chain.GetEntries();
   std::cout << n_entries << " entries in chain" << std::endl;
-
-  OutJet<JetLabels> labels;
-  std::cout << labels << std::endl;
 
   for (int iii = 0; iii < 10; iii++) {
     chain.GetEntry(iii);
