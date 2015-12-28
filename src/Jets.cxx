@@ -204,7 +204,8 @@ OutJet<Jet> Jets::getJet(int pos) const {
   o.jet_mv2c20 = jet_mv2c20->at(pos);
   o.jet_mv2c100 = jet_mv2c100->at(pos);
 
-  // track level                  // track level
+  // track level
+  // multiply is used here to give the vector the right units
   o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
   o.jet_trk_eta = jet_trk_eta->at(pos);
   o.jet_trk_theta = jet_trk_theta->at(pos);
@@ -228,6 +229,48 @@ OutJet<Jet> Jets::getJet(int pos) const {
 
   return o;
 };
+
+
+// _____________________________________________________________________
+// arrange track vectors into track units
+std::vector<TrkUnit> build_tracks(const Jet& jet){
+  std::vector<TrkUnit> out;
+  const size_t n_trks = jet.jet_trk_pt.size();
+  for (size_t trkn = 0; trkn < n_trks; trkn++) {
+
+    // first copy over the track parameters
+    Track track;
+#define COPY(par) track.par = jet.jet_trk_ ## par.at(trkn)
+    COPY(pt);
+    COPY(eta);
+    COPY(theta);
+    COPY(phi);
+    COPY(dr);
+    COPY(chi2);
+    COPY(ndf);
+#undef COPY
+    // special copy for ip3d vars
+#define COPY(par) track.par = jet.jet_trk_ip3d_ ## par.at(trkn)
+    COPY(d0);
+    COPY(z0);
+    COPY(d0sig);
+    COPY(z0sig);
+#undef COPY
+
+    // now copy the jetfitter vertices
+    JfVertex vx;
+#define COPY(par) vx.par = jet.jet_jf_trk_vtx_ ## par.at(trkn)
+    COPY(chi2);
+    COPY(ndf);
+    COPY(ntrk);
+#undef COPY
+    vx.l3d = jet.jet_jf_vtx_L3D.at(trkn);
+    vx.sig3d = jet.jet_jf_vtx_sig3D.at(trkn);
+
+    out.push_back({track, vx});
+  }
+  return out;
+}
 
 
 // ______________________________________________________________________

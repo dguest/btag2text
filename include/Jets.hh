@@ -12,6 +12,17 @@ template<typename T>
 class OutJet: public T
 {};
 
+template<typename T>
+class OutJfVertex: public T
+{};
+
+template<typename T>
+class OutTrack: public T
+{};
+
+template<typename T>
+class OutUnit: public T
+{};
 // ______________________________________________________________________
 // classes
 
@@ -107,6 +118,38 @@ struct Jet
 
 };
 
+struct JfVertex
+{
+  float chi2;
+  float ndf;
+  int ntrk;
+  float l3d;
+  float sig3d;
+};
+
+struct Track
+{
+  float pt;
+  float eta;
+  float theta;
+  float phi;
+  float dr;
+  float chi2;
+  float ndf;
+
+  // use the IP3D d0/z0 here
+  float d0;
+  float z0;
+  float d0sig;
+  float z0sig;
+};
+
+struct TrkUnit
+{
+  Track track;
+  JfVertex jf;
+};
+
 class Jets
 {
 public:
@@ -196,20 +239,23 @@ std::ostream& operator<<(std::ostream&, Jets&);
 template<typename T>
 std::ostream& operator<<(std::ostream& out, OutJet<T>& j);
 
+std::vector<TrkUnit> build_tracks(const Jet& jet);
 
 // _______________________________________________________________________
 // Implementation
 
-template<typename T>
-std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
-
-  // make up some grammar for the output
+// make up some grammar for the output
 #define OUT(NAME) out << j.NAME
 #define OUT_COMMA(NAME) out << j.NAME << ", "
 #define OPEN out << "{";
 #define CLOSE out << "}"
 #define OUT_CLOSE(NAME) out << j.NAME << "}"
 #define CS out << ", "
+
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
+
 
   OUT_COMMA(jet_pt);
   OUT_COMMA(jet_eta);
@@ -311,14 +357,50 @@ std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
   // OUT_COMMA(jet_trk_ip3d_d0sig);
   // OUT_COMMA(jet_trk_ip3d_z0sig);
   // OUT_COMMA(jet_trk_jf_Vertex);
+  return out;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutJfVertex<T>& j) {
+  OUT_COMMA(l3d);
+  OUT_COMMA(sig3d);
+  OUT_COMMA(ntrk);
+  OUT_COMMA(chi2);
+  OUT(ndf);
+  return out;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutTrack<T>& j) {
+  OUT_COMMA(pt);
+  OUT_COMMA(eta);
+  OUT_COMMA(theta);
+  OUT_COMMA(phi);
+  OUT_COMMA(dr);
+  OUT_COMMA(chi2);
+  OUT_COMMA(ndf);
+
+  OUT_COMMA(d0);
+  OUT_COMMA(z0);
+  OUT_COMMA(d0sig);
+  OUT(z0sig);
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, OutUnit<T>& j) {
+  OPEN {
+    OUT(track);
+  } CLOSE;
+  CS;
+  OPEN {
+    OUT(jf);
+  } CLOSE;
+}
+
 #undef CS
 #undef OUT_COMMA
 #undef OPEN
 #undef CLOSE
 #undef OUT_CLOSE
-  return out;
-}
-
-
 
 #endif // JETS_HH

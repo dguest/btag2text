@@ -53,7 +53,36 @@ public:
   LABELED(track_3_z0_significance);
   LABELED(n_tracks_over_d0_threshold);
 
-#undef LABELED
 };
+
+class TrackLabels
+{
+public:
+  LABELED(pt);
+  LABELED(eta);
+  LABELED(theta);
+  LABELED(phi);
+  LABELED(dr);
+  LABELED(chi2);
+  LABELED(ndf);
+
+  LABELED(d0);
+  LABELED(z0);
+  LABELED(d0sig);
+  LABELED(z0sig);
+};
+
+class JfVertexLabels
+{
+public:
+  LABELED(chi2);
+  LABELED(ndf);
+  LABELED(ntrk);
+  LABELED(l3d);
+  LABELED(sig3d);
+};
+
+#undef LABELED
+
 
 #endif
