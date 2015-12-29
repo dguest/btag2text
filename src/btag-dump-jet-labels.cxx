@@ -12,8 +12,8 @@ public:
 
 
 int main(int /*argc*/, char** /*argv*/) {
-  OutJet<JetLabels> labels;
-  std::cout << labels << std::endl;
+  // OutJet<JetLabels> labels;
+  // std::cout << labels << std::endl;
 
   OutUnit<TrkUnitLabels> trk_labels;
   std::cout << trk_labels << std::endl;

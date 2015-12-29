@@ -384,6 +384,7 @@ std::ostream& operator<<(std::ostream& out, OutTrack<T>& j) {
   OUT_COMMA(z0);
   OUT_COMMA(d0sig);
   OUT(z0sig);
+  return out;
 }
 
 template<typename T>
@@ -395,6 +396,7 @@ std::ostream& operator<<(std::ostream& out, OutUnit<T>& j) {
   OPEN {
     OUT(jf);
   } CLOSE;
+  return out;
 }
 
 #undef CS
