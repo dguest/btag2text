@@ -31,7 +31,10 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      std::cout << jet << std::endl;
+      std::cout << "building" << std::endl;
+      for (const auto& trk: build_tracks(jet)) {
+        std::cout << str_from_out_unit(trk) << std::endl;
+      }
     }
   }
 }

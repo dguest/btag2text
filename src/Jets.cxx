@@ -147,8 +147,8 @@ Jets::Jets(SmartChain& chain):
 int Jets::size() const {
   return jet_pt->size();
 }
-OutJet<Jet> Jets::getJet(int pos) const {
-  OutJet<Jet> o;
+Jet Jets::getJet(int pos) const {
+  Jet o;
   // kinematics                   // kinematics
   o.jet_pt = jet_pt->at(pos)*MeV;
   o.jet_eta = jet_eta->at(pos);
@@ -230,6 +230,18 @@ OutJet<Jet> Jets::getJet(int pos) const {
   return o;
 };
 
+template<typename T>
+T checked(const std::vector<T>& vec, int num, const std::string& err) {
+  try {
+    return vec.at(num);
+  } catch (std::out_of_range& e) {
+    std::string error = err + " index: " + std::to_string(num) +
+      " vector length: " + std::to_string(vec.size());
+    throw std::out_of_range(error);
+  }
+}
+
+#define CHECK_AT(var, number) checked(var, number, #var)
 
 // _____________________________________________________________________
 // arrange track vectors into track units
@@ -240,7 +252,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 
     // first copy over the track parameters
     Track track;
-#define COPY(par) track.par = jet.jet_trk_ ## par.at(trkn)
+#define COPY(par) track.par = CHECK_AT(jet.jet_trk_ ## par, trkn)
     COPY(pt);
     COPY(eta);
     COPY(theta);
@@ -250,7 +262,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(ndf);
 #undef COPY
     // special copy for ip3d vars
-#define COPY(par) track.par = jet.jet_trk_ip3d_ ## par.at(trkn)
+#define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
     COPY(d0);
     COPY(z0);
     COPY(d0sig);
@@ -259,13 +271,13 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 
     // now copy the jetfitter vertices
     JfVertex vx;
-#define COPY(par) vx.par = jet.jet_jf_trk_vtx_ ## par.at(trkn)
+#define COPY(par) vx.par = CHECK_AT(jet.jet_jf_trk_vtx_ ## par, trkn)
     COPY(chi2);
     COPY(ndf);
     COPY(ntrk);
 #undef COPY
-    vx.l3d = jet.jet_jf_vtx_L3D.at(trkn);
-    vx.sig3d = jet.jet_jf_vtx_sig3D.at(trkn);
+    vx.l3d = CHECK_AT(jet.jet_jf_trk_vtx_L3D, trkn);
+    vx.sig3d = CHECK_AT(jet.jet_jf_trk_vtx_sig3D, trkn);
 
     out.push_back({track, vx});
   }

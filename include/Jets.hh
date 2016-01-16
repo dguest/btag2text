@@ -3,26 +3,10 @@
 
 #include <vector>
 #include <ostream>
+#include <sstream>
 
 class SmartChain;
 
-// ______________________________________________________________________
-// silly templates to make out stream thing work right
-template<typename T>
-class OutJet: public T
-{};
-
-template<typename T>
-class OutJfVertex: public T
-{};
-
-template<typename T>
-class OutTrack: public T
-{};
-
-template<typename T>
-class OutUnit: public T
-{};
 // ______________________________________________________________________
 // classes
 
@@ -154,7 +138,7 @@ class Jets
 {
 public:
   Jets(SmartChain& chain);
-  OutJet<Jet> getJet(int) const;
+  Jet getJet(int) const;
   int size() const;
 private:
   SmartChain* m_chain;
@@ -237,7 +221,7 @@ private:
 std::ostream& operator<<(std::ostream&, Jets&);
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, OutJet<T>& j);
+std::string str_from_jet(const T&);
 
 std::vector<TrkUnit> build_tracks(const Jet& jet);
 
@@ -252,10 +236,9 @@ std::vector<TrkUnit> build_tracks(const Jet& jet);
 #define OUT_CLOSE(NAME) out << j.NAME << "}"
 #define CS out << ", "
 
-
 template<typename T>
-std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
-
+std::string str_from_jet(const T& j) {
+  std::stringstream out;
 
   OUT_COMMA(jet_pt);
   OUT_COMMA(jet_eta);
@@ -357,21 +340,23 @@ std::ostream& operator<<(std::ostream& out, OutJet<T>& j) {
   // OUT_COMMA(jet_trk_ip3d_d0sig);
   // OUT_COMMA(jet_trk_ip3d_z0sig);
   // OUT_COMMA(jet_trk_jf_Vertex);
-  return out;
+  return out.str();
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, OutJfVertex<T>& j) {
+std::string str_from_jf_vertex(const T& j) {
+  std::stringstream out;
   OUT_COMMA(l3d);
   OUT_COMMA(sig3d);
   OUT_COMMA(ntrk);
   OUT_COMMA(chi2);
   OUT(ndf);
-  return out;
+  return out.str();
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, OutTrack<T>& j) {
+std::string str_from_track(const T& j) {
+  std::stringstream out;
   OUT_COMMA(pt);
   OUT_COMMA(eta);
   OUT_COMMA(theta);
@@ -384,19 +369,20 @@ std::ostream& operator<<(std::ostream& out, OutTrack<T>& j) {
   OUT_COMMA(z0);
   OUT_COMMA(d0sig);
   OUT(z0sig);
-  return out;
+  return out.str();
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, OutUnit<T>& j) {
+std::string str_from_out_unit(const T& j) {
+  std::stringstream out;
   OPEN {
-    OUT(track);
+    out << str_from_track(j.track);
   } CLOSE;
   CS;
   OPEN {
-    OUT(jf);
+    out << str_from_jf_vertex(j.jf);
   } CLOSE;
-  return out;
+  return out.str();
 }
 
 #undef CS
