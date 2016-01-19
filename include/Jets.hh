@@ -236,13 +236,30 @@ std::vector<TrkUnit> build_tracks(const Jet& jet);
 #define OUT_CLOSE(NAME) out << j.NAME << "}"
 #define CS out << ", "
 
+// basic building blocks
+template<typename T>
+std::string str_from_basic_jet_pars(const T& j) {
+  std::stringstream out;
+  OUT_COMMA(jet_pt);
+  OUT_COMMA(jet_eta);
+  OUT(jet_truthflav);
+  return out.str();
+}
+template<typename T>
+std::string str_from_ip3d(const T& j) {
+  std::stringstream out;
+  OUT_COMMA(jet_ip3d_pb);
+  OUT_COMMA(jet_ip3d_pc);
+  OUT(jet_ip3d_pu);
+  return out.str();
+}
+
+// whole jet object
 template<typename T>
 std::string str_from_jet(const T& j) {
   std::stringstream out;
 
-  OUT_COMMA(jet_pt);
-  OUT_COMMA(jet_eta);
-  OUT_COMMA(jet_truthflav);
+  out << str_from_basic_jet_pars(j) << ", ";
 
   // OUT_COMMA(jet_phi);
   // OUT_COMMA(jet_E);
@@ -265,9 +282,7 @@ std::string str_from_jet(const T& j) {
 
     // ip2d, ip3d
     OPEN {
-      OUT_COMMA(jet_ip3d_pb);
-      OUT_COMMA(jet_ip3d_pc);
-      OUT(jet_ip3d_pu);
+      out << str_from_ip3d(j);
     } CLOSE;
     CS;
 
@@ -381,6 +396,46 @@ std::string str_from_out_unit(const T& j) {
   CS;
   OPEN {
     out << str_from_jf_vertex(j.jf);
+  } CLOSE;
+  return out.str();
+}
+
+template<typename T>
+std::string str_from_ip(const T& j) {
+  std::stringstream out;
+  OUT_COMMA(d0);
+  OUT_COMMA(d0sig);
+  OUT_COMMA(z0);
+  OUT(z0sig);
+  return out.str();
+}
+
+template<typename T>
+std::string str_from_all_track_ip(const T& j) {
+  std::stringstream out;
+
+  auto tracks = build_tracks(j);
+  int n_tracks = tracks.size();
+  for (int trackn = 0; trackn < n_tracks; trackn++) {
+    OPEN {
+      out << str_from_ip(tracks.at(trackn).track);
+    } CLOSE;
+    if (trackn < n_tracks - 1) CS;
+  }
+  return out.str();
+}
+
+// more complicated output functions
+template<typename T>
+std::string str_from_ip3d_jet(const T& j) {
+  std::stringstream out;
+  out << str_from_basic_jet_pars(j) << ", ";
+  out << "["; {
+    out << str_from_all_track_ip(j);
+  } out << "]";
+  CS;
+  OPEN {
+    out << str_from_ip3d(j);
   } CLOSE;
   return out.str();
 }
