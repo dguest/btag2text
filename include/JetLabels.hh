@@ -2,6 +2,7 @@
 #define JET_LABELS_HH
 
 #include <string>
+#include <vector>
 
 class JetLabels
 {
@@ -84,5 +85,13 @@ public:
 
 #undef LABELED
 
+class TrkUnitLabels
+{
+public:
+  TrackLabels track;
+  JfVertexLabels jf;
+};
+
+std::vector<TrkUnitLabels> build_tracks(const JetLabels& jet);
 
 #endif

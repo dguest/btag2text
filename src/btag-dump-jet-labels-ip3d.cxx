@@ -3,19 +3,9 @@
 
 #include <iostream>
 
-class TrkUnitLabels
-{
-public:
-  TrackLabels track;
-  JfVertexLabels jf;
-};
-
 
 int main(int /*argc*/, char** /*argv*/) {
-  // OutJet<JetLabels> labels;
-  // std::cout << labels << std::endl;
-
-  TrkUnitLabels trk_labels;
-  std::cout << str_from_out_unit(trk_labels) << std::endl;
+  JetLabels jet;
+  std::cout << str_from_ip3d_jet(jet) << std::endl;
   return 0;
 }

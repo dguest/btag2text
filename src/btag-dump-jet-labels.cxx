@@ -3,13 +3,6 @@
 
 #include <iostream>
 
-class TrkUnitLabels
-{
-public:
-  TrackLabels track;
-  JfVertexLabels jf;
-};
-
 
 int main(int /*argc*/, char** /*argv*/) {
   // OutJet<JetLabels> labels;
