@@ -22,10 +22,11 @@ std::string red(const std::string& st) {
 
 
 
-FileCLI::FileCLI(int nargs, char* argc[]):
+FileCLI::FileCLI(int nargs, char* argc[], Output output):
   m_nargs(nargs),
   m_name(argc[0]),
-  m_overwrite(false)
+  m_overwrite(false),
+  m_output_mode(output)
 {
   for (int nn = 0; nn < nargs; nn++) {
     m_args.push_back(argc[nn]);
@@ -40,17 +41,26 @@ FileCLI::FileCLI(int nargs, char* argc[]):
   if (!m_overwrite && exists(m_output)){
     throw std::runtime_error("can't overwrite " + m_output);
   }
-  if (m_output.size() == 0) throw std::runtime_error("no output given");
+  if (m_output.size() == 0 && output == Output::YES) {
+    throw std::runtime_error("no output given");
+  }
   if (m_files.size() == 0) throw std::runtime_error("no inputs given");
 }
 
 void FileCLI::usage() const
 {
-  std::cerr << "usage: " << m_name << " [options] <inputs>... -o <output>\n"
-	    << "\n"
-	    << "options:\n"
-	    << " -h, --help: print this help\n"
-	    << " -f: overwrite output\n"
+  std::string output_string;
+  switch (m_output_mode) {
+  case Output::YES: output_string = " -o <output>"; break;
+  case Output::NO: output_string = ""; break;
+  case Output::OPTIONAL: output_string = " [-o <output>]"; break;
+  }
+  std::cerr << "usage: " << m_name << " [options] <inputs>..."
+            << output_string << "\n"
+            << "\n"
+            << "options:\n"
+            << " -h, --help: print this help\n"
+            << " -f: overwrite output\n"
     ;
 }
 
@@ -62,13 +72,18 @@ int FileCLI::check_opts(int argn) {
     usage();
     exit(1);
   }
+  // parse options
   if (compound) {
     if (strchr(arg.c_str(), 'f')) {
       m_overwrite = true;
       is_file = false;
     }
   }
+  // parse outputs
   if (compound && strchr(arg.c_str(), 'o')) {
+    if (m_output_mode == Output::NO) {
+      throw std::runtime_error("-o isn't used");
+    }
     if (! (argn + 1 < m_nargs)) {
       throw std::runtime_error("no argument for -o given");
     }

@@ -4,13 +4,15 @@
 #include <string>
 #include <vector>
 
+enum class Output {YES, NO, OPTIONAL};
+
 bool exists(const std::string& file_name);
 std::string red(const std::string& string);
 
 class FileCLI
 {
 public:
-  FileCLI(int argc, char* argv[]);
+  FileCLI(int argc, char* argv[], Output = Output::YES);
   std::vector<std::string> in_files() const;
   std::string out_file() const;
 private:
@@ -22,7 +24,7 @@ private:
   std::string m_name;
   std::vector<std::string> m_args;
   bool m_overwrite;
+  Output m_output_mode;
 };
-
 
 #endif

@@ -16,7 +16,7 @@
 
 int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
-  FileCLI cli(argc, argv);
+  FileCLI cli(argc, argv, Output::NO);
 
   SmartChain chain("bTag_AntiKt4EMTopoJets");
   for (const auto& in: cli.in_files()) {
