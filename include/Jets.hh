@@ -148,9 +148,13 @@ struct Track
   float d0sig;
   float z0sig;
 
+  // IP3D-like proxy for DL
+  float dphi_jet;
+  float d0raw;
+
   // bitmask checks
-  bool usedFor(TAGGERALGO algo);
-  bool hasOrigin(TRKORIGIN origin);
+  bool usedFor(TAGGERALGO algo) const;
+  bool hasOrigin(TRKORIGIN origin) const;
 };
 
 struct TrkUnit

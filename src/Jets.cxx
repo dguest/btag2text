@@ -1,5 +1,6 @@
 #include "Jets.hh"
 #include "constants.hh"
+#include "math.hh"
 
 #include "SmartChain.hh"
 
@@ -65,6 +66,14 @@ namespace {
       out.push_back(entry*mult);
     }
     return out;
+  }
+
+  void setDerived(Track& track, const Jet& jet) {
+    float dphi = phi_mpi_pi(track.phi, jet.jet_phi);
+    float d0 = d0_from_signed_d0_dphi(track.d0, dphi);
+
+    track.dphi_jet = dphi;
+    track.d0raw = d0;
   }
 }
 
@@ -286,6 +295,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(d0sig);
     COPY(z0sig);
 #undef COPY
+    setDerived(track, jet);
 
     // now copy the jetfitter vertices
     JfVertex vx;
@@ -310,10 +320,10 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 
 // ______________________________________________________________________
 // track origin checks
-bool Track::usedFor(TAGGERALGO tagger_enum) {
+bool Track::usedFor(TAGGERALGO tagger_enum) const {
   return algo & 0x1 << tagger_enum;
 }
-bool Track::hasOrigin(TRKORIGIN orign_enum) {
+bool Track::hasOrigin(TRKORIGIN orign_enum) const {
   return orig & 0x1 << orign_enum;
 }
 
