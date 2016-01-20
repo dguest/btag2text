@@ -1,5 +1,6 @@
 #include "Jets.hh"
 #include "JetLabels.hh"
+#include "output_templates.hh"
 
 #include <iostream>
 

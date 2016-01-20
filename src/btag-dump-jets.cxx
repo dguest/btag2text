@@ -1,6 +1,7 @@
 #include "FileCLI.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
+#include "output_templates.hh"
 
 #include "TROOT.h"
 
