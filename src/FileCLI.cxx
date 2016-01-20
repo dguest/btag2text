@@ -19,6 +19,11 @@ bool exists(const std::string& file_name) {
 std::string red(const std::string& st) {
   return "\033[31;1m" + st + "\033[m";
 }
+void require(const std::string& file_name) {
+  if (!exists(file_name)) {
+    throw std::logic_error(file_name + " not found");
+  }
+}
 
 
 

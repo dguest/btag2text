@@ -1,5 +1,5 @@
-#ifndef TOOLS_HH
-#define TOOLS_HH
+#ifndef FLAVOR_PT_ETA_DISTRIBUTIONS_HH
+#define FLAVOR_PT_ETA_DISTRIBUTIONS_HH
 
 #include "ndhist/Distribution.hh"
 
@@ -21,4 +21,4 @@ private:
 };
 
 
-#endif  // TOOLS_HH
+#endif  // FLAVOR_PT_ETA_DISTRIBUTIONS_HH

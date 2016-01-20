@@ -1,7 +1,7 @@
 #include "FileCLI.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
-#include "tools.hh"
+#include "FlavorPtEtaDistributions.hh"
 #include "constants.hh"
 
 #include "ndhist/Histogram.hh"
@@ -10,8 +10,6 @@
 #include "TROOT.h"
 
 #include <iostream>
-
-const std::string reweight_file = "reweight.h5";
 
 // various plotting constants
 const int N_BINS = 200;
@@ -86,11 +84,10 @@ int main(int argc, char* argv[]) {
   Jets jets(chain);
   int n_entries = chain.GetEntries();
   std::cout << n_entries << " entries in chain" << std::endl;
-  if (!exists(reweight_file)) {
-    throw std::logic_error(reweight_file + " not found");
-  }
+
+  require(REWEIGHT_FILE);
   FlavorPtEtaDistributions pt_eta_reweight(
-    H5::H5File(reweight_file, H5F_ACC_RDONLY));
+    H5::H5File(REWEIGHT_FILE, H5F_ACC_RDONLY));
   FlavoredHists hists;
   FlavoredHists reweighted_hists;
 

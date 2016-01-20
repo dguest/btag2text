@@ -22,12 +22,13 @@ std::vector<TrkUnit> build_tracks(const Jet& jet);
 #define CS out << ", "
 
 // basic building blocks
-template<typename T>
-std::string str_from_basic_jet_pars(const T& j) {
+template<typename T, typename U = std::string>
+std::string str_from_basic_jet_pars(const T& j, const U& weight = "weight") {
   std::stringstream out;
   OUT_COMMA(jet_pt);
   OUT_COMMA(jet_eta);
-  OUT(jet_truthflav);
+  OUT_COMMA(jet_truthflav);
+  out << weight;
   return out.str();
 }
 template<typename T>
@@ -211,10 +212,10 @@ std::string str_from_all_track_ip(const T& j) {
 }
 
 // more complicated output functions
-template<typename T>
-std::string str_from_ip3d_jet(const T& j) {
+template<typename T, typename U = std::string>
+std::string str_from_ip3d_jet(const T& j, const U& weight = "weight") {
   std::stringstream out;
-  out << str_from_basic_jet_pars(j) << ", ";
+  out << str_from_basic_jet_pars(j, weight) << ", ";
   out << "["; {
     out << str_from_all_track_ip(j);
   } out << "]";

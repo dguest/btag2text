@@ -8,6 +8,8 @@ enum class Output {YES, NO, OPTIONAL};
 
 bool exists(const std::string& file_name);
 std::string red(const std::string& string);
+// throw exception if the file doesn't exist
+void require(const std::string& file_name);
 
 class FileCLI
 {
