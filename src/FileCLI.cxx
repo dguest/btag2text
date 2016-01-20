@@ -22,11 +22,12 @@ std::string red(const std::string& st) {
 
 
 
-FileCLI::FileCLI(int nargs, char* argc[], Output output):
+FileCLI::FileCLI(int nargs, char* argc[], Output output, std::string help):
   m_nargs(nargs),
   m_name(argc[0]),
   m_overwrite(false),
-  m_output_mode(output)
+  m_output_mode(output),
+  m_help(help)
 {
   for (int nn = 0; nn < nargs; nn++) {
     m_args.push_back(argc[nn]);
@@ -56,8 +57,11 @@ void FileCLI::usage() const
   case Output::OPTIONAL: output_string = " [-o <output>]"; break;
   }
   std::cerr << "usage: " << m_name << " [options] <inputs>..."
-            << output_string << "\n"
-            << "\n"
+            << output_string << "\n";
+  if (m_help.size() > 0) std::cerr << "\n" << m_help << "\n";
+
+  // help options
+  std::cerr << "\n"
             << "options:\n"
             << " -h, --help: print this help\n"
             << " -f: overwrite output\n"

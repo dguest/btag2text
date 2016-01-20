@@ -12,7 +12,8 @@ std::string red(const std::string& string);
 class FileCLI
 {
 public:
-  FileCLI(int argc, char* argv[], Output = Output::YES);
+  FileCLI(int argc, char* argv[], Output = Output::YES,
+          std::string help = "");
   std::vector<std::string> in_files() const;
   std::string out_file() const;
 private:
@@ -25,6 +26,7 @@ private:
   std::vector<std::string> m_args;
   bool m_overwrite;
   Output m_output_mode;
+  std::string m_help;
 };
 
 #endif

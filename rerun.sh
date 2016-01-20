@@ -6,9 +6,13 @@ set -eu
 function _usage() {
     echo "usage: ${0##*/} <input file>"
 }
-
 if (( $# < 1 )); then
     _usage
+    exit 1
+fi
+if [[ ! -f $1 ]]; then
+    _usage
+    echo "ERROR: no file '$1'" >&2
     exit 1
 fi
 

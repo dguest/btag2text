@@ -10,13 +10,14 @@
 // const double GeV = 1000;
 // const double MAX_PT = 1000*GeV;
 
+std::string help = "Dump IP3D information for jets";
 
 // _____________________________________________________________________
 // main function
 
 int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
-  FileCLI cli(argc, argv, Output::NO);
+  FileCLI cli(argc, argv, Output::NO, help);
 
   SmartChain chain("bTag_AntiKt4EMTopoJets");
   for (const auto& in: cli.in_files()) {
