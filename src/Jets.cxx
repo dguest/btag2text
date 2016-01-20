@@ -82,6 +82,8 @@ Jets::Jets(SmartChain& chain):
   // flavor label
   m_chain->SetBranch("jet_truthflav", &jet_truthflav);
 
+  m_chain->SetBranch("jet_ip3d_ntrk", &jet_ip3d_ntrk);
+
   m_chain->SetBranch("jet_ip2d_pb", &jet_ip2d_pb);
   m_chain->SetBranch("jet_ip2d_pc", &jet_ip2d_pc);
   m_chain->SetBranch("jet_ip2d_pu", &jet_ip2d_pu);
@@ -133,6 +135,9 @@ Jets::Jets(SmartChain& chain):
   m_chain->SetBranch("jet_trk_chi2", &jet_trk_chi2);
   m_chain->SetBranch("jet_trk_ndf", &jet_trk_ndf);
 
+  m_chain->SetBranch("jet_trk_algo", &jet_trk_algo);
+  m_chain->SetBranch("jet_trk_orig", &jet_trk_orig);
+
   m_chain->SetBranch("jet_trk_d0", &jet_trk_d0);
   m_chain->SetBranch("jet_trk_z0", &jet_trk_z0);
   m_chain->SetBranch("jet_trk_ip3d_d0", &jet_trk_ip3d_d0);
@@ -158,6 +163,9 @@ Jet Jets::getJet(int pos) const {
 
   // flavor label                 // flavor label
   o.jet_truthflav = jet_truthflav->at(pos);
+  // track counts
+  o.jet_ntrk = jet_trk_pt->at(pos).size();
+  o.jet_ip3d_ntrk = jet_ip3d_ntrk->at(pos);
 
   // high level                   // high level
   // ip2d, ip3d                   // ip2d, ip3d
@@ -213,6 +221,10 @@ Jet Jets::getJet(int pos) const {
   o.jet_trk_dr = jet_trk_dr->at(pos);
   o.jet_trk_chi2 = jet_trk_chi2->at(pos);
   o.jet_trk_ndf = jet_trk_ndf->at(pos);
+
+  o.jet_trk_algo = jet_trk_algo->at(pos);
+  o.jet_trk_orig = jet_trk_orig->at(pos);
+
   // metrics                      // metrics
   o.jet_trk_d0 = jet_trk_d0->at(pos); // Units?
   o.jet_trk_z0 = jet_trk_z0->at(pos); // Units?
@@ -246,6 +258,10 @@ T checked(const std::vector<T>& vec, int num, const std::string& err) {
 // _____________________________________________________________________
 // arrange track vectors into track units
 std::vector<TrkUnit> build_tracks(const Jet& jet){
+
+  // counter to check tracks
+  int n_ip3d = 0;
+
   std::vector<TrkUnit> out;
   const size_t n_trks = jet.jet_trk_pt.size();
   for (size_t trkn = 0; trkn < n_trks; trkn++) {
@@ -260,6 +276,8 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(dr);
     COPY(chi2);
     COPY(ndf);
+    COPY(algo);
+    COPY(orig);
 #undef COPY
     // special copy for ip3d vars
 #define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
@@ -280,10 +298,24 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     vx.sig3d = CHECK_AT(jet.jet_jf_trk_vtx_sig3D, trkn);
 
     out.push_back({track, vx});
+
+    // safety check
+    if (track.usedFor(IP3D)) n_ip3d++;
   }
+  // safety check
+  assert(n_ip3d == jet.jet_ip3d_ntrk);
   return out;
 }
 
+
+// ______________________________________________________________________
+// track origin checks
+bool Track::usedFor(TAGGERALGO tagger_enum) {
+  return algo & 0x1 << tagger_enum;
+}
+bool Track::hasOrigin(TRKORIGIN orign_enum) {
+  return orig & 0x1 << orign_enum;
+}
 
 // ______________________________________________________________________
 // jet labeling and printing to text

@@ -6,6 +6,19 @@
 
 class SmartChain;
 
+// enum info copied from https://goo.gl/WLPwL4
+enum TAGGERALGO { IP2D=0,
+                  IP3D,
+                  SV0,
+                  SV1,
+                  JF };
+
+enum TRKORIGIN { PUFAKE=-1,
+                 FROMB,
+                 FROMC,
+                 FRAG,
+                 GEANT };
+
 // ______________________________________________________________________
 // classes
 
@@ -20,6 +33,10 @@ struct Jet
 
   // flavor label
   int jet_truthflav;
+
+  // track counts
+  int jet_ntrk;
+  int jet_ip3d_ntrk;
 
   // high level
   // ip2d, ip3d
@@ -74,6 +91,10 @@ struct Jet
   std::vector<float> jet_trk_dr;
   std::vector<float> jet_trk_chi2;
   std::vector<float> jet_trk_ndf;
+
+  std::vector<int> jet_trk_algo;
+  std::vector<int> jet_trk_orig;
+
   // metrics
   std::vector<float> jet_trk_d0;
   std::vector<float> jet_trk_z0;
@@ -118,12 +139,18 @@ struct Track
   float dr;
   float chi2;
   float ndf;
+  int algo;
+  int orig;
 
   // use the IP3D d0/z0 here
   float d0;
   float z0;
   float d0sig;
   float z0sig;
+
+  // bitmask checks
+  bool usedFor(TAGGERALGO algo);
+  bool hasOrigin(TRKORIGIN origin);
 };
 
 struct TrkUnit
@@ -150,6 +177,9 @@ private:
 
   // flavor label
   std::vector<int>* jet_truthflav;
+
+  // track counts
+  std::vector<int>* jet_ip3d_ntrk;
 
   // high level
   // ip2d, ip3d
@@ -204,6 +234,10 @@ private:
   std::vector<std::vector<float> >* jet_trk_dr;
   std::vector<std::vector<float> >* jet_trk_chi2;
   std::vector<std::vector<float> >* jet_trk_ndf;
+
+  std::vector<std::vector<int> >* jet_trk_algo;
+  std::vector<std::vector<int> >* jet_trk_orig;
+
   // metrics
   std::vector<std::vector<float> >* jet_trk_d0;
   std::vector<std::vector<float> >* jet_trk_z0;
