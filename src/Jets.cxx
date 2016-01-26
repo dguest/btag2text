@@ -155,7 +155,21 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_trk_ip3d_z0);
   SET_BRANCH(jet_trk_ip3d_d0sig);
   SET_BRANCH(jet_trk_ip3d_z0sig);
+  SET_BRANCH(jet_trk_ip3d_grade);
   SET_BRANCH(jet_trk_jf_Vertex);
+
+  SET_BRANCH(jet_trk_nInnHits);
+  SET_BRANCH(jet_trk_nNextToInnHits);
+  SET_BRANCH(jet_trk_nBLHits);
+  SET_BRANCH(jet_trk_nsharedBLHits);
+  SET_BRANCH(jet_trk_nsplitBLHits);
+  SET_BRANCH(jet_trk_nPixHits);
+  SET_BRANCH(jet_trk_nsharedPixHits);
+  SET_BRANCH(jet_trk_nsplitPixHits);
+  SET_BRANCH(jet_trk_nSCTHits);
+  SET_BRANCH(jet_trk_nsharedSCTHits);
+  SET_BRANCH(jet_trk_expectBLayerHit);
+
 #undef SET_BRANCH
 }
 int Jets::size() const {
