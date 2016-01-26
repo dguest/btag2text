@@ -70,10 +70,10 @@ namespace {
 
   void setDerived(Track& track, const Jet& jet) {
     float dphi = phi_mpi_pi(track.phi, jet.jet_phi);
-    float d0 = d0_from_signed_d0_dphi(track.d0, dphi);
+    float d0 = d0_from_signed_d0_dphi(track.signed_d0, dphi);
 
     track.dphi_jet = dphi;
-    track.d0raw = d0;
+    track.d0 = d0;
   }
 }
 
@@ -237,7 +237,7 @@ Jet Jets::getJet(int pos) const {
   // metrics                      // metrics
   o.jet_trk_d0 = jet_trk_d0->at(pos); // Units?
   o.jet_trk_z0 = jet_trk_z0->at(pos); // Units?
-  o.jet_trk_ip3d_d0 = jet_trk_ip3d_d0->at(pos); // Units?
+  o.jet_trk_ip3d_signed_d0 = jet_trk_ip3d_d0->at(pos); // Units?
   o.jet_trk_ip3d_z0 = jet_trk_ip3d_z0->at(pos); // Units?
   o.jet_trk_ip3d_d0sig = jet_trk_ip3d_d0sig->at(pos);
   o.jet_trk_ip3d_z0sig = jet_trk_ip3d_z0sig->at(pos);
@@ -290,7 +290,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 #undef COPY
     // special copy for ip3d vars
 #define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
-    COPY(d0);
+    COPY(signed_d0);
     COPY(z0);
     COPY(d0sig);
     COPY(z0sig);

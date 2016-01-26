@@ -98,7 +98,7 @@ struct Jet
   // metrics
   std::vector<float> jet_trk_d0;
   std::vector<float> jet_trk_z0;
-  std::vector<float> jet_trk_ip3d_d0;
+  std::vector<float> jet_trk_ip3d_signed_d0;
   // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
   std::vector<float> jet_trk_ip3d_z0;
   std::vector<float> jet_trk_ip3d_d0sig;
@@ -143,14 +143,14 @@ struct Track
   int orig;
 
   // use the IP3D d0/z0 here
-  float d0;
+  float signed_d0;
   float z0;
   float d0sig;
   float z0sig;
 
   // IP3D-like proxy for DL
   float dphi_jet;
-  float d0raw;
+  float d0;
 
   // bitmask checks
   bool usedFor(TAGGERALGO algo) const;
