@@ -3,6 +3,7 @@
 #include "SmartChain.hh"
 #include "FlavorPtEtaDistributions.hh"
 #include "constants.hh"
+#include "hist_tools.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -12,7 +13,6 @@
 #include <iostream>
 
 // various plotting constants
-const int N_BINS = 200;
 const double MAX_VX_MASS = 10*GeV;
 const double JET_WIDTH = 0.5;
 const double MAX_SIGNIFICANCE = 50;
@@ -115,25 +115,7 @@ int main(int argc, char* argv[]) {
 // ______________________________________________________________________
 // hist methods
 
-namespace {
-  std::vector<Axis> range(std::string name,
-                          double low, double high,
-                          std::string units = "") {
-    return { {name, N_BINS, low, high, units} };
-  }
-  std::vector<Axis> zero_to_one(std::string name) {
-    return range(name, 0, 1.00001);
-  }
-  std::vector<Axis> count(std::string name, int max) {
-    return { {name, max + 1, -0.5, max + 0.5} };
-  }
-}
-
 JetHists::JetHists():
-#define ZERO_ONE(name) name( zero_to_one( #name) )
-#define COUNT(name, max) name( count( #name, max) )
-#define RANGE(name, low, high) name( range( #name, low, high) )
-#define ENERGY(name, high) name( range( #name, 0, high, BASE_UNITS) )
   // MV2
   ZERO_ONE(mv2c00),
   ZERO_ONE(mv2c10),
@@ -168,11 +150,6 @@ JetHists::JetHists():
   COUNT(jf_nvtx1t, 10),
   COUNT(jf_n2t, 15),
   COUNT(jf_VTXsize, 10),
-
-#undef ZERO_ONE
-#undef COUNT
-#undef RANGE
-#undef ENERGY
 
   pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, BASE_UNITS} }),
   eta({ {"eta", N_BINS, -2.8, 2.8 }})

@@ -8,8 +8,6 @@
 template<typename T>
 std::string str_from_jet(const T&);
 
-std::vector<TrkUnit> build_tracks(const Jet& jet);
-
 // _______________________________________________________________________
 // Implementation
 

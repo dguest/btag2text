@@ -297,6 +297,11 @@ private:
 
 };
 
+
+// ______________________________________________________________________
+// misc functions
+
+std::vector<TrkUnit> build_tracks(const Jet& jet);
 std::ostream& operator<<(std::ostream&, Jets&);
 
 
