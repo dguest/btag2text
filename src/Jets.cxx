@@ -81,180 +81,183 @@ namespace {
 Jets::Jets(SmartChain& chain):
   m_chain(&chain)
 {
+#define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // kinematics
-  m_chain->SetBranch("jet_pt", &jet_pt);
-  m_chain->SetBranch("jet_eta", &jet_eta);
-  m_chain->SetBranch("jet_phi", &jet_phi);
-  m_chain->SetBranch("jet_E", &jet_E);
-  m_chain->SetBranch("jet_m", &jet_m);
+  SET_BRANCH(jet_pt);
+  SET_BRANCH(jet_eta);
+  SET_BRANCH(jet_phi);
+  SET_BRANCH(jet_E);
+  SET_BRANCH(jet_m);
 
   // flavor label
-  m_chain->SetBranch("jet_truthflav", &jet_truthflav);
+  SET_BRANCH(jet_truthflav);
 
-  m_chain->SetBranch("jet_ip3d_ntrk", &jet_ip3d_ntrk);
+  SET_BRANCH(jet_ip3d_ntrk);
 
-  m_chain->SetBranch("jet_ip2d_pb", &jet_ip2d_pb);
-  m_chain->SetBranch("jet_ip2d_pc", &jet_ip2d_pc);
-  m_chain->SetBranch("jet_ip2d_pu", &jet_ip2d_pu);
-  m_chain->SetBranch("jet_ip3d_pb", &jet_ip3d_pb);
-  m_chain->SetBranch("jet_ip3d_pc", &jet_ip3d_pc);
-  m_chain->SetBranch("jet_ip3d_pu", &jet_ip3d_pu);
+  SET_BRANCH(jet_ip2d_pb);
+  SET_BRANCH(jet_ip2d_pc);
+  SET_BRANCH(jet_ip2d_pu);
+  SET_BRANCH(jet_ip3d_pb);
+  SET_BRANCH(jet_ip3d_pc);
+  SET_BRANCH(jet_ip3d_pu);
 
-  m_chain->SetBranch("jet_sv1_ntrkj", &jet_sv1_ntrkj);
-  m_chain->SetBranch("jet_sv1_ntrkv", &jet_sv1_ntrkv);
-  m_chain->SetBranch("jet_sv1_n2t", &jet_sv1_n2t);
-  m_chain->SetBranch("jet_sv1_m", &jet_sv1_m);
-  m_chain->SetBranch("jet_sv1_efc", &jet_sv1_efc);
-  m_chain->SetBranch("jet_sv1_normdist", &jet_sv1_normdist);
-  m_chain->SetBranch("jet_sv1_Nvtx", &jet_sv1_Nvtx);
-  m_chain->SetBranch("jet_sv1_sig3d", &jet_sv1_sig3d);
+  SET_BRANCH(jet_sv1_ntrkj);
+  SET_BRANCH(jet_sv1_ntrkv);
+  SET_BRANCH(jet_sv1_n2t);
+  SET_BRANCH(jet_sv1_m);
+  SET_BRANCH(jet_sv1_efc);
+  SET_BRANCH(jet_sv1_normdist);
+  SET_BRANCH(jet_sv1_Nvtx);
+  SET_BRANCH(jet_sv1_sig3d);
 
-  m_chain->SetBranch("jet_sv1_vtx_x", &jet_sv1_vtx_x);
-  m_chain->SetBranch("jet_sv1_vtx_y", &jet_sv1_vtx_y);
-  m_chain->SetBranch("jet_sv1_vtx_z", &jet_sv1_vtx_z);
+  SET_BRANCH(jet_sv1_vtx_x);
+  SET_BRANCH(jet_sv1_vtx_y);
+  SET_BRANCH(jet_sv1_vtx_z);
 
-  m_chain->SetBranch("jet_jf_m", &jet_jf_m);
-  m_chain->SetBranch("jet_jf_efc", &jet_jf_efc);
-  m_chain->SetBranch("jet_jf_deta", &jet_jf_deta);
-  m_chain->SetBranch("jet_jf_dphi", &jet_jf_dphi);
-  m_chain->SetBranch("jet_jf_ntrkAtVx", &jet_jf_ntrkAtVx);
-  m_chain->SetBranch("jet_jf_nvtx", &jet_jf_nvtx);
-  m_chain->SetBranch("jet_jf_sig3d", &jet_jf_sig3d);
-  m_chain->SetBranch("jet_jf_nvtx1t", &jet_jf_nvtx1t);
-  m_chain->SetBranch("jet_jf_n2t", &jet_jf_n2t);
-  m_chain->SetBranch("jet_jf_VTXsize", &jet_jf_VTXsize);
+  SET_BRANCH(jet_jf_m);
+  SET_BRANCH(jet_jf_efc);
+  SET_BRANCH(jet_jf_deta);
+  SET_BRANCH(jet_jf_dphi);
+  SET_BRANCH(jet_jf_ntrkAtVx);
+  SET_BRANCH(jet_jf_nvtx);
+  SET_BRANCH(jet_jf_sig3d);
+  SET_BRANCH(jet_jf_nvtx1t);
+  SET_BRANCH(jet_jf_n2t);
+  SET_BRANCH(jet_jf_VTXsize);
 
-  m_chain->SetBranch("jet_jf_vtx_chi2", &jet_jf_vtx_chi2);
-  m_chain->SetBranch("jet_jf_vtx_ndf", &jet_jf_vtx_ndf);
-  m_chain->SetBranch("jet_jf_vtx_ntrk", &jet_jf_vtx_ntrk);
-  m_chain->SetBranch("jet_jf_vtx_L3D", &jet_jf_vtx_L3D);
-  m_chain->SetBranch("jet_jf_vtx_sig3D", &jet_jf_vtx_sig3D);
+  SET_BRANCH(jet_jf_vtx_chi2);
+  SET_BRANCH(jet_jf_vtx_ndf);
+  SET_BRANCH(jet_jf_vtx_ntrk);
+  SET_BRANCH(jet_jf_vtx_L3D);
+  SET_BRANCH(jet_jf_vtx_sig3D);
 
-  m_chain->SetBranch("jet_mv2c00", &jet_mv2c00);
-  m_chain->SetBranch("jet_mv2c10", &jet_mv2c10);
-  m_chain->SetBranch("jet_mv2c20", &jet_mv2c20);
-  m_chain->SetBranch("jet_mv2c100", &jet_mv2c100);
-
-
-  m_chain->SetBranch("jet_trk_pt", &jet_trk_pt);
-  m_chain->SetBranch("jet_trk_eta", &jet_trk_eta);
-  m_chain->SetBranch("jet_trk_theta", &jet_trk_theta);
-  m_chain->SetBranch("jet_trk_phi", &jet_trk_phi);
-  m_chain->SetBranch("jet_trk_dr", &jet_trk_dr);
-  m_chain->SetBranch("jet_trk_chi2", &jet_trk_chi2);
-  m_chain->SetBranch("jet_trk_ndf", &jet_trk_ndf);
-
-  m_chain->SetBranch("jet_trk_algo", &jet_trk_algo);
-  m_chain->SetBranch("jet_trk_orig", &jet_trk_orig);
-
-  m_chain->SetBranch("jet_trk_d0", &jet_trk_d0);
-  m_chain->SetBranch("jet_trk_z0", &jet_trk_z0);
-  m_chain->SetBranch("jet_trk_ip3d_d0", &jet_trk_ip3d_d0);
-  // m_chain->SetBranch("jet_trk_ip3d_d02D", &jet_trk_ip3d_d02D);
-  m_chain->SetBranch("jet_trk_ip3d_z0", &jet_trk_ip3d_z0);
-  m_chain->SetBranch("jet_trk_ip3d_d0sig", &jet_trk_ip3d_d0sig);
-  m_chain->SetBranch("jet_trk_ip3d_z0sig", &jet_trk_ip3d_z0sig);
-  m_chain->SetBranch("jet_trk_jf_Vertex", &jet_trk_jf_Vertex);
+  SET_BRANCH(jet_mv2c00);
+  SET_BRANCH(jet_mv2c10);
+  SET_BRANCH(jet_mv2c20);
+  SET_BRANCH(jet_mv2c100);
 
 
+  SET_BRANCH(jet_trk_pt);
+  SET_BRANCH(jet_trk_eta);
+  SET_BRANCH(jet_trk_theta);
+  SET_BRANCH(jet_trk_phi);
+  SET_BRANCH(jet_trk_dr);
+  SET_BRANCH(jet_trk_chi2);
+  SET_BRANCH(jet_trk_ndf);
+
+  SET_BRANCH(jet_trk_algo);
+  SET_BRANCH(jet_trk_orig);
+
+  SET_BRANCH(jet_trk_d0);
+  SET_BRANCH(jet_trk_z0);
+  SET_BRANCH(jet_trk_ip3d_d0);
+  // SET_BRANCH(jet_trk_ip3d_d02D);
+  SET_BRANCH(jet_trk_ip3d_z0);
+  SET_BRANCH(jet_trk_ip3d_d0sig);
+  SET_BRANCH(jet_trk_ip3d_z0sig);
+  SET_BRANCH(jet_trk_jf_Vertex);
+#undef SET_BRANCH
 }
 int Jets::size() const {
   return jet_pt->size();
 }
 Jet Jets::getJet(int pos) const {
+#define COPY(var) o.var = var->at(pos);
   Jet o;
   // kinematics                   // kinematics
   o.jet_pt = jet_pt->at(pos)*MeV;
-  o.jet_eta = jet_eta->at(pos);
-  o.jet_phi = jet_phi->at(pos);
+  COPY(jet_eta);
+  COPY(jet_phi);
   o.jet_E = jet_E->at(pos)*MeV;
   o.jet_m = jet_m->at(pos)*MeV;
 
   // flavor label                 // flavor label
-  o.jet_truthflav = jet_truthflav->at(pos);
+  COPY(jet_truthflav);
   // track counts
   o.jet_ntrk = jet_trk_pt->at(pos).size();
-  o.jet_ip3d_ntrk = jet_ip3d_ntrk->at(pos);
+  COPY(jet_ip3d_ntrk);
 
   // high level                   // high level
   // ip2d, ip3d                   // ip2d, ip3d
-  o.jet_ip2d_pb = jet_ip2d_pb->at(pos);
-  o.jet_ip2d_pc = jet_ip2d_pc->at(pos);
-  o.jet_ip2d_pu = jet_ip2d_pu->at(pos);
-  o.jet_ip3d_pb = jet_ip3d_pb->at(pos);
-  o.jet_ip3d_pc = jet_ip3d_pc->at(pos);
-  o.jet_ip3d_pu = jet_ip3d_pu->at(pos);
+  COPY(jet_ip2d_pb);
+  COPY(jet_ip2d_pc);
+  COPY(jet_ip2d_pu);
+  COPY(jet_ip3d_pb);
+  COPY(jet_ip3d_pc);
+  COPY(jet_ip3d_pu);
   // sv1                          // sv1
-  o.jet_sv1_ntrkj = jet_sv1_ntrkj->at(pos);
-  o.jet_sv1_ntrkv = jet_sv1_ntrkv->at(pos);
-  o.jet_sv1_n2t = jet_sv1_n2t->at(pos);
+  COPY(jet_sv1_ntrkj);
+  COPY(jet_sv1_ntrkv);
+  COPY(jet_sv1_n2t);
   o.jet_sv1_m = jet_sv1_m->at(pos)*MeV;
-  o.jet_sv1_efc = jet_sv1_efc->at(pos);
-  o.jet_sv1_normdist = jet_sv1_normdist->at(pos);
-  o.jet_sv1_Nvtx = jet_sv1_Nvtx->at(pos);
-  o.jet_sv1_sig3d = jet_sv1_sig3d->at(pos);
+  COPY(jet_sv1_efc);
+  COPY(jet_sv1_normdist);
+  COPY(jet_sv1_Nvtx);
+  COPY(jet_sv1_sig3d);
   // med-level sv1                // med-level sv1
-  o.jet_sv1_vtx_x = jet_sv1_vtx_x->at(pos); // Units?
-  o.jet_sv1_vtx_y = jet_sv1_vtx_y->at(pos); // Units?
-  o.jet_sv1_vtx_z = jet_sv1_vtx_z->at(pos); // Units?
+  COPY(jet_sv1_vtx_x); // Units?
+  COPY(jet_sv1_vtx_y); // Units?
+  COPY(jet_sv1_vtx_z); // Units?
   // jetfitter                    // jetfitter
   o.jet_jf_m = jet_jf_m->at(pos)*MeV;
-  o.jet_jf_efc = jet_jf_efc->at(pos);
-  o.jet_jf_deta = jet_jf_deta->at(pos);
-  o.jet_jf_dphi = jet_jf_dphi->at(pos);
-  o.jet_jf_ntrkAtVx = jet_jf_ntrkAtVx->at(pos);
-  o.jet_jf_nvtx = jet_jf_nvtx->at(pos);
-  o.jet_jf_sig3d = jet_jf_sig3d->at(pos);
-  o.jet_jf_nvtx1t = jet_jf_nvtx1t->at(pos);
-  o.jet_jf_n2t = jet_jf_n2t->at(pos);
-  o.jet_jf_VTXsize = jet_jf_VTXsize->at(pos);
+  COPY(jet_jf_efc);
+  COPY(jet_jf_deta);
+  COPY(jet_jf_dphi);
+  COPY(jet_jf_ntrkAtVx);
+  COPY(jet_jf_nvtx);
+  COPY(jet_jf_sig3d);
+  COPY(jet_jf_nvtx1t);
+  COPY(jet_jf_n2t);
+  COPY(jet_jf_VTXsize);
   // med-level jetfitter          // med-level jetfitter
-  o.jet_jf_vtx_chi2 = jet_jf_vtx_chi2->at(pos);
-  o.jet_jf_vtx_ndf = jet_jf_vtx_ndf->at(pos);
-  o.jet_jf_vtx_ntrk = jet_jf_vtx_ntrk->at(pos);
-  o.jet_jf_vtx_L3D = jet_jf_vtx_L3D->at(pos);
-  o.jet_jf_vtx_sig3D = jet_jf_vtx_sig3D->at(pos);
+  COPY(jet_jf_vtx_chi2);
+  COPY(jet_jf_vtx_ndf);
+  COPY(jet_jf_vtx_ntrk);
+  COPY(jet_jf_vtx_L3D);
+  COPY(jet_jf_vtx_sig3D);
 
   // MV2                          // MV2
-  o.jet_mv2c00 = jet_mv2c00->at(pos);
-  o.jet_mv2c10 = jet_mv2c10->at(pos);
-  o.jet_mv2c20 = jet_mv2c20->at(pos);
-  o.jet_mv2c100 = jet_mv2c100->at(pos);
+  COPY(jet_mv2c00);
+  COPY(jet_mv2c10);
+  COPY(jet_mv2c20);
+  COPY(jet_mv2c100);
 
   // track level
   // multiply is used here to give the vector the right units
   o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
-  o.jet_trk_eta = jet_trk_eta->at(pos);
-  o.jet_trk_theta = jet_trk_theta->at(pos);
-  o.jet_trk_phi = jet_trk_phi->at(pos);
-  o.jet_trk_dr = jet_trk_dr->at(pos);
-  o.jet_trk_chi2 = jet_trk_chi2->at(pos);
-  o.jet_trk_ndf = jet_trk_ndf->at(pos);
+  COPY(jet_trk_eta);
+  COPY(jet_trk_theta);
+  COPY(jet_trk_phi);
+  COPY(jet_trk_dr);
+  COPY(jet_trk_chi2);
+  COPY(jet_trk_ndf);
 
-  o.jet_trk_algo = jet_trk_algo->at(pos);
-  o.jet_trk_orig = jet_trk_orig->at(pos);
+  COPY(jet_trk_algo);
+  COPY(jet_trk_orig);
 
   // metrics                      // metrics
-  o.jet_trk_d0 = jet_trk_d0->at(pos); // Units?
-  o.jet_trk_z0 = jet_trk_z0->at(pos); // Units?
+  COPY(jet_trk_d0); // Units?
+  COPY(jet_trk_z0); // Units?
   o.jet_trk_ip3d_signed_d0 = jet_trk_ip3d_d0->at(pos); // Units?
-  o.jet_trk_ip3d_z0 = jet_trk_ip3d_z0->at(pos); // Units?
-  o.jet_trk_ip3d_d0sig = jet_trk_ip3d_d0sig->at(pos);
-  o.jet_trk_ip3d_z0sig = jet_trk_ip3d_z0sig->at(pos);
-  o.jet_trk_ip3d_grade = jet_trk_ip3d_grade->at(pos);
-  o.jet_trk_jf_Vertex = jet_trk_jf_Vertex->at(pos);
+  COPY(jet_trk_ip3d_z0); // Units?
+  COPY(jet_trk_ip3d_d0sig);
+  COPY(jet_trk_ip3d_z0sig);
+  COPY(jet_trk_ip3d_grade);
+  COPY(jet_trk_jf_Vertex);
 
-  o.jet_trk_nInnHits =         jet_trk_nInnHits->at(pos);
-  o.jet_trk_nNextToInnHits =   jet_trk_nNextToInnHits->at(pos);
-  o.jet_trk_nBLHits =          jet_trk_nBLHits->at(pos);
-  o.jet_trk_nsharedBLHits =    jet_trk_nsharedBLHits->at(pos);
-  o.jet_trk_nsplitBLHits =     jet_trk_nsplitBLHits->at(pos);
-  o.jet_trk_nPixHits =         jet_trk_nPixHits->at(pos);
-  o.jet_trk_nsharedPixHits =   jet_trk_nsharedPixHits->at(pos);
-  o.jet_trk_nsplitPixHits =    jet_trk_nsplitPixHits->at(pos);
-  o.jet_trk_nSCTHits =         jet_trk_nSCTHits->at(pos);
-  o.jet_trk_nsharedSCTHits =   jet_trk_nsharedSCTHits->at(pos);
-  o.jet_trk_expectBLayerHit =  jet_trk_expectBLayerHit->at(pos);
+  COPY(jet_trk_nInnHits);
+  COPY(jet_trk_nNextToInnHits);
+  COPY(jet_trk_nBLHits);
+  COPY(jet_trk_nsharedBLHits);
+  COPY(jet_trk_nsplitBLHits);
+  COPY(jet_trk_nPixHits);
+  COPY(jet_trk_nsharedPixHits);
+  COPY(jet_trk_nsplitPixHits);
+  COPY(jet_trk_nSCTHits);
+  COPY(jet_trk_nsharedSCTHits);
+  COPY(jet_trk_expectBLayerHit);
+
+#undef COPY
 
   // derived stuff
   fill_derived(o);
