@@ -103,7 +103,20 @@ struct Jet
   std::vector<float> jet_trk_ip3d_z0;
   std::vector<float> jet_trk_ip3d_d0sig;
   std::vector<float> jet_trk_ip3d_z0sig;
+  std::vector<int> jet_trk_ip3d_grade;
   std::vector<int> jet_trk_jf_Vertex;
+
+  std::vector<int> jet_trk_nInnHits;
+  std::vector<int> jet_trk_nNextToInnHits;
+  std::vector<int> jet_trk_nBLHits;
+  std::vector<int> jet_trk_nsharedBLHits;
+  std::vector<int> jet_trk_nsplitBLHits;
+  std::vector<int> jet_trk_nPixHits;
+  std::vector<int> jet_trk_nsharedPixHits;
+  std::vector<int> jet_trk_nsplitPixHits;
+  std::vector<int> jet_trk_nSCTHits;
+  std::vector<int> jet_trk_nsharedSCTHits;
+  std::vector<int> jet_trk_expectBLayerHit;
 
   // --- derived quantities ---
   // track counting
@@ -137,8 +150,8 @@ struct Track
   float theta;
   float phi;
   float dr;
-  float chi2;
-  float ndf;
+
+  // bitmasks
   int algo;
   int orig;
 
@@ -147,6 +160,22 @@ struct Track
   float z0;
   float d0sig;
   float z0sig;
+
+  // quality info
+  float chi2;
+  float ndf;
+  int ip3d_grade;
+  int nInnHits;
+  int nNextToInnHits;
+  int nBLHits;
+  int nsharedBLHits;
+  int nsplitBLHits;
+  int nPixHits;
+  int nsharedPixHits;
+  int nsplitPixHits;
+  int nSCTHits;
+  int nsharedSCTHits;
+  int expectBLayerHit;
 
   // IP3D-like proxy for DL
   float dphi_jet;
@@ -250,6 +279,20 @@ private:
   std::vector<std::vector<float> >* jet_trk_ip3d_z0;
   std::vector<std::vector<float> >* jet_trk_ip3d_d0sig;
   std::vector<std::vector<float> >* jet_trk_ip3d_z0sig;
+  std::vector<std::vector<int> >* jet_trk_ip3d_grade;
+
+  std::vector<std::vector<int> >* jet_trk_nInnHits;
+  std::vector<std::vector<int> >* jet_trk_nNextToInnHits;
+  std::vector<std::vector<int> >* jet_trk_nBLHits;
+  std::vector<std::vector<int> >* jet_trk_nsharedBLHits;
+  std::vector<std::vector<int> >* jet_trk_nsplitBLHits;
+  std::vector<std::vector<int> >* jet_trk_nPixHits;
+  std::vector<std::vector<int> >* jet_trk_nsharedPixHits;
+  std::vector<std::vector<int> >* jet_trk_nsplitPixHits;
+  std::vector<std::vector<int> >* jet_trk_nSCTHits;
+  std::vector<std::vector<int> >* jet_trk_nsharedSCTHits;
+  std::vector<std::vector<int> >* jet_trk_expectBLayerHit;
+
   std::vector<std::vector<int> >* jet_trk_jf_Vertex;
 
 };

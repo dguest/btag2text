@@ -241,7 +241,20 @@ Jet Jets::getJet(int pos) const {
   o.jet_trk_ip3d_z0 = jet_trk_ip3d_z0->at(pos); // Units?
   o.jet_trk_ip3d_d0sig = jet_trk_ip3d_d0sig->at(pos);
   o.jet_trk_ip3d_z0sig = jet_trk_ip3d_z0sig->at(pos);
+  o.jet_trk_ip3d_grade = jet_trk_ip3d_grade->at(pos);
   o.jet_trk_jf_Vertex = jet_trk_jf_Vertex->at(pos);
+
+  o.jet_trk_nInnHits =         jet_trk_nInnHits->at(pos);
+  o.jet_trk_nNextToInnHits =   jet_trk_nNextToInnHits->at(pos);
+  o.jet_trk_nBLHits =          jet_trk_nBLHits->at(pos);
+  o.jet_trk_nsharedBLHits =    jet_trk_nsharedBLHits->at(pos);
+  o.jet_trk_nsplitBLHits =     jet_trk_nsplitBLHits->at(pos);
+  o.jet_trk_nPixHits =         jet_trk_nPixHits->at(pos);
+  o.jet_trk_nsharedPixHits =   jet_trk_nsharedPixHits->at(pos);
+  o.jet_trk_nsplitPixHits =    jet_trk_nsplitPixHits->at(pos);
+  o.jet_trk_nSCTHits =         jet_trk_nSCTHits->at(pos);
+  o.jet_trk_nsharedSCTHits =   jet_trk_nsharedSCTHits->at(pos);
+  o.jet_trk_expectBLayerHit =  jet_trk_expectBLayerHit->at(pos);
 
   // derived stuff
   fill_derived(o);
@@ -283,10 +296,23 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(theta);
     COPY(phi);
     COPY(dr);
-    COPY(chi2);
-    COPY(ndf);
     COPY(algo);
     COPY(orig);
+
+    COPY(chi2);
+    COPY(ndf);
+    COPY(nInnHits);
+    COPY(nNextToInnHits);
+    COPY(nBLHits);
+    COPY(nsharedBLHits);
+    COPY(nsplitBLHits);
+    COPY(nPixHits);
+    COPY(nsharedPixHits);
+    COPY(nsplitPixHits);
+    COPY(nSCTHits);
+    COPY(nsharedSCTHits);
+    COPY(expectBLayerHit);
+
 #undef COPY
     // special copy for ip3d vars
 #define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
@@ -295,6 +321,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(d0sig);
     COPY(z0sig);
 #undef COPY
+    track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
     setDerived(track, jet);
 
     // now copy the jetfitter vertices
