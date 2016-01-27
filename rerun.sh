@@ -7,21 +7,39 @@ set -eu
 
 # check inputs
 function _usage() {
-    echo "usage: ${0##*/} [jets|tracks] <input file>.."
+    echo "usage: ${0##*/} [jets|tracks] [png] <input file>.."
+}
+
+function _is_root_file() {
+    if [[ ! -f $1 ]]; then
+        echo "ERROR: $1 doesn't exist" >&2
+        return 1
+    elif ! [[ $1 == *.root* ]]; then
+        echo "ERROR: $1 isn't a root file" >&2
+        return 1
+    fi
+    return 0
 }
 
 # sort args into inputs and draw options
 ALL_OPTIONS=()
 ALL_INPUTS=()
+PLOT_EXT=".pdf"
 for input in $@; do
     ISOPT=""
     for option in jets tracks; do
         if [[ $input == $option ]]; then
-            ISOPT=1
             ALL_OPTIONS+=$option
+            ISOPT=1
+        elif [[ $input == png ]]; then
+            PLOT_EXT=".png"
+            ISOPT=1
         fi
     done
     if [[ -z $ISOPT ]]; then
+        if ! _is_root_file $input; then
+            exit 1
+        fi
         ALL_INPUTS+=( $input )
     fi
 done
@@ -32,11 +50,6 @@ if (( ${#ALL_INPUTS[*]} < 1 )); then
 fi
 # FIXME: make the routines run on all the inputs, not just the first one
 INPUT=${ALL_INPUTS[0]}
-if [[ ! -f $INPUT ]]; then
-    _usage
-    echo "ERROR: no file '$INPUT'" >&2
-    exit 1
-fi
 
 function _drawing() {
     if (( ${#ALL_OPTIONS[*]} == 0 )); then
@@ -125,7 +138,7 @@ fi
 if _drawing jets; then
     function draw_jets() {
         echo "drawing jets..."
-        $DRAW_OTHER $JET_HISTS -o $JET_PLOTS
+        $DRAW_OTHER $JET_HISTS -o $JET_PLOTS -e $PLOT_EXT
     }
     if need_new $JET_HISTS $INPUT $RW $FILL_OTHER; then
         echo "building jet hists"
@@ -141,7 +154,7 @@ fi
 if _drawing tracks; then
     function draw_tracks() {
         echo "drawing tracks..."
-        $DRAW_OTHER $TRACK_HISTS -o $TRACK_PLOTS $@
+        $DRAW_OTHER $TRACK_HISTS -o $TRACK_PLOTS -e $PLOT_EXT
     }
     if need_new $TRACK_HISTS $INPUT $RW $FILL_TRACK; then
         echo "building track hists"

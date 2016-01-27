@@ -23,6 +23,7 @@ def _get_args():
     parser.add_argument(
         '-o', '--output-dir', nargs='?', default=_default_output, help=d)
     parser.add_argument('-l', '--log', action='store_true')
+    parser.add_argument('-e', '--ext', default='.pdf', help=d)
     return parser.parse_args()
 
 def _get_hists(ds):
@@ -35,7 +36,7 @@ def _get_hists(ds):
             hists[name] = _get_hists(ds)
     return hists
 
-def _draw_hists(hist_dict, output_dir, var='pt', log=False):
+def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
     hists = []
     for ftl, name in _labels.items():
         hist = hist_dict[str(ftl)][var]
@@ -44,7 +45,8 @@ def _draw_hists(hist_dict, output_dir, var='pt', log=False):
         hists.append(hist)
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
-    name = '{}/{}.pdf'.format(output_dir, var if not log else var + '_log')
+    name = '{}/{}{}'.format(output_dir, var if not log else var + '_log', ext)
+    print("drawing {}".format(name))
     with Canvas(name) as can:
         draw1d(can, hists, log=log)
         can.ax.legend(framealpha=0)
@@ -59,10 +61,9 @@ def run():
     for hist_type, hists in subdirs.items():
         for hname in hists['0']:
             output_path = os.path.join(args.output_dir, hist_type)
-            print("drawing {}/{}".format(output_path, hname))
-            _draw_hists(hists, output_path, hname, log=args.log)
+            _draw_hists(hists, output_path, hname, log=args.log, ext=args.ext)
             if hname in _force_log and not args.log:
-                _draw_hists(hists, output_path, hname, log=True)
+                _draw_hists(hists, output_path, hname, log=True, ext=args.ext)
 
 if __name__ == '__main__':
     run()
