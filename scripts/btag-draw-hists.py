@@ -13,7 +13,10 @@ import os
 
 _default_output = "plots"
 _labels = {0: "light", 4: "charm", 5: "bottom"}
-_colors = {0: "blue", 4: "green", 5: "red"}
+red = (1, 0, 0, 0.8)
+green = (0, 0.5, 0, 0.8)
+blue = (0, 0, 1, 0.8)
+_colors = {0: blue, 4: green, 5: red}
 _force_log = {'pt'}
 
 def _get_args():
