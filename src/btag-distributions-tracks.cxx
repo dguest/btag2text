@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 // hist methods
 
 TrackHists::TrackHists():
-  pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, BASE_UNITS} }),
+  ENERGY(pt, 40*GeV),
   eta({ {"eta", N_BINS, -2.8, 2.8 }})
 {
 }

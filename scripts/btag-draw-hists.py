@@ -14,6 +14,7 @@ import os
 _default_output = "plots"
 _labels = {0: "light", 4: "charm", 5: "bottom"}
 _colors = {0: "blue", 4: "green", 5: "red"}
+_force_log = {'pt'}
 
 def _get_args():
     d = "default: %(default)s"
@@ -21,6 +22,7 @@ def _get_args():
     parser.add_argument('input')
     parser.add_argument(
         '-o', '--output-dir', nargs='?', default=_default_output, help=d)
+    parser.add_argument('-l', '--log', action='store_true')
     return parser.parse_args()
 
 def _get_hists(ds):
@@ -33,7 +35,7 @@ def _get_hists(ds):
             hists[name] = _get_hists(ds)
     return hists
 
-def _draw_hists(hist_dict, output_dir, var='pt', prefix=''):
+def _draw_hists(hist_dict, output_dir, var='pt', log=False):
     hists = []
     for ftl, name in _labels.items():
         hist = hist_dict[str(ftl)][var]
@@ -41,23 +43,26 @@ def _draw_hists(hist_dict, output_dir, var='pt', prefix=''):
         hist.label = name
         hists.append(hist)
     if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
-    name = '{}/{}{}.pdf'.format(
-        output_dir, prefix + "_" if prefix else '', var)
+        os.makedirs(output_dir)
+    name = '{}/{}.pdf'.format(output_dir, var if not log else var + '_log')
     with Canvas(name) as can:
-        draw1d(can, hists)
+        draw1d(can, hists, log=log)
         can.ax.legend(framealpha=0)
 
 def run():
     args = _get_args()
+    subdirs = {}
     with File(args.input, 'r') as h5in:
-        raw_hists = _get_hists(h5in['raw'])
-        reweighted = _get_hists(h5in['reweighted'])
+        for hist_type in h5in:
+            subdirs[hist_type] = _get_hists(h5in[hist_type])
 
-    for hname in raw_hists['0']:
-        print("drawing {}".format(hname))
-        _draw_hists(raw_hists, args.output_dir, hname, prefix='raw')
-        _draw_hists(reweighted, args.output_dir, hname, prefix='reweighted')
+    for hist_type, hists in subdirs.items():
+        for hname in hists['0']:
+            output_path = os.path.join(args.output_dir, hist_type)
+            print("drawing {}/{}".format(output_path, hname))
+            _draw_hists(hists, output_path, hname, log=args.log)
+            if hname in _force_log and not args.log:
+                _draw_hists(hists, output_path, hname, log=True)
 
 if __name__ == '__main__':
     run()
