@@ -27,6 +27,32 @@ public:
 private:
   Histogram pt;
   Histogram eta;
+  // Histogram theta;
+  // Histogram phi;
+  Histogram dr;
+  Histogram d0;
+  Histogram z0;
+  Histogram signed_d0;
+  Histogram d0sig;
+  Histogram z0sig;
+  Histogram dphi_jet;
+
+  // quality info
+  Histogram chi2;
+  Histogram ndf;
+  Histogram ip3d_grade;
+  Histogram nInnHits;
+  Histogram nNextToInnHits;
+  Histogram nBLHits;
+  Histogram nsharedBLHits;
+  Histogram nsplitBLHits;
+  Histogram nPixHits;
+  Histogram nsharedPixHits;
+  Histogram nsplitPixHits;
+  Histogram nSCTHits;
+  Histogram nsharedSCTHits;
+  Histogram expectBLayerHit;
+
 };
 
 class FlavoredHists
@@ -84,7 +110,29 @@ int main(int argc, char* argv[]) {
 
 TrackHists::TrackHists():
   ENERGY(pt, 40*GeV),
-  eta({ {"eta", N_BINS, -2.8, 2.8 }})
+  RANGE(eta, -2.8, 2.8),
+  RANGE(dr, 0, 4),
+  LENGTH(d0, -40, 40, len_unit),
+  LENGTH(z0, -40, 40, len_unit),
+  LENGTH(signed_d0, -40, 40, len_unit),
+  RANGE(d0sig, 0, 100),
+  RANGE(z0sig, 0, 100),
+  RANGE(dphi_jet, -0.5, 0.5),
+  RANGE(chi2, 0, 30),
+  COUNT(ndf, 30),
+  COUNT(ip3d_grade, 20),
+  COUNT(nInnHits, 100),
+  COUNT(nNextToInnHits, 100),
+  COUNT(nBLHits, 4),
+  COUNT(nsharedBLHits, 4),
+  COUNT(nsplitBLHits, 4),
+  COUNT(nPixHits, 10),
+  COUNT(nsharedPixHits, 10),
+  COUNT(nsplitPixHits, 10),
+  COUNT(nSCTHits, 20),
+  COUNT(nsharedSCTHits, 20),
+  COUNT(expectBLayerHit, 4)
+
 {
 }
 
@@ -92,6 +140,30 @@ void TrackHists::fill(const Track& track, double weight) {
 #define BYNAME(name) name.fill(track.name, weight)
   BYNAME(pt);
   BYNAME(eta);
+
+  BYNAME(dr);
+  BYNAME(d0);
+  BYNAME(z0);
+  BYNAME(signed_d0);
+  BYNAME(d0sig);
+  BYNAME(z0sig);
+  BYNAME(dphi_jet);
+
+  // quality info
+  BYNAME(chi2);
+  BYNAME(ndf);
+  BYNAME(ip3d_grade);
+  BYNAME(nInnHits);
+  BYNAME(nNextToInnHits);
+  BYNAME(nBLHits);
+  BYNAME(nsharedBLHits);
+  BYNAME(nsplitBLHits);
+  BYNAME(nPixHits);
+  BYNAME(nsharedPixHits);
+  BYNAME(nsplitPixHits);
+  BYNAME(nSCTHits);
+  BYNAME(nsharedSCTHits);
+  BYNAME(expectBLayerHit);
 #undef BYNAME
 }
 
@@ -99,6 +171,30 @@ void TrackHists::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
   BYNAME(pt);
   BYNAME(eta);
+
+  BYNAME(dr);
+  BYNAME(d0);
+  BYNAME(z0);
+  BYNAME(signed_d0);
+  BYNAME(d0sig);
+  BYNAME(z0sig);
+  BYNAME(dphi_jet);
+
+  // quality info
+  BYNAME(chi2);
+  BYNAME(ndf);
+  BYNAME(ip3d_grade);
+  BYNAME(nInnHits);
+  BYNAME(nNextToInnHits);
+  BYNAME(nBLHits);
+  BYNAME(nsharedBLHits);
+  BYNAME(nsplitBLHits);
+  BYNAME(nPixHits);
+  BYNAME(nsharedPixHits);
+  BYNAME(nsplitPixHits);
+  BYNAME(nSCTHits);
+  BYNAME(nsharedSCTHits);
+  BYNAME(expectBLayerHit);
 #undef BYNAME
 }
 void TrackHists::save(H5::CommonFG& out, std::string subdir) const {
