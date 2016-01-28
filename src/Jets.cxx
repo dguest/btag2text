@@ -176,7 +176,9 @@ int Jets::size() const {
   return jet_pt->size();
 }
 Jet Jets::getJet(int pos) const {
-#define COPY(var) o.var = var->at(pos);
+#define COPY(var) o.var = var->at(pos)
+#define COPY_MULT(var, mult) o.var = var->at(pos)*mult
+#define COPY_MULTV(var, mult) o.var = multiply<float>(var->at(pos),mult)
   Jet o;
   // kinematics                   // kinematics
   o.jet_pt = jet_pt->at(pos)*MeV;
@@ -209,9 +211,9 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_sv1_Nvtx);
   COPY(jet_sv1_sig3d);
   // med-level sv1                // med-level sv1
-  COPY(jet_sv1_vtx_x); // Units?
-  COPY(jet_sv1_vtx_y); // Units?
-  COPY(jet_sv1_vtx_z); // Units?
+  COPY_MULTV(jet_sv1_vtx_x, mm); // Units?
+  COPY_MULTV(jet_sv1_vtx_y, mm); // Units?
+  COPY_MULTV(jet_sv1_vtx_z, mm); // Units?
   // jetfitter                    // jetfitter
   o.jet_jf_m = jet_jf_m->at(pos)*MeV;
   COPY(jet_jf_efc);
@@ -227,7 +229,7 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_jf_vtx_chi2);
   COPY(jet_jf_vtx_ndf);
   COPY(jet_jf_vtx_ntrk);
-  COPY(jet_jf_vtx_L3D);
+  COPY_MULTV(jet_jf_vtx_L3D, mm); // TODO: check this
   COPY(jet_jf_vtx_sig3D);
 
   // MV2                          // MV2
@@ -249,11 +251,11 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_trk_algo);
   COPY(jet_trk_orig);
 
-  // metrics                      // metrics
-  COPY(jet_trk_d0); // Units?
-  COPY(jet_trk_z0); // Units?
-  o.jet_trk_ip3d_signed_d0 = jet_trk_ip3d_d0->at(pos); // Units?
-  COPY(jet_trk_ip3d_z0); // Units?
+  // TODO: check these units
+  COPY_MULTV(jet_trk_d0, mm); // Units?
+  COPY_MULTV(jet_trk_z0, mm); // Units?
+  o.jet_trk_ip3d_signed_d0 = multiply<float>(jet_trk_ip3d_d0->at(pos), mm);
+  COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
   COPY(jet_trk_ip3d_d0sig);
   COPY(jet_trk_ip3d_z0sig);
   COPY(jet_trk_ip3d_grade);
@@ -272,6 +274,8 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_trk_expectBLayerHit);
 
 #undef COPY
+#undef COPY_MULT
+#undef COPY_MULTV
 
   // derived stuff
   fill_derived(o);

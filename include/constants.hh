@@ -6,6 +6,12 @@
 static const char* BASE_UNITS = "GeV";
 const double MeV = 0.001;
 const double GeV = 1000*MeV;
+
+static const char* BASE_LENGTH = "mm";
+const double mm = 1.0;
+const double cm = 10*mm;
+
+// various other constants
 const double D0_THRESHOLD = 1.8; // track counting significance
 const double PT_REWEIGHT_MAX = 1000*GeV;
 const int PT_REWEIGHT_NBINS = 100;

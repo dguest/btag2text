@@ -108,21 +108,23 @@ int main(int argc, char* argv[]) {
 // ______________________________________________________________________
 // hist methods
 
+const double D0_MAX = 5*mm;
+const double Z0_MAX = 30*mm;
 TrackHists::TrackHists():
   ENERGY(pt, 40*GeV),
   RANGE(eta, -2.8, 2.8),
-  RANGE(dr, 0, 4),
-  LENGTH(d0, -40, 40, len_unit),
-  LENGTH(z0, -40, 40, len_unit),
-  LENGTH(signed_d0, -40, 40, len_unit),
+  RANGE(dr, 0, 0.6),
+  LENGTH(d0, -D0_MAX, D0_MAX),
+  LENGTH(z0, -Z0_MAX, Z0_MAX),
+  LENGTH(signed_d0, -D0_MAX, D0_MAX),
   RANGE(d0sig, 0, 100),
   RANGE(z0sig, 0, 100),
   RANGE(dphi_jet, -0.5, 0.5),
-  RANGE(chi2, 0, 30),
-  COUNT(ndf, 30),
+  RANGE(chi2, 0, 100),
+  COUNT(ndf, 100),
   COUNT(ip3d_grade, 20),
-  COUNT(nInnHits, 100),
-  COUNT(nNextToInnHits, 100),
+  COUNT(nInnHits, 5),
+  COUNT(nNextToInnHits, 5),
   COUNT(nBLHits, 4),
   COUNT(nsharedBLHits, 4),
   COUNT(nsplitBLHits, 4),
