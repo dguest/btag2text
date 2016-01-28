@@ -6,6 +6,7 @@
 #include "hist_tools.hh"
 
 #include "ndhist/Histogram.hh"
+#include "covol/Covariance.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
@@ -85,6 +86,8 @@ int main(int argc, char* argv[]) {
     H5::H5File(REWEIGHT_FILE, H5F_ACC_RDONLY));
   FlavoredHists hists;
 
+  Covariance cov( {"pt", "eta"} );
+
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
@@ -93,6 +96,7 @@ int main(int argc, char* argv[]) {
       std::map<std::string, double> pt_eta{
         {"pt", jet.jet_pt},
         {"eta", std::abs(jet.jet_eta)}};
+      cov.fill(pt_eta);
       double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
       for (const auto& track_unit: build_tracks(jet)) {
         hists.fill(track_unit.track, jet.jet_truthflav, weight);
@@ -103,6 +107,8 @@ int main(int argc, char* argv[]) {
   // save histograms
   H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
   hists.save(out_file, "reweighted");
+  H5::H5File cov_file("covariance.h5", H5F_ACC_TRUNC);
+  cov.write_to(cov_file, "covariance");
 }
 
 // ______________________________________________________________________
