@@ -6,6 +6,7 @@
 #include "hist_tools.hh"
 
 #include "ndhist/Histogram.hh"
+#include "covol/Covariance.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
@@ -91,24 +92,30 @@ int main(int argc, char* argv[]) {
   FlavoredHists hists;
   FlavoredHists reweighted_hists;
 
+  Covariance jetcov( get_jet_variables() );
+
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       hists.fill(jet);
-      std::map<std::string, double> pt_eta{
-        {"pt", jet.jet_pt},
-        {"eta", std::abs(jet.jet_eta)}};
-      double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
+      auto jet_vars = get_map(jet);
+      double weight = pt_eta_reweight.get(jet_vars, jet.jet_truthflav);
       reweighted_hists.fill(jet, weight);
+      jetcov.fill(jet_vars, weight);
     }
   }
 
   // save histograms
   H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
-  hists.save(out_file, "raw");
-  reweighted_hists.save(out_file, "reweighted");
+  // hists
+  auto hist_group = out_file.createGroup("hists");
+  hists.save(hist_group, "raw");
+  reweighted_hists.save(hist_group, "reweighted");
+  // covariance
+  auto cov_group = out_file.createGroup("cov");
+  jetcov.write_to(cov_group, "reweighted");
 
 }
 

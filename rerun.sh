@@ -107,15 +107,22 @@ function need_new() {
 # than the first arg
 function need_new_dir() {
     if ! [[ $(ls -A $2) ]]; then
+        echo "$2 doesn't exist, rebuilding"
         return 0
     fi
     local OUTPUT
     for OUTPUT in $2/*; do
         if [[ $OUTPUT -ot $1 ]]; then
+            echo "$OUTPUT older than $1, rebuilding"
             return 0
         fi
     done
     return 1
+}
+
+# touch subdirs to make them look newer
+function touch_dirs() {
+    find $1 -type d -exec touch {} \;
 }
 
 # _________________________________________________________________________
@@ -134,11 +141,18 @@ fi
 # _________________________________________________________________________
 # draw main histograms
 
+# draw 1 (hists) in 2 (dir)
+function draw_hists() {
+    echo "drawing $2"
+    $DRAW_OTHER $1 -o $2 -e $PLOT_EXT
+    touch_dirs $2
+
+}
+
 # draw jets
 if _drawing jets; then
     function draw_jets() {
-        echo "drawing jets..."
-        $DRAW_OTHER $JET_HISTS -o $JET_PLOTS -e $PLOT_EXT
+        draw_hists $JET_HISTS $JET_PLOTS
     }
     if need_new $JET_HISTS $INPUT $RW $FILL_OTHER; then
         echo "building jet hists"
@@ -153,8 +167,7 @@ fi
 # draw tracks
 if _drawing tracks; then
     function draw_tracks() {
-        echo "drawing tracks..."
-        $DRAW_OTHER $TRACK_HISTS -o $TRACK_PLOTS -e $PLOT_EXT
+        draw_hists $TRACK_HISTS $TRACK_PLOTS
     }
     if need_new $TRACK_HISTS $INPUT $RW $FILL_TRACK; then
         echo "building track hists"

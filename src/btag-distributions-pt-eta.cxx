@@ -30,7 +30,7 @@ void FlavorPtEtaHists::fill(int ftl, double pt, double eta, double weight) {
   if (!m_flavors.count(ftl)) {
     std::vector<Axis> axes{
       {"pt", PT_REWEIGHT_NBINS, 0, m_pt_max, BASE_UNITS},
-      {"eta", 1, 0, m_eta_max} };
+      {"abs_eta", 1, 0, m_eta_max} };
     m_flavors.emplace(ftl, axes);
   }
   m_flavors.at(ftl).fill({pt, std::abs(eta)}, weight);

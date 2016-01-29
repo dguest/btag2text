@@ -58,8 +58,9 @@ def run():
     args = _get_args()
     subdirs = {}
     with File(args.input, 'r') as h5in:
-        for hist_type in h5in:
-            subdirs[hist_type] = _get_hists(h5in[hist_type])
+        hists = h5in['hists']
+        for hist_type in hists:
+            subdirs[hist_type] = _get_hists(hists[hist_type])
 
     for hist_type, hists in subdirs.items():
         for hname in hists['0']:

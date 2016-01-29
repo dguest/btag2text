@@ -2,7 +2,10 @@
 #define JETS_HH
 
 #include <vector>
+#include <map>
 #include <ostream>
+
+#include "covol/CovVar.hh"
 
 class SmartChain;
 
@@ -303,6 +306,7 @@ private:
 
 std::vector<TrkUnit> build_tracks(const Jet& jet);
 std::ostream& operator<<(std::ostream&, Jets&);
-
+std::map<std::string, double> get_map(const Jet& jet);
+std::vector<CovVar> get_jet_variables();
 
 #endif // JETS_HH
