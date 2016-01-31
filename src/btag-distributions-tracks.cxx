@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
   FileCLI cli(argc, argv);
 
-  SmartChain chain("bTag_AntiKt4EMTopoJets");
+  SmartChain chain(JET_COLLECTION);
   for (const auto& in: cli.in_files()) {
     chain.add(in);
   }
@@ -99,9 +99,10 @@ int main(int argc, char* argv[]) {
   }
 
   // save histograms
+  using namespace grp;
   H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
-  auto hist_group = out_file.createGroup("hists");
-  hists.save(hist_group, "reweighted");
+  auto hist_group = out_file.createGroup(HIST);
+  hists.save(hist_group, REWEIGHTED);
 }
 
 // ______________________________________________________________________

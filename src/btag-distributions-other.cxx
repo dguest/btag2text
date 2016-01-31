@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
   FileCLI cli(argc, argv);
 
-  SmartChain chain("bTag_AntiKt4EMTopoJets");
+  SmartChain chain(JET_COLLECTION);
   for (const auto& in: cli.in_files()) {
     chain.add(in);
   }
@@ -108,14 +108,15 @@ int main(int argc, char* argv[]) {
   }
 
   // save histograms
+  using namespace grp;
   H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
   // hists
-  auto hist_group = out_file.createGroup("hists");
-  hists.save(hist_group, "raw");
-  reweighted_hists.save(hist_group, "reweighted");
+  auto hist_group = out_file.createGroup(HIST);
+  hists.save(hist_group, RAW);
+  reweighted_hists.save(hist_group, REWEIGHTED);
   // covariance
-  auto cov_group = out_file.createGroup("cov");
-  jetcov.write_to(cov_group, "reweighted");
+  auto cov_group = out_file.createGroup(COV);
+  jetcov.write_to(cov_group, REWEIGHTED);
 
 }
 

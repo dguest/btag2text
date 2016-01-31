@@ -19,6 +19,12 @@ const int PT_REWEIGHT_NBINS = 100;
 const int N_BINS = 200;
 
 // constant IO stuff
-static const char*  REWEIGHT_FILE = "reweight.h5";
-
+static const char* REWEIGHT_FILE = "reweight.h5";
+static const char* JET_COLLECTION = "bTag_AntiKt4EMTopoJets";
+namespace grp {
+  static const char* HIST = "hists";
+  static const char* COV = "cov";
+  static const char* REWEIGHTED = "reweighted";
+  static const char* RAW = "raw";
+}
 #endif
