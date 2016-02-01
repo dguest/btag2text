@@ -237,6 +237,8 @@ std::string str_from_all_track_ip(const T& j) {
       OPEN { out << str_from_ip(track); } CLOSE; CS;
       OPEN { out << str_from_track_quality(track); } CLOSE;
     } CLOSE;
+    // by default this next line does nothing, it can be overloaded
+    // for classes that spit out names
     out << ellipsis(track);
     if (trackn < n_tracks - 1) CS;
   }
