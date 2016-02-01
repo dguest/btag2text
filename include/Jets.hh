@@ -168,21 +168,23 @@ struct Track
   float chi2;
   float ndf;
   int ip3d_grade;
-  int nInnHits;
-  int nNextToInnHits;
-  int nBLHits;
-  int nsharedBLHits;
-  int nsplitBLHits;
-  int nPixHits;
-  int nsharedPixHits;
-  int nsplitPixHits;
-  int nSCTHits;
-  int nsharedSCTHits;
-  int expectBLayerHit;
+  int nInnHits; // number of innermost pixel layer hits
+  int nNextToInnHits; // number of next-to-innermost pixel layer hits
+  int nBLHits; // number of b-layer hits
+  int nsharedBLHits; // number of shared b-layer hits
+  int nsplitBLHits; // number of split b-layer hits
+  int nPixHits; // number of pixel hits
+  int nsharedPixHits; // number of shared pixel hits
+  int nsplitPixHits; // number of split pixel hits
+  int nSCTHits; // number of sct hits
+  int nsharedSCTHits; // number of shared sct hits
+  int expectBLayerHit; // is a b-layer hit expected?
 
   // IP3D-like proxy for DL
   float dphi_jet;
   float d0;
+  // TODO: figure out how to add the original z0
+  // float z0;
 
   // bitmask checks
   bool usedFor(TAGGERALGO algo) const;
@@ -306,7 +308,11 @@ private:
 
 std::vector<TrkUnit> build_tracks(const Jet& jet);
 std::ostream& operator<<(std::ostream&, Jets&);
+
+// get named maps of variables (last one supplies all)
+std::map<std::string, double> get_pt_eta_map(const Jet& jet);
 std::map<std::string, double> get_map(const Jet& jet);
+
 std::vector<CovVar> get_jet_variables();
 
 #endif // JETS_HH

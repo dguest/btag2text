@@ -44,9 +44,7 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      std::map<std::string, double> pt_eta{
-        {"pt", jet.jet_pt},
-        {"abs_eta", std::abs(jet.jet_eta)}};
+      auto pt_eta = get_pt_eta_map(jet);
       double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
       std::cout << str_from_ip3d_jet(jet, weight) << std::endl;
     }

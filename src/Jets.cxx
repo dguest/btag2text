@@ -378,12 +378,17 @@ bool Track::hasOrigin(TRKORIGIN orign_enum) const {
 // ______________________________________________________________________
 // jet labeling and printing to text
 
-std::map<std::string, double> get_map(const Jet& jet) {
+std::map<std::string, double> get_pt_eta_map(const Jet& jet) {
   std::map<std::string, double> map;
 #define ADD(val) map.emplace(#val, jet.jet_ ## val)
   ADD(pt);
   ADD(eta);
   map.emplace("abs_eta", std::abs(jet.jet_eta));
+  return map;
+}
+
+std::map<std::string, double> get_map(const Jet& jet) {
+  std::map<std::string, double> map = get_pt_eta_map(jet);
   ADD(phi);
   ADD(m);
   ADD(ntrk);

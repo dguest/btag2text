@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "ellipsis.hh"
+
 class JetLabels
 {
 public:
@@ -71,7 +73,26 @@ public:
   LABELED(z0);
   LABELED(d0sig);
   LABELED(z0sig);
+
+  // NOTE: ``innermost'' pixel layer is the one _outside_ the b-layer
+  const std::string nInnHits = "number of first pixel layer hits";
+  const std::string nNextToInnHits = "number second pixel layer hits";
+  const std::string nBLHits = "number of b-layer hits";
+  const std::string nsharedBLHits = "number of shared b-layer hits";
+  const std::string nsplitBLHits = "number of split b-layer hits";
+  const std::string nPixHits = "number of pixel hits";
+  const std::string nsharedPixHits = "number of shared pixel hits";
+  const std::string nsplitPixHits = "number of split pixel hits";
+  const std::string nSCTHits = "number of sct hits";
+  const std::string nsharedSCTHits = "number of shared sct hits";
+  const std::string expectBLayerHit = "is a b-layer hit expected?";
+
+  const std::string dphi_jet = "dphi between jet and track";
+
 };
+
+template<>
+std::string ellipsis(const TrackLabels&);
 
 class JfVertexLabels
 {

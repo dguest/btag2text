@@ -5,6 +5,8 @@
 #include <vector>
 #include <ostream>
 
+#include "ellipsis.hh"
+
 template<typename T>
 std::string str_from_jet(const T&);
 
@@ -195,15 +197,47 @@ std::string str_from_ip(const T& j) {
 }
 
 template<typename T>
+std::string str_from_track_kinematics(const T& j) {
+  std::stringstream out;
+  OUT_COMMA(pt);
+  OUT_COMMA(eta);
+  OUT(dphi_jet);
+  return out.str();
+}
+
+template<typename T>
+std::string str_from_track_quality(const T& j) {
+  std::stringstream out;
+  OUT_COMMA(chi2);
+  OUT_COMMA(ndf);
+  OUT_COMMA(nBLHits);
+  OUT_COMMA(expectBLayerHit);
+  OUT_COMMA(nInnHits);
+  OUT_COMMA(nNextToInnHits);
+  // OUT_COMMA(nsharedBLHits);
+  // OUT_COMMA(nsplitBLHits);
+  OUT_COMMA(nPixHits);
+  // OUT_COMMA(nSharedPixHits);
+  // OUT_COMMA(nsplitPixHits);
+  OUT(nSCTHits);
+  // OUT_COMMA(nsharedSCTHits);
+  return out.str();
+}
+
+template<typename T>
 std::string str_from_all_track_ip(const T& j) {
   std::stringstream out;
 
   auto tracks = build_tracks(j);
   int n_tracks = tracks.size();
   for (int trackn = 0; trackn < n_tracks; trackn++) {
+    const auto& track = tracks.at(trackn).track;
     OPEN {
-      out << str_from_ip(tracks.at(trackn).track);
+      OPEN { out << str_from_track_kinematics(track); } CLOSE; CS;
+      OPEN { out << str_from_ip(track); } CLOSE; CS;
+      OPEN { out << str_from_track_quality(track); } CLOSE;
     } CLOSE;
+    out << ellipsis(track);
     if (trackn < n_tracks - 1) CS;
   }
   return out.str();
