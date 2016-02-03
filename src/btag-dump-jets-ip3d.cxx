@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
   FlavorPtEtaDistributions pt_eta_reweight(
     H5::H5File(REWEIGHT_FILE, H5F_ACC_RDONLY));
 
-  for (int iii = 0; iii < 10; iii++) {
+  for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
