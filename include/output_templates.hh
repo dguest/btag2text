@@ -16,11 +16,11 @@ std::string str_from_jet(const T&);
 // make up some grammar for the output
 #define OUT(NAME) out << j.NAME
 #define OUT_COMMA(NAME) out << j.NAME << ", "
-#define OPEN out << "(";
-#define CLOSE out << ")"
+#define OPEN out << "[";
+#define CLOSE out << "]"
 #define OPEN_LIST out << "[";
 #define CLOSE_LIST out << "]"
-#define OUT_CLOSE(NAME) out << j.NAME << "}"
+#define OUT_CLOSE(NAME) out << j.NAME << "]"
 #define CS out << ", "
 
 // basic building blocks
@@ -251,13 +251,15 @@ std::string str_from_all_track_ip(const T& j) {
 template<typename T, typename U = std::string>
 std::string str_from_ip3d_jet(const T& j, const U& weight = "weight") {
   std::stringstream out;
-  out << str_from_basic_jet_pars(j, weight) << ", ";
-  OPEN_LIST {
-    out << str_from_all_track_ip(j);
-  } CLOSE_LIST;
-  CS;
   OPEN {
-    out << str_from_ip3d(j);
+    out << str_from_basic_jet_pars(j, weight) << ", ";
+    OPEN_LIST {
+      out << str_from_all_track_ip(j);
+    } CLOSE_LIST;
+    CS;
+    OPEN {
+      out << str_from_ip3d(j);
+    } CLOSE;
   } CLOSE;
   return out.str();
 }

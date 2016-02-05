@@ -32,7 +32,6 @@ int main(int argc, char* argv[]) {
   }
   Jets jets(chain);
   int n_entries = chain.GetEntries();
-  std::cout << n_entries << " entries in chain" << std::endl;
 
   // load distributions
   require(REWEIGHT_FILE);
