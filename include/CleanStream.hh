@@ -16,7 +16,6 @@ public:
   std::string str() const;
 private:
   std::stringstream _stream;
-  friend CleanStream& operator<<(CleanStream&, int);
   friend CleanStream& operator<<(CleanStream&, const std::string&);
   friend CleanStream& operator<<(CleanStream&, const char*);
 
@@ -38,8 +37,5 @@ CleanStream& operator<<(CleanStream& out, T num) {
   }
   return out;
 }
-
-CleanStream& operator<<(CleanStream&, int);
-
 
 #endif
