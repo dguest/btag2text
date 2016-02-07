@@ -7,6 +7,15 @@ Reads from stdin if no file is given
 import json
 from argparse import ArgumentParser
 import sys
+from collections import Counter
+
+def _checkline(string):
+    try:
+        jdict = json.loads(string)
+    except Exception as err:
+        return False
+    if jdict:
+        return True
 
 def run():
     parser = ArgumentParser(description=__doc__)
@@ -14,18 +23,22 @@ def run():
     args = parser.parse_args()
 
     if args.in_file:
-        with open(args.in_file) as ifile:
-            string = next(ifile)
+        line_itr = ((l for l in open(args.in_file)))
     else:
-        string = next(sys.stdin)
+        line_itr = sys.stdin
 
-    try:
-        jdict = json.loads(string)
-    except Exception as err:
-        print('everthing is broken! {}'.format(str(err)))
-        exit(1)
-    if jdict:
-        print('good!')
+    lines = Counter()
+    for line in line_itr:
+        if _checkline(line) is True:
+            lines['good'] += 1
+        else:
+            sys.stderr.write("BAD: {}".format(line))
+            lines['bad'] += 1
+
+    if lines['bad']:
+        print('FAIL! {} good, {} bad'.format(lines['good'], lines['bad']))
+    else:
+        print('{} good lines!'.format(lines['good']))
 
 if __name__ == '__main__':
     run()

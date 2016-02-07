@@ -1,11 +1,11 @@
 #ifndef OUTPUT_TEMPLATES_HH
 #define OUTPUT_TEMPLATES_HH
 
-#include <sstream>
 #include <vector>
 #include <ostream>
 
 #include "ellipsis.hh"
+#include "CleanStream.hh"
 
 template<typename T>
 std::string str_from_jet(const T&);
@@ -26,7 +26,7 @@ std::string str_from_jet(const T&);
 // basic building blocks
 template<typename T, typename U = std::string>
 std::string str_from_basic_jet_pars(const T& j, const U& weight = "weight") {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(jet_pt);
   OUT_COMMA(jet_eta);
   OUT_COMMA(jet_truthflav);
@@ -35,7 +35,7 @@ std::string str_from_basic_jet_pars(const T& j, const U& weight = "weight") {
 }
 template<typename T>
 std::string str_from_ip3d(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(jet_ip3d_pb);
   OUT_COMMA(jet_ip3d_pc);
   OUT(jet_ip3d_pu);
@@ -43,7 +43,7 @@ std::string str_from_ip3d(const T& j) {
 }
 template<typename T>
 std::string str_from_ip2d(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(jet_ip2d_pb);
   OUT_COMMA(jet_ip2d_pc);
   OUT(jet_ip2d_pu);
@@ -52,7 +52,7 @@ std::string str_from_ip2d(const T& j) {
 
 template<typename T>
 std::string str_from_hl_vars(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   // MV2
   OPEN {
     OUT_COMMA(jet_mv2c00);
@@ -118,7 +118,7 @@ std::string str_from_hl_vars(const T& j) {
 // whole jet object
 template<typename T>
 std::string str_from_jet(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   out << str_from_basic_jet_pars(j) << ", ";
   out << str_from_hl_vars(j);
   return out.str();
@@ -127,7 +127,7 @@ std::string str_from_jet(const T& j) {
 // medium level stuff
 template<typename T>
 std::string str_from_jf_vertex(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(l3d);
   OUT_COMMA(sig3d);
   OUT_COMMA(ntrk);
@@ -138,7 +138,7 @@ std::string str_from_jf_vertex(const T& j) {
 
 template<typename T>
 std::string str_from_track(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(pt);
   OUT_COMMA(eta);
   OUT_COMMA(theta);
@@ -156,7 +156,7 @@ std::string str_from_track(const T& j) {
 
 template<typename T>
 std::string str_from_out_unit(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OPEN {
     out << str_from_track(j.track);
   } CLOSE;
@@ -169,7 +169,7 @@ std::string str_from_out_unit(const T& j) {
 
 template<typename T>
 std::string str_from_ip(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(d0);
   OUT_COMMA(d0sig);
   OUT_COMMA(z0);
@@ -179,7 +179,7 @@ std::string str_from_ip(const T& j) {
 
 template<typename T>
 std::string str_from_track_kinematics(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(pt);
   OUT_COMMA(eta);
   OUT(dphi_jet);
@@ -188,7 +188,7 @@ std::string str_from_track_kinematics(const T& j) {
 
 template<typename T>
 std::string str_from_track_quality(const T& j) {
-  std::stringstream out;
+  CleanStream out;
   OUT_COMMA(chi2);
   OUT_COMMA(ndf);
   OUT_COMMA(nBLHits);
@@ -207,7 +207,7 @@ std::string str_from_track_quality(const T& j) {
 
 template<typename T>
 std::string str_from_all_track_ip(const T& j) {
-  std::stringstream out;
+  CleanStream out;
 
   auto tracks = build_tracks(j);
   int n_tracks = tracks.size();
@@ -232,7 +232,7 @@ std::string str_from_all_track_ip(const T& j) {
 // more complicated output functions
 template<typename T, typename U = std::string>
 std::string str_from_ip3d_jet(const T& j, const U& weight = "weight") {
-  std::stringstream out;
+  CleanStream out;
   OPEN {
     out << str_from_basic_jet_pars(j, weight) << ", ";
     OPEN_LIST {
@@ -248,7 +248,7 @@ std::string str_from_ip3d_jet(const T& j, const U& weight = "weight") {
 
 template<typename T, typename U = std::string>
 std::string str_from_hl_jet(const T& j, const U& weight = "weight") {
-  std::stringstream out;
+  CleanStream out;
   OPEN {
     out << str_from_basic_jet_pars(j, weight) << ", ";
     OPEN {
