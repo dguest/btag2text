@@ -27,6 +27,9 @@ enum TRKORIGIN { PUFAKE=-1,
 
 struct Jet
 {
+  // event
+  double avgmu;
+
   // kinematics
   float jet_pt;
   float jet_eta;
@@ -148,6 +151,9 @@ struct JfVertex
 
 struct Track
 {
+  // event
+  double avgmu;
+
   float pt;
   float eta;
   float theta;
@@ -205,6 +211,9 @@ public:
   int size() const;
 private:
   SmartChain* m_chain;
+
+  // event
+  double avgmu;
 
   // kinematics
   std::vector<float>* jet_pt;

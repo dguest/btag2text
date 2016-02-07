@@ -82,6 +82,9 @@ Jets::Jets(SmartChain& chain):
   m_chain(&chain)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
+  // event
+  SET_BRANCH(avgmu);
+
   // kinematics
   SET_BRANCH(jet_pt);
   SET_BRANCH(jet_eta);
@@ -180,6 +183,9 @@ Jet Jets::getJet(int pos) const {
 #define COPY_MULT(var, mult) o.var = var->at(pos)*mult
 #define COPY_MULTV(var, mult) o.var = multiply<float>(var->at(pos),mult)
   Jet o;
+  // event
+  o.avgmu = avgmu;
+
   // kinematics                   // kinematics
   o.jet_pt = jet_pt->at(pos)*MeV;
   COPY(jet_eta);
@@ -311,6 +317,8 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 
     // first copy over the track parameters
     Track track;
+    track.avgmu = jet.avgmu;
+
 #define COPY(par) track.par = CHECK_AT(jet.jet_trk_ ## par, trkn)
     COPY(pt);
     COPY(eta);
