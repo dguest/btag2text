@@ -41,18 +41,18 @@ std::string str_from_ip3d(const T& j) {
   OUT(jet_ip3d_pu);
   return out.str();
 }
-
-// whole jet object
 template<typename T>
-std::string str_from_jet(const T& j) {
+std::string str_from_ip2d(const T& j) {
   std::stringstream out;
+  OUT_COMMA(jet_ip2d_pb);
+  OUT_COMMA(jet_ip2d_pc);
+  OUT(jet_ip2d_pu);
+  return out.str();
+}
 
-  out << str_from_basic_jet_pars(j) << ", ";
-
-  // OUT_COMMA(jet_phi);
-  // OUT_COMMA(jet_E);
-  // OUT_COMMA(jet_m);
-
+template<typename T>
+std::string str_from_hl_vars(const T& j) {
+  std::stringstream out;
   // MV2
   OPEN {
     OUT_COMMA(jet_mv2c00);
@@ -64,11 +64,11 @@ std::string str_from_jet(const T& j) {
 
   // high level tracking
   OPEN {
-    // OUT_COMMA(jet_ip2d_pb);
-    // OUT_COMMA(jet_ip2d_pc);
-    // OUT_COMMA(jet_ip2d_pu);
-
     // ip2d, ip3d
+    OPEN {
+      out << str_from_ip2d(j);
+    } CLOSE;
+    CS;
     OPEN {
       out << str_from_ip3d(j);
     } CLOSE;
@@ -112,40 +112,19 @@ std::string str_from_jet(const T& j) {
       OUT(jet_jf_VTXsize);
     } CLOSE;
   } CLOSE;
-
-  // // med-level jetfitter
-  // OUT_COMMA(jet_jf_vtx_chi2);
-  // OUT_COMMA(jet_jf_vtx_ndf);
-  // OUT_COMMA(jet_jf_vtx_ntrk);
-  // OUT_COMMA(jet_jf_vtx_L3D);
-  // OUT_COMMA(jet_jf_vtx_sig3D);
-
-    // med-level sv1
-    // OUT_COMMA(jet_sv1_vtx_x);
-    // OUT_COMMA(jet_sv1_vtx_y);
-    // OUT_COMMA(jet_sv1_vtx_z);
-    // jetfitter
-
-  // // track level
-  // OUT_COMMA(jet_trk_pt);
-  // OUT_COMMA(jet_trk_eta);
-  // OUT_COMMA(jet_trk_theta);
-  // OUT_COMMA(jet_trk_phi);
-  // OUT_COMMA(jet_trk_dr);
-  // OUT_COMMA(jet_trk_chi2);
-  // OUT_COMMA(jet_trk_ndf);
-  // // metrics
-  // OUT_COMMA(jet_trk_d0);
-  // OUT_COMMA(jet_trk_z0);
-  // OUT_COMMA(jet_trk_ip3d_d0);
-  // // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
-  // OUT_COMMA(jet_trk_ip3d_z0);
-  // OUT_COMMA(jet_trk_ip3d_d0sig);
-  // OUT_COMMA(jet_trk_ip3d_z0sig);
-  // OUT_COMMA(jet_trk_jf_Vertex);
   return out.str();
 }
 
+// whole jet object
+template<typename T>
+std::string str_from_jet(const T& j) {
+  std::stringstream out;
+  out << str_from_basic_jet_pars(j) << ", ";
+  out << str_from_hl_vars(j);
+  return out.str();
+}
+
+// medium level stuff
 template<typename T>
 std::string str_from_jf_vertex(const T& j) {
   std::stringstream out;
@@ -247,6 +226,9 @@ std::string str_from_all_track_ip(const T& j) {
   return out.str();
 }
 
+// _________________________________________________________________________
+// top level output functions
+
 // more complicated output functions
 template<typename T, typename U = std::string>
 std::string str_from_ip3d_jet(const T& j, const U& weight = "weight") {
@@ -263,6 +245,19 @@ std::string str_from_ip3d_jet(const T& j, const U& weight = "weight") {
   } CLOSE;
   return out.str();
 }
+
+template<typename T, typename U = std::string>
+std::string str_from_hl_jet(const T& j, const U& weight = "weight") {
+  std::stringstream out;
+  OPEN {
+    out << str_from_basic_jet_pars(j, weight) << ", ";
+    OPEN {
+      out << str_from_hl_vars(j);
+    } CLOSE;
+  } CLOSE;
+  return out.str();
+}
+
 
 #undef CS
 #undef OUT_COMMA

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
   // load info
   FileCLI cli(argc, argv, Output::NO, help);
-  SmartChain chain("bTag_AntiKt4EMTopoJets");
+  SmartChain chain(JET_COLLECTION);
   for (const auto& in: cli.in_files()) {
     chain.add(in);
   }
