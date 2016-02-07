@@ -6,7 +6,7 @@
 
 
 int main(int /*argc*/, char** /*argv*/) {
-  JetLabels jet_labels;
-  std::cout << str_from_hl_jet(jet_labels) << std::endl;
+  TerseJetLabels jet;
+  std::cout << str_from_ip3d_jet(jet, "\"weight\"") << std::endl;
   return 0;
 }
