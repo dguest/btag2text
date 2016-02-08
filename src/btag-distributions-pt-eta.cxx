@@ -48,10 +48,12 @@ void FlavorPtEtaHists::save(H5::CommonFG& out, std::string subdir) {
 }
 
 struct Jet {
+  Jet();
   std::vector<float>* pt;
   std::vector<float>* eta;
   std::vector<int>* ftl;
 };
+Jet::Jet(): pt(0), eta(0), ftl(0) {}
 
 int main(int argc, char* argv[]) {
   FileCLI cli(argc, argv);
