@@ -46,5 +46,5 @@ fi
 
 mkdir -p $OUTPUT_DIR
 echo "submitting for $NFILES files"
-BOPTS="-t 60 -p atlas_all -c 2 -o $OUTPUT_PATTERN"
+BOPTS="-t 5 -p atlas_all -c 2 -o $OUTPUT_PATTERN"
 sbatch -a 1-${NFILES} $BOPTS $RUN_PATH $ROOT_FILE_LIST $OUT_FILES
