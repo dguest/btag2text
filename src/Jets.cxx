@@ -95,6 +95,7 @@ Jets::Jets(SmartChain& chain):
   // flavor label
   SET_BRANCH(jet_truthflav);
 
+  // jet_ntrk is defined from the size of a vector later
   SET_BRANCH(jet_ip3d_ntrk);
 
   SET_BRANCH(jet_ip2d_pb);
@@ -159,7 +160,6 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_trk_ip3d_d0sig);
   SET_BRANCH(jet_trk_ip3d_z0sig);
   SET_BRANCH(jet_trk_ip3d_grade);
-  SET_BRANCH(jet_trk_jf_Vertex);
 
   SET_BRANCH(jet_trk_nInnHits);
   SET_BRANCH(jet_trk_nNextToInnHits);
@@ -172,6 +172,8 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_trk_nSCTHits);
   SET_BRANCH(jet_trk_nsharedSCTHits);
   SET_BRANCH(jet_trk_expectBLayerHit);
+
+  SET_BRANCH(jet_trk_jf_Vertex);
 
 #undef SET_BRANCH
 }
