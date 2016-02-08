@@ -1,5 +1,6 @@
 #include "FileCLI.hh"
 
+#include <cstring>
 #include <string>
 #include <fstream>
 #include <iostream>

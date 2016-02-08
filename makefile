@@ -113,12 +113,15 @@ $(BUILD)/%.o: %.cxx
 
 # root dictionary generation
 LINKDEF := $(INC)/LinkDef.h
+SEDSTR  := 's,\\\#include "\$(INC)/\(.*\)",\\\#include "\1",g'
+TMPDIR  := $(shell mktemp -d /tmp/rootbuild.XXXX)
 $(DICT)/%Dict.cxx: %.h $(LINKDEF)
 	@echo making dict $@
 	@mkdir -p $(DICT)
 	@rm -f $(DICT)/$*Dict.h $(DICT)/$*Dict.cxx
 	@rootcint $@ -c $(INC)/$*.h $(LINKDEF)
-	@sed -i '' 's,#include "$(INC)/\(.*\)",#include "\1",g' $(DICT)/$*Dict.h
+	@sed $(SEDSTR) $(DICT)/$*Dict.h > $(TMPDIR)/$*Dict.h
+	@mv -f -- $(TMPDIR)/$*Dict.h $(DICT)/$*Dict.h
 
 $(BUILD)/%Dict.o: $(DICT)/%Dict.cxx
 	@mkdir -p $(BUILD)
