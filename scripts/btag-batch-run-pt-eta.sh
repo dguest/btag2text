@@ -2,11 +2,6 @@
 
 set -eu
 
-#SBATCH -p atlas_all
-#SBATCH -t 60
-#SBATCH --mem 1500
-#SBATCH -c 2
-
 OUTPUT_DIR=$2
 
 echo "submit from $SLURM_SUBMIT_DIR, array index $SLURM_ARRAY_TASK_ID"

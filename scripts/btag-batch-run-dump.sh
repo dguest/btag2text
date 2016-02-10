@@ -4,6 +4,9 @@ set -eu
 
 OUTPUT_DIR=$2
 
+# read in some common tools
+. $(dirname $0)/batch-tools.sh
+
 echo "submit from $SLURM_SUBMIT_DIR, array index $SLURM_ARRAY_TASK_ID"
 cd $SLURM_SUBMIT_DIR
 

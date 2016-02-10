@@ -5,7 +5,7 @@ set -eu
 ROOT_DIR=root
 ROOT_FILE_LIST=root-files.txt
 RUN_SCRIPT=btag-batch-run-pt-eta.sh
-JOB_DIR=runs/job
+JOB_DIR=runs/rwt
 OUTPUT_DIR=$JOB_DIR/output
 OUTPUT_PATTERN=$OUTPUT_DIR/jobout-%j.txt
 OUT_FILES=$JOB_DIR/hists
