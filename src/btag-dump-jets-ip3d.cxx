@@ -4,9 +4,9 @@
 #include "FlavorPtEtaDistributions.hh"
 #include "output_templates.hh"
 #include "constants.hh"
+#include "unshittify.hh"
 
 #include "H5Cpp.h"
-#include "TROOT.h"
 
 #include <iostream>
 #include <limits>
@@ -20,9 +20,9 @@ std::string help = "Dump IP3D information for jets";
 // main function
 
 int main(int argc, char* argv[]) {
+  unshittify();
   // required library calls
   H5::Exception::dontPrint();
-  gROOT->ProcessLine("#include <vector>");
 
   // load info
   FileCLI cli(argc, argv, Output::NO, help);

@@ -4,9 +4,10 @@
 #include "FlavorPtEtaDistributions.hh"
 #include "output_templates.hh"
 #include "constants.hh"
+#include "unshittify.hh"
 
 #include "H5Cpp.h"
-#include "TROOT.h"
+// #include "TROOT.h"
 
 #include <iostream>
 #include <limits>
@@ -17,7 +18,7 @@ std::string help = "Dump high level information for jets";
 // main function
 
 int main(int argc, char* argv[]) {
-  gROOT->ProcessLine("#include <vector>");
+  unshittify();
   FileCLI cli(argc, argv, Output::NO, help);
 
   SmartChain chain(JET_COLLECTION);
