@@ -40,6 +40,24 @@ struct Jet
   // flavor label
   int jet_truthflav;
 
+  // cluster and calo
+  std::vector<float> jet_cluster_pt                  ;
+  std::vector<float> jet_cluster_eta                 ;
+  std::vector<float> jet_cluster_phi                 ;
+  std::vector<float> jet_cluster_e                   ;
+  std::vector<unsigned int> jet_cluster_clustersize  ;
+  std::vector<float> jet_cluster_isolation           ;
+  std::vector<float> jet_cluster_lateral             ;
+  std::vector<float> jet_cluster_longitudinal        ;
+  std::vector<float> jet_cluster_second_lambda       ;
+  std::vector<float> jet_cluster_second_r            ;
+  std::vector<float> jet_cluster_center_lambda       ;
+  std::vector<float> jet_cluster_center_mag          ;
+  std::vector<float> jet_cluster_eng_pos             ;
+  std::vector<float> jet_cluster_em_probability      ;
+  std::vector<float> jet_cluster_eng_frac_max        ;
+  std::vector<float> jet_cluster_first_eng_dens      ;
+
   // track counts
   int jet_ntrk;
   int jet_ip3d_ntrk;
@@ -149,6 +167,26 @@ struct JfVertex
   float sig3d;
 };
 
+struct Cluster
+{
+  float pt                  ;
+  float eta                 ;
+  float phi                 ;
+  float e                   ;
+  unsigned int clustersize  ;
+  float isolation           ;
+  float lateral             ;
+  float longitudinal        ;
+  float second_lambda       ;
+  float second_r            ;
+  float center_lambda       ;
+  float center_mag          ;
+  float eng_pos             ;
+  float em_probability      ;
+  float eng_frac_max        ;
+  float first_eng_dens      ;
+};
+
 struct Track
 {
   // event
@@ -224,6 +262,24 @@ private:
 
   // flavor label
   std::vector<int>* jet_truthflav;
+
+  // cluster and calo
+  std::vector<std::vector<float> >* jet_cluster_pt                  ;
+  std::vector<std::vector<float> >* jet_cluster_eta                 ;
+  std::vector<std::vector<float> >* jet_cluster_phi                 ;
+  std::vector<std::vector<float> >* jet_cluster_e                   ;
+  std::vector<std::vector<unsigned int> >* jet_cluster_clustersize  ;
+  std::vector<std::vector<float> >* jet_cluster_isolation           ;
+  std::vector<std::vector<float> >* jet_cluster_lateral             ;
+  std::vector<std::vector<float> >* jet_cluster_longitudinal        ;
+  std::vector<std::vector<float> >* jet_cluster_second_lambda       ;
+  std::vector<std::vector<float> >* jet_cluster_second_r            ;
+  std::vector<std::vector<float> >* jet_cluster_center_lambda       ;
+  std::vector<std::vector<float> >* jet_cluster_center_mag          ;
+  std::vector<std::vector<float> >* jet_cluster_eng_pos             ;
+  std::vector<std::vector<float> >* jet_cluster_em_probability      ;
+  std::vector<std::vector<float> >* jet_cluster_eng_frac_max        ;
+  std::vector<std::vector<float> >* jet_cluster_first_eng_dens      ;
 
   // track counts
   std::vector<int>* jet_ip3d_ntrk;
@@ -317,6 +373,8 @@ private:
 
 std::vector<TrkUnit> build_tracks(const Jet& jet);
 std::ostream& operator<<(std::ostream&, Jets&);
+
+std::vector<Cluster> build_clusters(const Jet& jet);
 
 // get named maps of variables (last one supplies all)
 std::map<std::string, double> get_pt_eta_map(const Jet& jet);
