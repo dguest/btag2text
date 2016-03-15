@@ -5,6 +5,7 @@
 #pragma link off all functions;
 #pragma link C++ nestedclass;
 #pragma link C++ class std::vector<std::vector<int> >+;
+#pragma link C++ class std::vector<std::vector<unsigned> >+;
 #pragma link C++ class std::vector<std::vector<float> >+;
 
 #endif // __CINT__

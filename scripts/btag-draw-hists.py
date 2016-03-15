@@ -12,11 +12,12 @@ import numpy as np
 import os
 
 _default_output = "plots"
-_labels = {0: "light", 4: "charm", 5: "bottom"}
+_labels = {0: "light", 4: "charm", 5: "bottom", -1: "???"}
 red = (1, 0, 0, 0.8)
 green = (0, 0.5, 0, 0.8)
 blue = (0, 0, 1, 0.8)
-_colors = {0: blue, 4: green, 5: red}
+black = (0, 0, 0, 1.0)
+_colors = {0: blue, 4: green, 5: red, -1: black}
 _force_log = {'pt', 'd0', 'd0sig', 'z0', 'z0sig', 'd0_signed'}
 
 def _get_args():
@@ -42,6 +43,8 @@ def _get_hists(ds):
 def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
     hists = []
     for ftl, name in _labels.items():
+        if not str(ftl) in hist_dict:
+            continue
         hist = hist_dict[str(ftl)][var]
         hist.color = _colors[ftl]
         hist.label = name
@@ -63,7 +66,7 @@ def run():
             subdirs[hist_type] = _get_hists(hists[hist_type])
 
     for hist_type, hists in subdirs.items():
-        for hname in hists['0']:
+        for hname in hists.get('0') or next(iter(hists.values())):
             output_path = os.path.join(args.output_dir, hist_type)
             _draw_hists(hists, output_path, hname, log=args.log, ext=args.ext)
             if hname in _force_log and not args.log:

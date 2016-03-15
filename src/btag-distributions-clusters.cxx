@@ -1,14 +1,16 @@
 #include "FileCLI.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
-#include "FlavorPtEtaDistributions.hh"
 #include "constants.hh"
 #include "hist_tools.hh"
+#include "get_tree.hh"
+#include "math.hh"
 
 #include "ndhist/Histogram.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
+#include "TFile.h"
 
 #include <iostream>
 
@@ -24,6 +26,17 @@ private:
   Histogram eta;
   Histogram phi;
   Histogram e;
+};
+
+class ClusterImages
+{
+public:
+  ClusterImages();
+  void fill(const Cluster& cluster, const Jet& jet);
+  void save(H5::CommonFG& out) const;
+  void save(H5::CommonFG& out, std::string subdir) const;
+private:
+  Histogram image;
 };
 
 class FlavoredHists
@@ -42,29 +55,28 @@ private:
 int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
   FileCLI cli(argc, argv);
+  std::string tree_name = get_tree(cli.in_files().front());
 
-  SmartChain chain(JET_COLLECTION);
+  SmartChain chain(tree_name);
   for (const auto& in: cli.in_files()) {
     chain.add(in);
   }
   Jets jets(chain);
   int n_entries = chain.GetEntries();
+  // int n_entries = 1;
   std::cout << n_entries << " entries in chain" << std::endl;
 
-  require(REWEIGHT_FILE);
-  FlavorPtEtaDistributions pt_eta_reweight(
-    H5::H5File(REWEIGHT_FILE, H5F_ACC_RDONLY));
   FlavoredHists hists;
+  ClusterImages images;
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      auto jet_vars = get_map(jet);
-      double weight = pt_eta_reweight.get(jet_vars, jet.jet_truthflav);
       for (const auto& cluster: build_clusters(jet)) {
-        hists.fill(cluster, jet.jet_truthflav, weight);
+        hists.fill(cluster, jet.jet_truthflav);
+        images.fill(cluster, jet);
       }
     }
   }
@@ -73,7 +85,9 @@ int main(int argc, char* argv[]) {
   using namespace grp;
   H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
   auto hist_group = out_file.createGroup(HIST);
-  hists.save(hist_group, REWEIGHTED);
+  hists.save(hist_group, RAW);
+  auto imgroup = out_file.createGroup("images");
+  images.save(imgroup, "raw");
 }
 
 // ______________________________________________________________________
@@ -111,6 +125,27 @@ void ClusterHists::save(H5::CommonFG& out, std::string subdir) const {
 }
 
 // ________________________________________________________________________
+// cluster images
+const double JET_R = 1.0;
+ClusterImages::ClusterImages():
+  image({{"deta", 100, -JET_R, JET_R}, {"dphi", 100, -JET_R, JET_R}})
+{}
+void ClusterImages::fill(const Cluster& cluster, const Jet& jet) {
+  double dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
+  std::map<std::string, double> eta_phi {
+    {"deta", cluster.eta - jet.jet_eta}, {"dphi", dphi} };
+  image.fill(eta_phi);
+}
+void ClusterImages::save(H5::CommonFG& out) const {
+#define BYNAME(name) name.write_to(out, #name)
+  BYNAME(image);
+#undef BYNAME
+}
+void ClusterImages::save(H5::CommonFG& out, std::string subdir) const {
+  H5::Group group(out.createGroup(subdir));
+  save(group);
+}
+// ________________________________________________________________________
 // flavored hists
 
 void FlavoredHists::fill(const Cluster& track, int ftl, double weight) {
@@ -127,3 +162,4 @@ void FlavoredHists::save(H5::CommonFG& out, std::string name) const {
   H5::Group group(out.createGroup(name));
   save(group);
 }
+
