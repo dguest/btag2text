@@ -20,7 +20,8 @@ const int N_BINS = 200;
 
 // constant IO stuff
 static const char* REWEIGHT_FILE = "reweight.h5";
-static const char* JET_COLLECTION = "bTag_AntiKt4EMTopoJets";
+// static const char* JET_COLLECTION = "bTag_AntiKt4EMTopoJets";
+static const char* JET_COLLECTION = "bTag_AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets";
 namespace grp {
   static const char* HIST = "hists";
   static const char* COV = "cov";

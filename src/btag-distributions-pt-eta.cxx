@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
   FileCLI cli(argc, argv);
 
   // setup chain
-  TChain chain("bTag_AntiKt4EMTopoJets");
+  TChain chain(JET_COLLECTION);
   for (const auto& in: cli.in_files()) {
     chain.Add(in.c_str());
   }
