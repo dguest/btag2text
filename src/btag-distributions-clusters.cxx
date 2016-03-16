@@ -5,6 +5,7 @@
 #include "hist_tools.hh"
 #include "get_tree.hh"
 #include "math.hh"
+#include "cluster_rotation.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -32,7 +33,7 @@ class ClusterImages
 {
 public:
   ClusterImages();
-  void fill(const Cluster& cluster, const Jet& jet);
+  void fill(const std::vector<Cluster>& points, const Jet& jet);
   void save(H5::CommonFG& out) const;
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
@@ -74,10 +75,11 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      for (const auto& cluster: build_clusters(jet)) {
+      auto clusters = build_clusters(jet);
+      for (const auto& cluster: clusters) {
         hists.fill(cluster, jet.jet_truthflav);
-        images.fill(cluster, jet);
       }
+      images.fill(clusters, jet);
     }
   }
 
@@ -128,13 +130,21 @@ void ClusterHists::save(H5::CommonFG& out, std::string subdir) const {
 // cluster images
 const double JET_R = 1.0;
 ClusterImages::ClusterImages():
-  image({{"deta", 100, -JET_R, JET_R}, {"dphi", 100, -JET_R, JET_R}})
+  image({{"x", 100, -JET_R, JET_R}, {"y", 100, -JET_R, JET_R}})
 {}
-void ClusterImages::fill(const Cluster& cluster, const Jet& jet) {
-  double dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
-  std::map<std::string, double> eta_phi {
-    {"deta", cluster.eta - jet.jet_eta}, {"dphi", dphi} };
-  image.fill(eta_phi);
+void ClusterImages::fill(const std::vector<Cluster>& clusters, const Jet& jet) {
+  std::vector<Point> points;
+  for (const auto& cluster: clusters) {
+    double dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
+    double deta = cluster.eta - jet.jet_eta;
+    points.push_back({deta, dphi, cluster.e});
+  }
+  const auto rotated_points = get_points_along_principal(points);
+  for (const auto& point: rotated_points) {
+    std::map<std::string, double> eta_phi {
+      {"x", point.x}, {"y", point.y} };
+    image.fill(eta_phi, point.w);
+  }
 }
 void ClusterImages::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
