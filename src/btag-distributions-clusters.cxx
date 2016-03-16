@@ -32,12 +32,13 @@ private:
 class ClusterImages
 {
 public:
-  ClusterImages();
+  ClusterImages(double mass);
   void fill(const std::vector<Cluster>& points, const Jet& jet);
   void save(H5::CommonFG& out) const;
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
   Histogram image;
+  double m_mass;
 };
 
 class FlavoredHists
@@ -68,7 +69,7 @@ int main(int argc, char* argv[]) {
   std::cout << n_entries << " entries in chain" << std::endl;
 
   FlavoredHists hists;
-  ClusterImages images;
+  ClusterImages images(125e3);
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
@@ -129,15 +130,17 @@ void ClusterHists::save(H5::CommonFG& out, std::string subdir) const {
 // ________________________________________________________________________
 // cluster images
 const double JET_R = 1.0;
-ClusterImages::ClusterImages():
-  image({{"x", 100, -JET_R, JET_R}, {"y", 100, -JET_R, JET_R}})
+ClusterImages::ClusterImages(double mass):
+  image({{"x", 100, -JET_R, JET_R}, {"y", 100, -JET_R, JET_R}}),
+  m_mass(mass)
 {}
 void ClusterImages::fill(const std::vector<Cluster>& clusters, const Jet& jet) {
   std::vector<Point> points;
   for (const auto& cluster: clusters) {
     double dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
     double deta = cluster.eta - jet.jet_eta;
-    points.push_back({deta, dphi, cluster.e});
+    double jet_r = 2 * m_mass / jet.jet_pt;
+    points.push_back({deta / jet_r, dphi / jet_r, cluster.e});
   }
   const auto rotated_points = get_points_along_principal(points);
   for (const auto& point: rotated_points) {
