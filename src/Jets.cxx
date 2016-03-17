@@ -220,7 +220,7 @@ Jet Jets::getJet(int pos) const {
   o.jet_cluster_pt = multiply<float>(jet_cluster_pt->at(pos),MeV);
   COPY(jet_cluster_eta);
   COPY(jet_cluster_phi);
-  COPY(jet_cluster_e);
+  o.jet_cluster_e = multiply<float>(jet_cluster_e->at(pos), MeV);
   COPY(jet_cluster_clustersize        );
   COPY(jet_cluster_isolation          );
   COPY(jet_cluster_lateral            );

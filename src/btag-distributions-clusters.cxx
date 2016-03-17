@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
   std::cout << n_entries << " entries in chain" << std::endl;
 
   FlavoredHists hists;
-  ClusterImages images(125e3);
+  ClusterImages images(125*GeV);
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
