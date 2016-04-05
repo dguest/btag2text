@@ -37,6 +37,9 @@ struct Jet
   float jet_E;
   float jet_m;
 
+  // cleaning
+  float jet_JVT;
+
   // flavor label
   int jet_truthflav;
 
@@ -221,6 +224,9 @@ private:
   std::vector<float>* jet_phi;
   std::vector<float>* jet_E;
   std::vector<float>* jet_m;
+
+  // cleaning
+  std::vector<float>* jet_JVT;
 
   // flavor label
   std::vector<int>* jet_truthflav;

@@ -92,6 +92,8 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_E);
   SET_BRANCH(jet_m);
 
+  SET_BRANCH(jet_JVT);
+
   // flavor label
   SET_BRANCH(jet_truthflav);
 
@@ -194,6 +196,8 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_phi);
   o.jet_E = jet_E->at(pos)*MeV;
   o.jet_m = jet_m->at(pos)*MeV;
+
+  COPY(jet_JVT);
 
   // flavor label                 // flavor label
   COPY(jet_truthflav);

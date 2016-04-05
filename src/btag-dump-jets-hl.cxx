@@ -5,6 +5,7 @@
 #include "output_templates.hh"
 #include "constants.hh"
 #include "unshittify.hh"
+#include "select_jet.hh"
 
 #include "H5Cpp.h"
 // #include "TROOT.h"
@@ -38,6 +39,7 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
+      if (! select_jet(jet) ) continue;
       auto pt_eta = get_pt_eta_map(jet);
       double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
       std::cout << str_from_hl_jet(jet, weight) << std::endl;
