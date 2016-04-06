@@ -5,7 +5,7 @@
 #include <cmath>
 
 namespace {
-  bool jvt_check(const Jet& jtet) {
+  bool jvt_check(const Jet& jet) {
     double aeta = std::abs(jet.jet_eta);
     double pt = jet.jet_pt;
     double jvt = jet.jet_JVT;
