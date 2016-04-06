@@ -105,17 +105,8 @@ $(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(BUILD)/$(EXE_PREFIX)%.o
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
 	@$(CXX) -o $@ $^ $(LIBS) $(LDFLAGS)
+	@cp $(DICT)/*.pcm $(OUTPUT)
 
-# compile rule
-$(BUILD)/%Dict.o: $(DICT)/%Dict.cxx
-	@mkdir -p $(BUILD)
-	@echo compiling dict $@
-	@$(CXX) -I. $(CXXFLAGS) $(ROOTCFLAGS) -c $< -o $@
-
-$(BUILD)/%.o: %.cxx
-	@echo compiling $<
-	@mkdir -p $(BUILD)
-	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # root dictionary generation
 LINKDEF := $(INC)/LinkDef.h
@@ -123,6 +114,18 @@ $(DICT)/%Dict.cxx: %.h $(LINKDEF)
 	@echo making dict $@
 	@mkdir -p $(DICT)
 	@rootcint -f $@ -c -I$(INC) $(INC)/$*.h $(LINKDEF)
+
+$(BUILD)/%Dict.o: $(DICT)/%Dict.cxx
+	@mkdir -p $(BUILD)
+	@echo compiling dict $@
+	@$(CXX) -I. $(CXXFLAGS) $(ROOTCFLAGS) -c $< -o $@
+
+# compile rule
+$(BUILD)/%.o: %.cxx
+	@echo compiling $<
+	@mkdir -p $(BUILD)
+	@$(CXX) -c $(CXXFLAGS) $< -o $@
+
 
 # use auto dependency generation
 ALLOBJ       := $(GEN_OBJ)
