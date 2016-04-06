@@ -4,6 +4,7 @@
 #include "FlavorPtEtaDistributions.hh"
 #include "constants.hh"
 #include "hist_tools.hh"
+#include "select_jet.hh"
 
 #include "ndhist/Histogram.hh"
 #include "covol/Covariance.hh"
@@ -17,6 +18,8 @@
 const double MAX_VX_MASS = 10*GeV;
 const double JET_WIDTH = 0.5;
 const double MAX_SIGNIFICANCE = 50;
+const double MV2_HIGH = 1.00001;
+const double MV2_LOW = -MV2_HIGH;
 
 class JetHists
 {
@@ -99,6 +102,7 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
+      if (! select_jet(jet) ) continue;
       hists.fill(jet);
       auto jet_vars = get_map(jet);
       double weight = pt_eta_reweight.get(jet_vars, jet.jet_truthflav);
@@ -125,10 +129,10 @@ int main(int argc, char* argv[]) {
 
 JetHists::JetHists():
   // MV2
-  ZERO_ONE(mv2c00),
-  ZERO_ONE(mv2c10),
-  ZERO_ONE(mv2c20),
-  ZERO_ONE(mv2c100),
+  RANGE(mv2c00, MV2_LOW, MV2_HIGH),
+  RANGE(mv2c10, MV2_LOW, MV2_HIGH),
+  RANGE(mv2c20, MV2_LOW, MV2_HIGH),
+  RANGE(mv2c100,MV2_LOW, MV2_HIGH),
 
   // IP3D
   ZERO_ONE(ip3d_pu),
