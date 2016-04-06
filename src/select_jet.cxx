@@ -11,7 +11,7 @@ namespace {
     double jvt = jet.jet_JVT;
     if (aeta < 2.4 && pt > 20*GeV && pt < 60*GeV) {
       if (jvt > 0.59) return true;
-      else return false;
+      return false;
     } else {
       return true;
     }

@@ -4,6 +4,7 @@
 #include "FlavorPtEtaDistributions.hh"
 #include "constants.hh"
 #include "hist_tools.hh"
+#include "select_jet.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -90,6 +91,7 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
+      if (! select_jet(jet) ) continue;
       auto jet_vars = get_map(jet);
       double weight = pt_eta_reweight.get(jet_vars, jet.jet_truthflav);
       for (const auto& track_unit: build_tracks(jet)) {
