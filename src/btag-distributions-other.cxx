@@ -40,6 +40,7 @@ private:
 
   Histogram ip3d_ntrk;
   Histogram ntrk;
+  Histogram JVT;
 
   // Histogram sv1_ntrkj; // never seems to exist...
   Histogram sv1_ntrkv;
@@ -141,6 +142,7 @@ JetHists::JetHists():
 
   COUNT(ip3d_ntrk, 30),
   COUNT(ntrk, 30),
+  ZERO_ONE(JVT),
 
   // SV1
   COUNT(sv1_ntrkv, 20),
@@ -185,6 +187,8 @@ void JetHists::fill(const Jet& jet, double weight) {
   BYNAME(ip3d_ntrk);
   BYNAME(ntrk);
 
+  BYNAME(JVT);
+
   // BYNAME(sv1_ntrkj);
   BYNAME(sv1_ntrkv);
   BYNAME(sv1_n2t);
@@ -223,6 +227,8 @@ void JetHists::save(H5::CommonFG& out) const {
 
   BYNAME(ip3d_ntrk);
   BYNAME(ntrk);
+
+  BYNAME(JVT);
 
 // BYNAME(sv1_ntrkj);
   BYNAME(sv1_ntrkv);
