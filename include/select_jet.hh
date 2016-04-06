@@ -1,7 +1,7 @@
 #ifndef SELECT_JET_HH
 #define SELECT_JET_HH
 
-class Jet;
+struct Jet;
 
 bool select_jet(const Jet&);
 
