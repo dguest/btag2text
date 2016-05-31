@@ -258,6 +258,22 @@ std::string str_from_hl_jet(const T& j, const U& weight = "weight") {
   return out.str();
 }
 
+template<typename T, typename U = std::string>
+std::string str_from_all_jet(const T& j, const U& weight = "weight") {
+  CleanStream out;
+  OPEN {
+    out << str_from_basic_jet_pars(j, weight) << ", ";
+    OPEN {
+      out << str_from_ip3d(j);
+    } CLOSE; CS;
+    OPEN {
+      out << str_from_hl_vars(j);
+    } CLOSE;
+  } CLOSE;
+  return out.str();
+}
+
+
 
 #undef CS
 #undef OUT_COMMA
