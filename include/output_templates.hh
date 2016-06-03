@@ -263,6 +263,10 @@ std::string str_from_all_jet(const T& j, const U& weight = "weight") {
   CleanStream out;
   OPEN {
     out << str_from_basic_jet_pars(j, weight) << ", ";
+    OPEN_LIST {
+      out << str_from_all_track_ip(j);
+    } CLOSE_LIST;
+    CS;
     OPEN {
       out << str_from_ip3d(j);
     } CLOSE; CS;
