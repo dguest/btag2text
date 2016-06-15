@@ -20,7 +20,7 @@ const double JET_WIDTH = 0.5;
 const double MAX_SIGNIFICANCE = 50;
 const double MV2_HIGH = 1.00001;
 const double MV2_LOW = -MV2_HIGH;
-const int MV2_2D_BINS = 200;
+const int MV2_2D_BINS = 2000;
 
 class JetHists
 {
