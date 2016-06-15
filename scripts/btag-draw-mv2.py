@@ -66,7 +66,7 @@ def run():
 
     signal = subdirs['raw']['5']['mv2']
     bg = subdirs['raw']['0']['mv2']
-    bg.hist += subdirs['raw']['4']['mv2'].hist * 10
+    bg.hist += subdirs['raw']['4']['mv2'].hist * 1.0
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir)
     with Canvas(os.path.join(args.output_dir, 'test.pdf')) as can:
