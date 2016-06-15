@@ -66,7 +66,7 @@ def run():
 
     signal = subdirs['raw']['5']['mv2']
     bg = subdirs['raw']['0']['mv2']
-    bg += subdirs['raw']['4']['mv2']
+    bg.hist += subdirs['raw']['4']['mv2'].hist * 10
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir)
     with Canvas(os.path.join(args.output_dir, 'test.pdf')) as can:
@@ -85,14 +85,22 @@ def run():
 
     valid = np.isfinite(sort_roc['rej'])
     sort_roc = sort_roc[valid]
-    cum_max = np.maximum.accumulate(sort_roc['rej'][::-1])[::-1]
 
+    print('plotting')
+    cum_max = np.maximum.accumulate(sort_roc['rej'][::-1])[::-1]
     high_index = cum_max == sort_roc['rej']
     with Canvas(os.path.join(args.output_dir, 'roc_raw.pdf')) as can:
-        can.ax.plot(sort_roc['eff'], sort_roc['rej'])
-        can.ax.plot(sort_roc['eff'], cum_max)
-        can.ax.plot(sort_roc['eff'][high_index], sort_roc['rej'][high_index])
+        can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
+        can.ax.plot(sort_roc['eff'][high_index],
+                    sort_roc['rej'][high_index], label='upper points')
         can.ax.set_yscale('log')
+        can.ax.set_xlabel(r'$b$ efficiency')
+        can.ax.set_ylabel(r'inclusive bg rejection')
+        can.ax.legend()
+
+    print('plotting cut path')
+    with Canvas(os.path.join(args.output_dir, 'cut_scatter.pdf')) as can:
+        can.ax.plot(sort_roc['binx'][high_index], sort_roc['biny'][high_index])
 
 if __name__ == '__main__':
     run()
