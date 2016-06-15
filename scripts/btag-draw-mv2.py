@@ -72,6 +72,7 @@ def run():
     with Canvas(os.path.join(args.output_dir, 'test.pdf')) as can:
         draw2d(can, signal, log=True)
 
+    # calculate 2d roc
     eff = _eff(_cumsum(signal.hist))
     rej = _reg(_cumsum(bg.hist))
     dtype = [('eff', float), ('rej', float), ('binx', int), ('biny', int)]
@@ -82,9 +83,17 @@ def run():
     roc_array['binx'] = np.arange(0, eff.shape[0])[:, None]
     roc_array['biny'] = np.arange(0, eff.shape[1])[None, :]
     sort_roc = np.sort(roc_array.flatten(), order='eff')
-
     valid = np.isfinite(sort_roc['rej'])
     sort_roc = sort_roc[valid]
+
+    # calculate 1d roc
+    roc_tups = {}
+    for tagger in ['mv2c10', 'mv2c20']:
+        eff = _eff(subdirs['raw']['5'][tagger].hist[::-1].cumsum())
+        bg = subdirs['raw']['0'][tagger].hist
+        bg += subdirs['raw']['4'][tagger].hist
+        rej = _reg(bg[::-1].cumsum())
+        roc_tups[tagger] = (eff, rej)
 
     def op(base):
         return os.path.join(args.output_dir, '{}{}'.format(base, args.ext))
@@ -96,6 +105,8 @@ def run():
         can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
         can.ax.plot(sort_roc['eff'][high_index],
                     sort_roc['rej'][high_index], label='upper points')
+        for tagger, (eff, rej) in roc_tups.items():
+            can.ax.plot(eff, rej, label=tagger)
         can.ax.set_yscale('log')
         can.ax.set_xlabel(r'$b$ efficiency')
         can.ax.set_ylabel(r'inclusive bg rejection')
