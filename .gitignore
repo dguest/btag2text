@@ -3,6 +3,7 @@
 *.json
 *.txt
 *.pdf
+*.png
 .DS_Store
 __pycache__
 /build/

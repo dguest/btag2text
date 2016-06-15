@@ -86,10 +86,13 @@ def run():
     valid = np.isfinite(sort_roc['rej'])
     sort_roc = sort_roc[valid]
 
+    def op(base):
+        return os.path.join(args.output_dir, '{}{}'.format(base, args.ext))
+
     print('plotting')
     cum_max = np.maximum.accumulate(sort_roc['rej'][::-1])[::-1]
     high_index = cum_max == sort_roc['rej']
-    with Canvas(os.path.join(args.output_dir, 'roc_raw.pdf')) as can:
+    with Canvas(op('roc_raw')) as can:
         can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
         can.ax.plot(sort_roc['eff'][high_index],
                     sort_roc['rej'][high_index], label='upper points')
@@ -99,7 +102,7 @@ def run():
         can.ax.legend()
 
     print('plotting cut path')
-    with Canvas(os.path.join(args.output_dir, 'cut_scatter.pdf')) as can:
+    with Canvas(op('cut_scatter')) as can:
         can.ax.plot(sort_roc['binx'][high_index], sort_roc['biny'][high_index])
 
 if __name__ == '__main__':
