@@ -102,7 +102,7 @@ def run():
     cum_max = np.maximum.accumulate(sort_roc['rej'][::-1])[::-1]
     high_index = cum_max == sort_roc['rej']
     with Canvas(op('roc_raw')) as can:
-        can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
+        # can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
         can.ax.plot(sort_roc['eff'][high_index],
                     sort_roc['rej'][high_index], label='upper points')
         for tagger, (eff, rej) in roc_tups.items():
@@ -110,7 +110,7 @@ def run():
         can.ax.set_yscale('log')
         can.ax.set_xlabel(r'$b$ efficiency')
         can.ax.set_ylabel(r'inclusive bg rejection')
-        can.ax.legend()
+        can.ax.legend(framealpha=0)
 
     print('plotting cut path')
     with Canvas(op('cut_scatter')) as can:
