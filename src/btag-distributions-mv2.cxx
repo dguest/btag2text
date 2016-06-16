@@ -5,6 +5,7 @@
 #include "constants.hh"
 #include "hist_tools.hh"
 #include "select_jet.hh"
+#include "get_tree.hh"
 
 #include "ndhist/Histogram.hh"
 // #include "covol/Covariance.hh"
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
   gROOT->ProcessLine("#include <vector>");
   FileCLI cli(argc, argv);
 
-  SmartChain chain(JET_COLLECTION);
+  SmartChain chain(get_tree(cli.in_files().at(0)));
   for (const auto& in: cli.in_files()) {
     chain.add(in);
   }
