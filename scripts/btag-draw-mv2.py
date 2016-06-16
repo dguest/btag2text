@@ -55,7 +55,13 @@ def _reg(arr):
 def _eff(arr):
     return arr / arr.max()
 
+def _ax_cuts(axis, n_bins):
+    cuts = np.linspace(axis.lims[1], axis.lims[0], n_bins - 1)
+    return np.concatenate((cuts, [np.inf]))
+
 # main run func
+U_WT = 1.0
+C_WT = 1.0
 def run():
     args = _get_args()
     subdirs = {}
@@ -66,7 +72,7 @@ def run():
 
     signal = subdirs['raw']['5']['mv2']
     bg = subdirs['raw']['0']['mv2']
-    bg.hist += subdirs['raw']['4']['mv2'].hist * 1.0
+    bg.hist = subdirs['raw']['4']['mv2'].hist * C_WT + bg.hist * U_WT
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir)
     with Canvas(os.path.join(args.output_dir, 'test.pdf')) as can:
@@ -75,13 +81,15 @@ def run():
     # calculate 2d roc
     eff = _eff(_cumsum(signal.hist))
     rej = _reg(_cumsum(bg.hist))
-    dtype = [('eff', float), ('rej', float), ('binx', int), ('biny', int)]
+    dtype = [('eff', float), ('rej', float),
+             ('mv2c100', float), ('mv2c00', float)]
     roc_array = np.zeros(eff.shape, dtype=dtype)
     roc_array['eff'] = eff
     roc_array['rej'] = rej
-    # TODO: fix (or check) this indexing
-    roc_array['binx'] = np.arange(0, eff.shape[0])[:, None]
-    roc_array['biny'] = np.arange(0, eff.shape[1])[None, :]
+    # index mv2 cuts
+    axes = signal.axes
+    roc_array[axes[0].name] = _ax_cuts(axes[0], eff.shape[0])[:, None]
+    roc_array[axes[1].name] = _ax_cuts(axes[1], eff.shape[1])[None, :]
     sort_roc = np.sort(roc_array.flatten(), order='eff')
     valid = np.isfinite(sort_roc['rej'])
     sort_roc = sort_roc[valid]
@@ -91,7 +99,7 @@ def run():
     for tagger in ['mv2c10', 'mv2c20']:
         eff = _eff(subdirs['raw']['5'][tagger].hist[::-1].cumsum())
         bg = subdirs['raw']['0'][tagger].hist
-        bg += subdirs['raw']['4'][tagger].hist
+        bg = subdirs['raw']['4'][tagger].hist * C_WT + bg * U_WT
         rej = _reg(bg[::-1].cumsum())
         roc_tups[tagger] = (eff, rej)
 
@@ -100,7 +108,9 @@ def run():
 
     print('plotting')
     cum_max = np.maximum.accumulate(sort_roc['rej'][::-1])[::-1]
-    high_index = cum_max == sort_roc['rej']
+    high_index = (cum_max == sort_roc['rej'])
+    next_point_lower = (cum_max[:-1] > cum_max[1:])
+    high_index[~next_point_lower] = False
     with Canvas(op('roc_raw')) as can:
         # can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
         can.ax.plot(sort_roc['eff'][high_index],
@@ -114,7 +124,25 @@ def run():
 
     print('plotting cut path')
     with Canvas(op('cut_scatter')) as can:
-        can.ax.plot(sort_roc['binx'][high_index], sort_roc['biny'][high_index])
+        x, y = axes
+        can.ax.plot(sort_roc[x.name][high_index],
+                    sort_roc[y.name][high_index],
+                    marker=None, linestyle='-')
+        can.ax.set_xlabel(x.name)
+        can.ax.set_ylabel(y.name)
+
+    print('plotting cut vs eff')
+    with Canvas(op('cut_vs_eff')) as can:
+        x, y = axes
+        can.ax.plot(sort_roc['eff'][high_index],
+                    sort_roc[x.name][high_index],
+                    label=x.name)
+        can.ax.plot(sort_roc['eff'][high_index],
+                    sort_roc[y.name][high_index],
+                    label=y.name)
+        can.ax.set_xlabel(r'$b$-efficiency')
+        can.ax.set_ylabel(r'cut value')
+        can.ax.legend(framealpha=0)
 
 if __name__ == '__main__':
     run()
