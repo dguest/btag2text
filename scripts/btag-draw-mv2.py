@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make b-tagging reweighting histograms
+Make mv2 ROC curves
 """
 from ndhist.hist import Hist
 from ndhist.hist import HistError
@@ -17,8 +17,6 @@ red = (1, 0, 0, 0.8)
 green = (0, 0.5, 0, 0.8)
 blue = (0, 0, 1, 0.8)
 _colors = {0: blue, 4: green, 5: red}
-_force_log = {'pt', 'd0', 'd0sig', 'z0', 'z0sig', 'd0_signed',
-              'JVT', 'mv1c00', 'mv1c10', 'mv1c20'}
 
 def _get_args():
     d = "default: %(default)s"
@@ -62,6 +60,7 @@ def _ax_cuts(axis, n_bins):
 # main run func
 U_WT = 1.0
 C_WT = 1.0
+MIN_EFF = 0.5
 def run():
     args = _get_args()
     subdirs = {}
@@ -111,15 +110,20 @@ def run():
     high_index = (cum_max == sort_roc['rej'])
     next_point_lower = (cum_max[:-1] > cum_max[1:])
     high_index[~next_point_lower] = False
+    high_eff = sort_roc['eff'] > MIN_EFF
     with Canvas(op('roc_raw')) as can:
         # can.ax.plot(sort_roc['eff'], sort_roc['rej'], label='all points')
-        can.ax.plot(sort_roc['eff'][high_index],
-                    sort_roc['rej'][high_index], label='upper points')
+        can.ax.plot(sort_roc['eff'][high_index & high_eff],
+                    sort_roc['rej'][high_index & high_eff],
+                    label='upper points')
         for tagger, (eff, rej) in roc_tups.items():
-            can.ax.plot(eff, rej, label=tagger)
+            high_eff = eff > MIN_EFF
+            can.ax.plot(eff[high_eff], rej[high_eff], label=tagger)
         can.ax.set_yscale('log')
         can.ax.set_xlabel(r'$b$ efficiency')
         can.ax.set_ylabel(r'inclusive bg rejection')
+        can.ax.grid(True)
+        can.ax.set_xlim(0.5, 1.0)
         can.ax.legend(framealpha=0)
 
     print('plotting cut path')
