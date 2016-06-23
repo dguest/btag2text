@@ -1,5 +1,6 @@
 #include "FileCLI.hh"
 #include "constants.hh"
+#include "get_tree.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]) {
   FileCLI cli(argc, argv);
 
   // setup chain
-  TChain chain("bTag_AntiKt4EMTopoJets");
+  TChain chain(get_tree(cli.in_files().at(0)).c_str());
   for (const auto& in: cli.in_files()) {
     chain.Add(in.c_str());
   }
