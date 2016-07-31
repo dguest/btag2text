@@ -8,20 +8,25 @@
 #include "select_jet.hh"
 
 #include "H5Cpp.h"
-// #include "TROOT.h"
 
 #include <iostream>
 #include <limits>
 
-std::string help = "Dump high level information for jets";
+// const double GeV = 1000;
+// const double MAX_PT = 1000*GeV;
+
+std::string help = "Dump IP3D information for jets";
 
 // _____________________________________________________________________
 // main function
 
 int main(int argc, char* argv[]) {
   unshittify();
-  FileCLI cli(argc, argv, Output::NO, help);
+  // required library calls
+  H5::Exception::dontPrint();
 
+  // load info
+  FileCLI cli(argc, argv, Output::NO, help);
   SmartChain chain(JET_COLLECTION);
   for (const auto& in: cli.in_files()) {
     chain.add(in);
@@ -42,7 +47,7 @@ int main(int argc, char* argv[]) {
       if (! select_jet(jet) ) continue;
       auto pt_eta = get_pt_eta_map(jet);
       double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
-      std::cout << str_from_hl_jet(jet, weight) << std::endl;
+      std::cout << str_from_all_jet(jet, weight) << std::endl;
     }
   }
 }

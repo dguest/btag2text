@@ -2,15 +2,15 @@
 
 set -eu
 
-OUTPUT_DIR=$2
-
-# read in some common tools
-. $(dirname $0)/batch-tools.sh
+OUTPUT_DIR=$3
 
 echo "submit from $SLURM_SUBMIT_DIR, array index $SLURM_ARRAY_TASK_ID"
 cd $SLURM_SUBMIT_DIR
 
-IN_FILE_FILE=$1
+# read in some common tools
+. $1
+
+IN_FILE_FILE=$2
 if [[ ! -f $IN_FILE_FILE ]]; then
     echo "$IN_FILE_FILE not found!" >&2
     exit 1

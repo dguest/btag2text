@@ -108,8 +108,13 @@ void SmartChain::fake_set(const std::string& name){
 
 void SmartChain::throw_bad_branch(std::string name) const {
   std::string issue = "can't find branch " + name;
-  std::string file = GetFile()->GetName();
-  issue.append(" bad file: " + file);
+  auto* file = GetFile();
+  if (!file) {
+    issue.append(" unknown file");
+  } else {
+    std::string filen = file->GetName();
+    issue.append(" bad file: " + filen);
+  }
   throw MissingBranchError(issue);
 
 }

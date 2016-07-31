@@ -18,7 +18,8 @@ green = (0, 0.5, 0, 0.8)
 blue = (0, 0, 1, 0.8)
 black = (0, 0, 0, 1.0)
 _colors = {0: blue, 4: green, 5: red, -1: black}
-_force_log = {'pt', 'd0', 'd0sig', 'z0', 'z0sig', 'd0_signed'}
+_force_log = {'pt', 'd0', 'd0sig', 'z0', 'z0sig', 'd0_signed',
+              'JVT', 'mv1c00', 'mv1c10', 'mv1c20'}
 
 def _get_args():
     d = "default: %(default)s"
