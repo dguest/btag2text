@@ -97,6 +97,24 @@ Jets::Jets(SmartChain& chain):
   // flavor label
   SET_BRANCH(jet_truthflav);
 
+  // cluster and calo
+  SET_BRANCH(jet_cluster_pt                 );
+  SET_BRANCH(jet_cluster_eta                );
+  SET_BRANCH(jet_cluster_phi                );
+  SET_BRANCH(jet_cluster_e                  );
+  SET_BRANCH(jet_cluster_clustersize        );
+  SET_BRANCH(jet_cluster_isolation          );
+  SET_BRANCH(jet_cluster_lateral            );
+  SET_BRANCH(jet_cluster_longitudinal       );
+  SET_BRANCH(jet_cluster_second_lambda      );
+  SET_BRANCH(jet_cluster_second_r           );
+  SET_BRANCH(jet_cluster_center_lambda      );
+  SET_BRANCH(jet_cluster_center_mag         );
+  SET_BRANCH(jet_cluster_eng_pos            );
+  SET_BRANCH(jet_cluster_em_probability     );
+  SET_BRANCH(jet_cluster_eng_frac_max       );
+  SET_BRANCH(jet_cluster_first_eng_dens     );
+
   // jet_ntrk is defined from the size of a vector later
   SET_BRANCH(jet_ip3d_ntrk);
 
@@ -201,6 +219,25 @@ Jet Jets::getJet(int pos) const {
 
   // flavor label                 // flavor label
   COPY(jet_truthflav);
+
+  // cluster
+  o.jet_cluster_pt = multiply<float>(jet_cluster_pt->at(pos),MeV);
+  COPY(jet_cluster_eta);
+  COPY(jet_cluster_phi);
+  o.jet_cluster_e = multiply<float>(jet_cluster_e->at(pos), MeV);
+  COPY(jet_cluster_clustersize        );
+  COPY(jet_cluster_isolation          );
+  COPY(jet_cluster_lateral            );
+  COPY(jet_cluster_longitudinal       );
+  COPY(jet_cluster_second_lambda      );
+  COPY(jet_cluster_second_r           );
+  COPY(jet_cluster_center_lambda      );
+  COPY(jet_cluster_center_mag         );
+  COPY(jet_cluster_eng_pos            );
+  COPY(jet_cluster_em_probability     );
+  COPY(jet_cluster_eng_frac_max       );
+  COPY(jet_cluster_first_eng_dens     );
+
   // track counts
   o.jet_ntrk = jet_trk_pt->at(pos).size();
   COPY(jet_ip3d_ntrk);
@@ -377,6 +414,33 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
   // safety check
   assert(n_ip3d == jet.jet_ip3d_ntrk);
   return out;
+}
+std::vector<Cluster> build_clusters(const Jet& jet) {
+  std::vector<Cluster> clusters;
+  size_t n_clusters = jet.jet_cluster_pt.size();
+  for (size_t cluster_n = 0; cluster_n < n_clusters; cluster_n++) {
+    Cluster cluster;
+#define COPY(par) cluster.par = CHECK_AT(jet.jet_cluster_ ## par, cluster_n)
+    COPY(pt);
+    COPY(eta);
+    COPY(phi);
+    COPY(e);
+    COPY(clustersize        );
+    COPY(isolation          );
+    COPY(lateral            );
+    COPY(longitudinal       );
+    COPY(second_lambda      );
+    COPY(second_r           );
+    COPY(center_lambda      );
+    COPY(center_mag         );
+    COPY(eng_pos            );
+    COPY(em_probability     );
+    COPY(eng_frac_max       );
+    COPY(first_eng_dens     );
+#undef COPY
+    clusters.push_back(cluster);
+  }
+  return clusters;
 }
 
 

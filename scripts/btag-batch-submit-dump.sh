@@ -37,4 +37,4 @@ move-if-exists $JOB_DIR
 mkdir -p $OUTPUT_DIR
 BOPTS=$(get-slurm-opts $OUTPUT_DIR)
 BOPTS+=" "$(get-array-opts $ROOT_FILE_LIST)
-echo sbatch $BOPTS $RUN_PATH $TOOL_PATH $ROOT_FILE_LIST $OUT_FILES
+sbatch $BOPTS $RUN_PATH $TOOL_PATH $ROOT_FILE_LIST $OUT_FILES

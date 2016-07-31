@@ -1,5 +1,6 @@
 #include "FileCLI.hh"
 #include "constants.hh"
+#include "get_tree.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -58,8 +59,9 @@ Jet::Jet(): pt(0), eta(0), ftl(0) {}
 int main(int argc, char* argv[]) {
   FileCLI cli(argc, argv);
 
+  std::string tree_name = get_tree(cli.in_files().front());
   // setup chain
-  TChain chain("bTag_AntiKt4EMTopoJets");
+  TChain chain(tree_name.c_str());
   for (const auto& in: cli.in_files()) {
     chain.Add(in.c_str());
   }

@@ -46,6 +46,11 @@ class Branch(object):
         return '{} {}'.format(self.type_name,self.name)
 
 
+def dumpall(d):
+    """dump names of objects"""
+    for key in d.GetListOfKeys():
+        kname = key.GetName()
+        print kname
 
 def get_args():
     d = 'default: %(default)s'
@@ -62,6 +67,10 @@ if __name__ == '__main__':
     args = get_args()
     rfile = TFile(args.file)
     tree = rfile.Get(args.tree)
+    if not tree:
+        print "objects:"
+        dumpall(rfile)
+        exit("couldn't find tree " + args.tree)
     branches = tree.GetListOfBranches()
     for tbranch in branches:
         branch = Branch(tbranch)

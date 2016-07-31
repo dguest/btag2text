@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
       if (! select_jet(jet) ) continue;
       auto pt_eta = get_pt_eta_map(jet);
       double weight = pt_eta_reweight.get(pt_eta, jet.jet_truthflav);
-      std::cout << str_from_all_jet(jet, weight);
+      std::cout << str_from_all_jet(jet, weight) << std::endl;
     }
   }
 }
