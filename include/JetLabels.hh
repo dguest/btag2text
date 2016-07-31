@@ -93,8 +93,20 @@ public:
 
 };
 
+class ClusterLabels
+{
+public:
+  const std::string pt = "cluster pt";
+  const std::string eta = "cluster eta";
+  const std::string phi = "cluster phi";
+  const std::string e = "cluster energy";
+};
+
+
 template<>
 std::string ellipsis(const TrackLabels&);
+template<>
+std::string ellipsis(const ClusterLabels&);
 
 class JfVertexLabels
 {
@@ -115,6 +127,7 @@ public:
 };
 
 std::vector<TrkUnitLabels> build_tracks(const JetLabels& jet);
+std::vector<ClusterLabels> build_clusters(const JetLabels& jet);
 
 // _______________________________________________________________________
 // terse labels
@@ -207,6 +220,16 @@ public:
 
 };
 
+class TerseClusterLabels
+{
+public:
+  LABELED(pt);
+  LABELED(eta);
+  LABELED(phi);
+  LABELED(e);
+};
+
+
 class TerseTrkUnitLabels
 {
 public:
@@ -216,8 +239,11 @@ public:
 
 template<>
 std::string ellipsis(const TerseTrackLabels&);
+template<>
+std::string ellipsis(const TerseClusterLabels&);
 
 std::vector<TerseTrkUnitLabels> build_tracks(const TerseJetLabels& jet);
+std::vector<TerseClusterLabels> build_clusters(const TerseJetLabels& jet);
 
 #undef LABELED
 

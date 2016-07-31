@@ -226,6 +226,36 @@ std::string str_from_all_track_ip(const T& j) {
   return out.str();
 }
 
+template<typename T>
+std::string str_from_cluster_kinematics(const T& j) {
+  CleanStream out;
+  OUT_COMMA(pt);
+  OUT_COMMA(eta);
+  OUT_COMMA(phi);
+  OUT(e);
+  return out.str();
+}
+template<typename T>
+std::string str_from_all_clusters(const T& j) {
+  CleanStream out;
+
+  auto clusters = build_clusters(j);
+  int n_clusters = clusters.size();
+  for (int nnn = 0; nnn < n_clusters; nnn++) {
+    const auto& cluster = clusters.at(nnn);
+    // OPEN {
+      OPEN {
+        out << str_from_cluster_kinematics(cluster);
+      } CLOSE;
+    // } CLOSE;
+    // by default this next line does nothing, it can be overloaded
+    // for classes that spit out names
+    out << ellipsis(cluster);
+    if (nnn < n_clusters - 1) CS;
+  }
+  return out.str();
+}
+
 // _________________________________________________________________________
 // top level output functions
 
@@ -265,6 +295,10 @@ std::string str_from_all_jet(const T& j, const U& weight = "weight") {
     out << str_from_basic_jet_pars(j, weight) << ", ";
     OPEN_LIST {
       out << str_from_all_track_ip(j);
+    } CLOSE_LIST;
+    CS;
+    OPEN_LIST {
+      out << str_from_all_clusters(j);
     } CLOSE_LIST;
     CS;
     OPEN {
