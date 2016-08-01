@@ -77,9 +77,69 @@ namespace {
   }
 }
 
+Subjets::Subjets(SmartChain& chain, const std::string& name) {
+  auto nm = [&name](const std::string& var) {
+    return "jet_" + name + "_" + var;
+  };
+#define SET_BRANCH(var) chain.SetBranch(nm(#var), &var)
+  SET_BRANCH(pt);
+  SET_BRANCH(eta);
+  SET_BRANCH(phi);
+  // SET_BRANCH(E);
+  SET_BRANCH(m);
+
+  // jet_ntrk is defined from the size of a vector later
+  SET_BRANCH(ip3d_ntrk);
+
+  // SET_BRANCH(ip2d_pb);
+  // SET_BRANCH(ip2d_pc);
+  // SET_BRANCH(ip2d_pu);
+  SET_BRANCH(ip3d_pb);
+  SET_BRANCH(ip3d_pc);
+  SET_BRANCH(ip3d_pu);
+
+  // SET_BRANCH(sv1_ntrkj);
+  SET_BRANCH(sv1_ntrkv);
+  SET_BRANCH(sv1_n2t);
+  SET_BRANCH(sv1_m);
+  SET_BRANCH(sv1_efc);
+  SET_BRANCH(sv1_normdist);
+  SET_BRANCH(sv1_Nvtx);
+  // SET_BRANCH(sv1_sig3d);
+
+  // SET_BRANCH(sv1_vtx_x);
+  // SET_BRANCH(sv1_vtx_y);
+  // SET_BRANCH(sv1_vtx_z);
+
+  SET_BRANCH(jf_m);
+  SET_BRANCH(jf_efc);
+  SET_BRANCH(jf_deta);
+  SET_BRANCH(jf_dphi);
+  SET_BRANCH(jf_ntrkAtVx);
+  SET_BRANCH(jf_nvtx);
+  SET_BRANCH(jf_sig3d);
+  SET_BRANCH(jf_nvtx1t);
+  SET_BRANCH(jf_n2t);
+  SET_BRANCH(jf_VTXsize);
+
+  // SET_BRANCH(jf_vtx_chi2);
+  // SET_BRANCH(jf_vtx_ndf);
+  // SET_BRANCH(jf_vtx_ntrk);
+  // SET_BRANCH(jf_vtx_L3D);
+  // SET_BRANCH(jf_vtx_sig3D);
+
+  // SET_BRANCH(mv2c00);
+  SET_BRANCH(mv2c10);
+  SET_BRANCH(mv2c20);
+  // SET_BRANCH(mv2c100);
+
+#undef SET_BRANCH
+}
 
 Jets::Jets(SmartChain& chain):
-  m_chain(&chain)
+  m_chain(&chain),
+  m_trkjet(chain, "trkjet"),
+  m_vrtrkjet(chain, "vrtrkjet")
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
@@ -195,6 +255,9 @@ Jets::Jets(SmartChain& chain):
 
   SET_BRANCH(jet_trk_jf_Vertex);
 
+
+  // subjets
+  
 #undef SET_BRANCH
 }
 int Jets::size() const {
