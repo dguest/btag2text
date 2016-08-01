@@ -159,6 +159,8 @@ struct Jet
   std::vector<float> jet_jf_trk_vtx_L3D;
   std::vector<float> jet_jf_trk_vtx_sig3D;
 
+  std::vector<Jet> subjets;
+
 };
 
 struct JfVertex
@@ -244,6 +246,69 @@ struct TrkUnit
   JfVertex jf;
 };
 
+class Subjets
+{
+public:
+  Subjets(SmartChain& chain, const std::string& name);
+private:
+  // subjet-wise branches
+  // kinematics
+  std::vector<std::vector<float> >* pt;
+  std::vector<std::vector<float> >* eta;
+  std::vector<std::vector<float> >* phi;
+  // std::vector<std::vector<float> >* E;
+  std::vector<std::vector<float> >* m;
+
+  // track counts
+  std::vector<std::vector<int> >* ip3d_ntrk;
+
+  // high level
+  // ip2d, ip3d
+  // std::vector<std::vector<float> >* ip2d_pb;
+  // std::vector<std::vector<float> >* ip2d_pc;
+  // std::vector<std::vector<float> >* ip2d_pu;
+  std::vector<std::vector<float> >* ip3d_pb;
+  std::vector<std::vector<float> >* ip3d_pc;
+  std::vector<std::vector<float> >* ip3d_pu;
+  // sv1
+  // std::vector<std::vector<int> >* sv1_ntrkj;
+  std::vector<std::vector<int> >* sv1_ntrkv;
+  std::vector<std::vector<int> >* sv1_n2t;
+  std::vector<std::vector<float> >* sv1_m;
+  std::vector<std::vector<float> >* sv1_efc;
+  std::vector<std::vector<float> >* sv1_normdist;
+  std::vector<std::vector<int> >* sv1_Nvtx;
+  // std::vector<std::vector<float> >* sv1_sig3d;
+  // med-level sv1
+  // std::vector<std::vector<std::vector<float> > >* sv1_vtx_x;
+  // std::vector<std::vector<std::vector<float> > >* sv1_vtx_y;
+  // std::vector<std::vector<std::vector<float> > >* sv1_vtx_z;
+  // jetfitter
+  std::vector<std::vector<float> >* jf_m;
+  std::vector<std::vector<float> >* jf_efc;
+  std::vector<std::vector<float> >* jf_deta;
+  std::vector<std::vector<float> >* jf_dphi;
+  std::vector<std::vector<float> >* jf_ntrkAtVx;
+  std::vector<std::vector<int> >* jf_nvtx;
+  std::vector<std::vector<float> >* jf_sig3d;
+  std::vector<std::vector<int> >* jf_nvtx1t;
+  std::vector<std::vector<int> >* jf_n2t;
+  std::vector<std::vector<int> >* jf_VTXsize;
+  // med-level jetfitter
+  // std::vector<std::vector<std::vector<float> > >* jf_vtx_chi2;
+  // std::vector<std::vector<std::vector<float> > >* jf_vtx_ndf;
+  // std::vector<std::vector<std::vector<int> > >* jf_vtx_ntrk;
+  // std::vector<std::vector<std::vector<float> > >* jf_vtx_L3D;
+  // std::vector<std::vector<std::vector<float> > >* jf_vtx_sig3D;
+
+  // MV2
+  // std::vector<std::vector<double> >* mv2c00;
+  std::vector<std::vector<double> >* mv2c10;
+  std::vector<std::vector<double> >* mv2c20;
+  // std::vector<std::vector<double> >* mv2c100;
+
+};
+
 class Jets
 {
 public:
@@ -252,6 +317,8 @@ public:
   int size() const;
 private:
   SmartChain* m_chain;
+  Subjets m_trkjet;
+  Subjets m_vrtrkjet;
 
   // event
   double avgmu;
@@ -370,6 +437,7 @@ private:
   std::vector<std::vector<int> >* jet_trk_expectBLayerHit;
 
   std::vector<std::vector<int> >* jet_trk_jf_Vertex;
+
 
 };
 
