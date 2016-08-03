@@ -159,7 +159,8 @@ struct Jet
   std::vector<float> jet_jf_trk_vtx_L3D;
   std::vector<float> jet_jf_trk_vtx_sig3D;
 
-  std::vector<Jet> subjets;
+  std::vector<Jet> trkjets;
+  std::vector<Jet> vrtrkjets;
 
 };
 
@@ -250,6 +251,8 @@ class Subjets
 {
 public:
   Subjets(SmartChain& chain, const std::string& name);
+  Jet getJet(int jet, int subjet) const;
+  int size(int jet) const;
 private:
   // subjet-wise branches
   // kinematics
@@ -262,11 +265,7 @@ private:
   // track counts
   std::vector<std::vector<int> >* ip3d_ntrk;
 
-  // high level
   // ip2d, ip3d
-  // std::vector<std::vector<float> >* ip2d_pb;
-  // std::vector<std::vector<float> >* ip2d_pc;
-  // std::vector<std::vector<float> >* ip2d_pu;
   std::vector<std::vector<float> >* ip3d_pb;
   std::vector<std::vector<float> >* ip3d_pc;
   std::vector<std::vector<float> >* ip3d_pu;
@@ -278,11 +277,7 @@ private:
   std::vector<std::vector<float> >* sv1_efc;
   std::vector<std::vector<float> >* sv1_normdist;
   std::vector<std::vector<int> >* sv1_Nvtx;
-  // std::vector<std::vector<float> >* sv1_sig3d;
-  // med-level sv1
-  // std::vector<std::vector<std::vector<float> > >* sv1_vtx_x;
-  // std::vector<std::vector<std::vector<float> > >* sv1_vtx_y;
-  // std::vector<std::vector<std::vector<float> > >* sv1_vtx_z;
+
   // jetfitter
   std::vector<std::vector<float> >* jf_m;
   std::vector<std::vector<float> >* jf_efc;
@@ -295,16 +290,11 @@ private:
   std::vector<std::vector<int> >* jf_n2t;
   std::vector<std::vector<int> >* jf_VTXsize;
   // med-level jetfitter
-  // std::vector<std::vector<std::vector<float> > >* jf_vtx_chi2;
-  // std::vector<std::vector<std::vector<float> > >* jf_vtx_ndf;
-  // std::vector<std::vector<std::vector<int> > >* jf_vtx_ntrk;
-  // std::vector<std::vector<std::vector<float> > >* jf_vtx_L3D;
-  // std::vector<std::vector<std::vector<float> > >* jf_vtx_sig3D;
 
   // MV2
   // std::vector<std::vector<double> >* mv2c00;
-  std::vector<std::vector<double> >* mv2c10;
-  std::vector<std::vector<double> >* mv2c20;
+  std::vector<std::vector<float> >* mv2c10;
+  std::vector<std::vector<float> >* mv2c20;
   // std::vector<std::vector<double> >* mv2c100;
 
 };

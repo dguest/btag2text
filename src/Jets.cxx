@@ -75,6 +75,20 @@ namespace {
     track.dphi_jet = dphi;
     track.d0 = d0;
   }
+
+  template<typename T>
+  T getValue(const std::vector<std::vector<T> >& vec,
+             int p1, int p2, const std::string& name) {
+    if (vec.size() <= p1) {
+      throw std::logic_error(
+        "can't access jet " + std::to_string(p1) + " in vector " + name);
+    } else if (vec.at(p1).size() <= p2) {
+      throw std::logic_error(
+        "can't access subjet " + std::to_string(p2) + " in jet "
+        + std::to_string(p1) + " in vector " + name);
+    }
+    return vec.at(p1).at(p2);
+  }
 }
 
 Subjets::Subjets(SmartChain& chain, const std::string& name) {
@@ -134,6 +148,53 @@ Subjets::Subjets(SmartChain& chain, const std::string& name) {
   // SET_BRANCH(mv2c100);
 
 #undef SET_BRANCH
+}
+
+Jet Subjets::getJet(int jet, int subjet) const {
+// #define COPY(var) o.jet_ ## var = var->at(jet).at(subjet)
+#define COPY(var) o.jet_ ## var = getValue(*var, jet, subjet, #var)
+  Jet o;
+
+  // kinematics                   // kinematics
+  o.jet_pt = pt->at(jet).at(subjet)*MeV;
+  COPY(eta);
+  COPY(phi);
+  o.jet_m = m->at(jet).at(subjet)*MeV;
+
+  // track counts
+  COPY(ip3d_ntrk);
+
+  // track variables
+  COPY(ip3d_pb);
+  COPY(ip3d_pc);
+  COPY(ip3d_pu);
+
+  COPY(sv1_ntrkv);
+  COPY(sv1_n2t);
+  COPY(sv1_m);
+  COPY(sv1_efc);
+  COPY(sv1_normdist);
+  COPY(sv1_Nvtx);
+
+  COPY(jf_m);
+  COPY(jf_efc);
+  COPY(jf_deta);
+  COPY(jf_dphi);
+  COPY(jf_ntrkAtVx);
+  COPY(jf_nvtx);
+  COPY(jf_sig3d);
+  COPY(jf_nvtx1t);
+  COPY(jf_n2t);
+  COPY(jf_VTXsize);
+
+  COPY(mv2c10);
+  COPY(mv2c20);
+
+#undef COPY
+  return o;
+}
+int Subjets::size(int jet) const {
+  return pt->at(jet).size();
 }
 
 Jets::Jets(SmartChain& chain):
@@ -255,9 +316,6 @@ Jets::Jets(SmartChain& chain):
 
   SET_BRANCH(jet_trk_jf_Vertex);
 
-
-  // subjets
-  
 #undef SET_BRANCH
 }
 int Jets::size() const {
@@ -393,6 +451,13 @@ Jet Jets::getJet(int pos) const {
   fill_derived(o);
 
   assert(pass_checks(o));
+
+  for (int sub_pos = 0; sub_pos < m_trkjet.size(pos); sub_pos++) {
+    o.trkjets.push_back(m_trkjet.getJet(pos, sub_pos));
+  }
+  for (int sub_pos = 0; sub_pos < m_vrtrkjet.size(pos); sub_pos++) {
+    o.vrtrkjets.push_back(m_vrtrkjet.getJet(pos, sub_pos));
+  }
 
   return o;
 };
