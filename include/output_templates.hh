@@ -288,6 +288,7 @@ std::string str_from_hl_jet(const T& j, const U& weight = "weight") {
   return out.str();
 }
 
+
 template<typename T, typename U = std::string>
 std::string str_from_all_jet(const T& j, const U& weight = "weight") {
   CleanStream out;
@@ -311,6 +312,54 @@ std::string str_from_all_jet(const T& j, const U& weight = "weight") {
   return out.str();
 }
 
+// _______________________________________________________________________
+// subjet stuff
+
+template<typename T>
+std::string str_from_subjets(const T& jets) {
+  CleanStream out;
+  int n_jets = jets.size();
+  for (int jetn = 0; jetn < n_jets; jetn++) {
+    const auto& jet = jets.at(jetn);
+    OPEN {
+      OPEN {
+        out << str_from_ip3d(jet);
+      } CLOSE; CS;
+      OPEN {
+        out << str_from_hl_vars(jet);
+      } CLOSE;
+    } CLOSE;
+    // by default this next line does nothing, it can be overloaded
+    // for classes that spit out names
+    out << ellipsis(jet);
+    if (jetn < n_jets - 1) CS;
+  }
+  return out.str();
+}
+
+
+template<typename T, typename U = std::string>
+std::string str_from_fat_jet(const T& j, const U& weight = "weight") {
+  CleanStream out;
+  OPEN {
+    out << str_from_basic_jet_pars(j, weight) << ", ";
+    OPEN_LIST {
+      out << str_from_all_track_ip(j);
+    } CLOSE_LIST;
+    CS;
+    OPEN_LIST {
+      out << str_from_all_clusters(j);
+    } CLOSE_LIST;
+    CS;
+    OPEN {
+      out << str_from_ip3d(j);
+    } CLOSE; CS;
+    OPEN_LIST {
+      out << str_from_subjets(j.vrtrkjets);
+    } CLOSE_LIST;
+  } CLOSE;
+  return out.str();
+}
 
 
 #undef CS
