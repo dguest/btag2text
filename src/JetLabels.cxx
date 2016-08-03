@@ -27,6 +27,10 @@ template<>
 std::string ellipsis(const ClusterLabels&) {
   return ", ... ";
 }
+template<>
+std::string ellipsis(const JetLabels&) {
+  return ", ... ";
+}
 
 template<>
 std::string ellipsis(const TerseTrackLabels&) {
@@ -36,6 +40,11 @@ template<>
 std::string ellipsis(const TerseClusterLabels&) {
   return ", \"...\" ";
 }
+template<>
+std::string ellipsis(const TerseJetLabels&) {
+  return ", \"...\" ";
+}
+
 
 
 

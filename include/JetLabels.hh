@@ -58,6 +58,9 @@ public:
   const std::string track_3_z0_significance = "track_3_z0_significance";
   const std::string n_tracks_over_d0_threshold = "n_tracks_over_d0_threshold";
 
+  const std::vector<JetLabels> vrtrkjets;
+  JetLabels() = default;
+  JetLabels(int iii): vrtrkjets(iii) {}
 };
 
 class TrackLabels
@@ -107,6 +110,8 @@ template<>
 std::string ellipsis(const TrackLabels&);
 template<>
 std::string ellipsis(const ClusterLabels&);
+template<>
+std::string ellipsis(const JetLabels&);
 
 class JfVertexLabels
 {
@@ -185,6 +190,9 @@ public:
   LABELED(track_3_z0_significance);
   LABELED(n_tracks_over_d0_threshold);
 
+  const std::vector<TerseJetLabels> vrtrkjets;
+  TerseJetLabels() = default;
+  TerseJetLabels(int iii): vrtrkjets(iii) {}
 };
 
 class TerseTrackLabels
@@ -223,10 +231,10 @@ public:
 class TerseClusterLabels
 {
 public:
-  LABELED(pt);
-  LABELED(eta);
-  LABELED(phi);
-  LABELED(e);
+  const std::string pt = quoted("cluster_pt");
+  const std::string eta = quoted("cluster_eta");
+  const std::string phi = quoted("cluster_phi");
+  const std::string e = quoted("cluster_energy");
 };
 
 
@@ -241,6 +249,8 @@ template<>
 std::string ellipsis(const TerseTrackLabels&);
 template<>
 std::string ellipsis(const TerseClusterLabels&);
+template<>
+std::string ellipsis(const TerseJetLabels&);
 
 std::vector<TerseTrkUnitLabels> build_tracks(const TerseJetLabels& jet);
 std::vector<TerseClusterLabels> build_clusters(const TerseJetLabels& jet);
