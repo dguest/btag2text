@@ -178,6 +178,7 @@ struct Cluster
   float pt                  ;
   float eta                 ;
   float phi                 ;
+  float dphi_jet            ;
   float e                   ;
   unsigned int clustersize  ;
   float isolation           ;

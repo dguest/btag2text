@@ -231,7 +231,7 @@ std::string str_from_cluster_kinematics(const T& j) {
   CleanStream out;
   OUT_COMMA(pt);
   OUT_COMMA(eta);
-  OUT_COMMA(phi);
+  OUT_COMMA(dphi_jet);
   OUT(e);
   return out.str();
 }
