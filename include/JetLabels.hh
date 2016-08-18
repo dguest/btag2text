@@ -102,6 +102,7 @@ public:
   const std::string pt = "cluster pt";
   const std::string eta = "cluster eta";
   const std::string phi = "cluster phi";
+  const std::string dphi_jet = "cluster dphi with respect to jet";
   const std::string e = "cluster energy";
 };
 
@@ -234,6 +235,7 @@ public:
   const std::string pt = quoted("cluster_pt");
   const std::string eta = quoted("cluster_eta");
   const std::string phi = quoted("cluster_phi");
+  const std::string dphi_jet = quoted("cluster_dphi_jet");
   const std::string e = quoted("cluster_energy");
 };
 

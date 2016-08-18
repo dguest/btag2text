@@ -76,6 +76,12 @@ namespace {
     track.d0 = d0;
   }
 
+  void setDerived(Cluster& cluster, const Jet& jet) {
+    float dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
+
+    cluster.dphi_jet = dphi;
+  }
+
   template<typename T>
   T getValue(const std::vector<std::vector<T> >& vec,
              int p1, int p2, const std::string& name) {
@@ -566,6 +572,7 @@ std::vector<Cluster> build_clusters(const Jet& jet) {
     COPY(eng_frac_max       );
     COPY(first_eng_dens     );
 #undef COPY
+    setDerived(cluster, jet);
     clusters.push_back(cluster);
   }
   return clusters;
