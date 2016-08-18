@@ -1,0 +1,98 @@
+#include "FileCLI.hh"
+#include "Jets.hh"
+#include "SmartChain.hh"
+// #include "FlavorPtEtaDistributions.hh"
+#include "constants.hh"
+#include "hist_tools.hh"
+#include "select_jet.hh"
+#include "unshittify.hh"
+#include "get_tree.hh"
+
+#include "ndhist/Histogram.hh"
+
+#include "H5Cpp.h"
+#include "TROOT.h"
+
+#include <iostream>
+
+// various plotting constants
+const double MAX_VX_MASS = 10*GeV;
+const double MV2_HIGH = 1.00001;
+const double MV2_LOW = -MV2_HIGH;
+const double PT_MAX = 5*TeV;
+const double ETA_MAX = 2.8;
+
+class JetHists
+{
+public:
+  JetHists();
+  void fill(const Jet& jet, double weight = 1);
+  void save(H5::CommonFG& out) const;
+  void save(H5::CommonFG& out, std::string subdir) const;
+private:
+  Histogram pt;
+  Histogram eta;
+};
+
+// _____________________________________________________________________
+// main function
+
+int main(int argc, char* argv[]) {
+  unshittify();
+  FileCLI cli(argc, argv);
+
+  SmartChain chain(get_tree(cli.in_files().at(0)));
+  for (const auto& in: cli.in_files()) {
+    chain.add(in);
+  }
+  Jets jets(chain);
+  int n_entries = chain.GetEntries();
+  std::cout << n_entries << " entries in chain" << std::endl;
+
+  JetHists hists;
+
+  for (int iii = 0; iii < n_entries; iii++) {
+    chain.GetEntry(iii);
+    int n_jets = jets.size();
+    for (int jjj = 0; jjj < n_jets; jjj++) {
+      auto jet = jets.getJet(jjj);
+      if (! select_jet(jet) ) continue;
+      hists.fill(jet);
+    }
+  }
+
+  // save histograms
+  using namespace grp;
+  H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
+  // hists
+  hists.save(out_file, HIST);
+}
+
+// ______________________________________________________________________
+// hist methods
+
+JetHists::JetHists():
+  // MV2
+  ENERGY(pt, PT_MAX),
+  RANGE(eta, -ETA_MAX, ETA_MAX)
+{
+}
+
+void JetHists::fill(const Jet& jet, double weight) {
+#define BYNAME(name) name.fill(jet.jet_ ## name, weight)
+  BYNAME(pt);
+  BYNAME(eta);
+#undef BYNAME
+}
+
+void JetHists::save(H5::CommonFG& out) const {
+#define BYNAME(name) name.write_to(out, #name)
+  BYNAME(pt);
+  BYNAME(eta);
+#undef BYNAME
+}
+void JetHists::save(H5::CommonFG& out, std::string subdir) const {
+  H5::Group group(out.createGroup(subdir));
+  save(group);
+}
+

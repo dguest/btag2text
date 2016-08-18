@@ -21,5 +21,5 @@ OUTPUT_PT_ETA=$(get-output-name $INPUT_FILE)
 
 echo "running on $INPUT_FILE"
 mkdir -p $OUTPUT_DIR
-btag-distributions-pt-eta $INPUT_FILE -o ${OUTPUT_DIR}/$OUTPUT_PT_ETA.h5
+btag-distributions-fatjets $INPUT_FILE -o ${OUTPUT_DIR}/$OUTPUT_PT_ETA.h5
 

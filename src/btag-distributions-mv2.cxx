@@ -8,7 +8,6 @@
 #include "get_tree.hh"
 
 #include "ndhist/Histogram.hh"
-// #include "covol/Covariance.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
