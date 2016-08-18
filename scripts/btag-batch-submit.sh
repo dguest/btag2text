@@ -42,6 +42,7 @@ done
 shift $(($OPTIND - 1))
 ROOT_FILE_LIST=root-files.txt
 
+# TODO: simplify this, we can just require an absolute path
 RUN_PATH=$(readlink -e $(dirname $0)/$RUN_SCRIPT)
 if [[ ! -f $RUN_PATH ]]; then
     echo "$RUN_PATH not found!" >&2
@@ -54,6 +55,7 @@ TOOLS=$(readlink -e $(dirname $0)/batch-tools.sh)
 
 # make a list of files
 if [[ ! -f $ROOT_FILE_LIST ]] ; then
+    echo "rebuilding root file list: $ROOT_FILE_LIST"
     build-root-file-list $ROOT_DIR $ROOT_FILE_LIST
 fi
 NFILES=$(wc -l $ROOT_FILE_LIST | cut -d ' ' -f 1)

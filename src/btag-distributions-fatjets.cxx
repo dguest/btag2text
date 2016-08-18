@@ -19,8 +19,8 @@
 const double MAX_VX_MASS = 10*GeV;
 const double MV2_HIGH = 1.00001;
 const double MV2_LOW = -MV2_HIGH;
-const double PT_MAX = 5*TeV;
-const double ETA_MAX = 2.8;
+const double PT_MAX = 2*TeV;
+const double ETA_MAX = 3.0;
 
 class JetHists
 {
