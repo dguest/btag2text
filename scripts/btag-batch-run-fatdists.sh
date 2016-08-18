@@ -16,13 +16,10 @@ if [[ ! -f $IN_FILE_FILE ]]; then
     exit 1
 fi
 
-IN_FILE_ARRAY=( $(cat $IN_FILE_FILE) )
-echo "${#IN_FILE_ARRAY[*]} files in array"
-INPUT_FILE=${IN_FILE_ARRAY[$SLURM_ARRAY_TASK_ID-1]}
-OUT_BASE=$(basename ${INPUT_FILE%.root*})-$SLURM_ARRAY_TASK_ID
-OUTPUT_FILE=${OUT_BASE}-pt-eta.h5
+INPUT_FILE=$(get-input-file $IN_FILE_FILE)
+OUTPUT_PT_ETA=$(get-output-name $INPUT_FILE)
 
 echo "running on $INPUT_FILE"
 mkdir -p $OUTPUT_DIR
-btag-distributions-pt-eta $INPUT_FILE -o ${OUTPUT_DIR}/$OUTPUT_FILE
+btag-distributions-pt-eta $INPUT_FILE -o ${OUTPUT_DIR}/$OUTPUT_PT_ETA.h5
 
