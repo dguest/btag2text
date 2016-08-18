@@ -16,6 +16,7 @@ Options:
  -s <script name>: command to run in script
  -r <root dir>: where the files are
  -t: test run
+ -w <walltime>: formatted as HH:MM:SS
 
 EOF
 }
@@ -26,13 +27,15 @@ EOF
 RUN_SCRIPT=''
 ROOT_DIR=root
 PREFIX=''
+WALLTIME=00:45:00
 
-while getopts ":hs:r:t" opt $@; do
+while getopts ":hs:r:tw:" opt $@; do
 	  case $opt in
 	      h) _help; exit 1;;
 	      s) RUN_SCRIPT=${OPTARG} ;;
         r) ROOT_DIR=${OPTARG} ;;
         t) PREFIX=echo ;;
+        w) WALLTIME=${OPTARG} ;;
 	      # handle errors
 	      \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :) _usage; echo "Missing argument for -$OPTARG" >&2; exit 1;;
@@ -69,7 +72,7 @@ OUT_FILES=$JOB_DIR/results
 move-if-exists $JOB_DIR
 
 mkdir -p $LOG_DIR
-BOPTS=$(get-slurm-opts $LOG_DIR)
+BOPTS=$(get-slurm-opts $LOG_DIR $WALLTIME)
 BOPTS+=" "$(get-array-opts $ROOT_FILE_LIST)
 ${PREFIX} sbatch $BOPTS $RUN_PATH $TOOLS $ROOT_FILE_LIST $OUT_FILES
 
