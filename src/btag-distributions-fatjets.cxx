@@ -46,9 +46,10 @@ int main(int argc, char* argv[]) {
   std::string out_name = "";
   po::options_description opt(description);
   opt.add_options()
-    ("help,h", "Print help messages")
+    ("files", po::value<std::vector<std::string> >(), "list of input files")
     ("out_file,o", po::value<std::string>(&out_name)->required(),
      "output file")
+    ("help,h", "Print help messages")
     ("weight,w", po::value<double>()->default_value(1.0),
      "weights for this file");
   po::positional_options_description pos_opts;

@@ -20,7 +20,7 @@ def input_itr():
         yield from (int(x) for x in line.split())
 
 class CrossSections:
-    def __init__(self, file_name, lumi_fb=15):
+    def __init__(self, file_name, lumi_fb=20):
         self.datasets = {}
         self.lumi_fb = lumi_fb
         with open(file_name) as infile:
