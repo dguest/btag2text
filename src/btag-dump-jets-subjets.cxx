@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   H5::Exception::dontPrint();
 
   // load info
-  const auto opts = get_opts(argc, argv, DESCRIPTION);
+  const auto opts = get_stream_opts(argc, argv, DESCRIPTION);
   SmartChain chain(get_tree(opts.input_files.at(0)));
   for (const auto& in: opts.input_files) {
     chain.add(in);
