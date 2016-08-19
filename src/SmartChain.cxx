@@ -38,7 +38,7 @@ int SmartChain::GetEntry(long long int entry_n, int getall) {
     for (auto br_itr: m_set_branches) {
       if (m_fake_branches.count(br_itr)) continue;
       if (!GetBranch(br_itr.c_str())) {
-	throw_bad_branch(br_itr);
+        throw_bad_branch(br_itr);
       }
     }
     m_last_tree = this_tree_n;
