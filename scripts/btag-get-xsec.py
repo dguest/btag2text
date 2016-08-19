@@ -42,8 +42,13 @@ def run():
     args = _get_args()
     xsecs = CrossSections(args.xsec_file)
     for dsid in input_itr():
-        outline = '{}\n'.format(xsecs.get_weight(dsid))
+        try:
+            outline = '{}\n'.format(xsecs.get_weight(dsid))
+        except KeyError as err:
+            sys.stderr.write('ERROR: no xsec for {}'.format(dsid))
+            exit(1)
         sys.stdout.write(outline)
+
 
 
 if __name__ == '__main__':
