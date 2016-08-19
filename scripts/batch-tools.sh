@@ -46,8 +46,8 @@ function get-array-opts() {
 function get-slurm-opts() {
     local OUTPUT_DIR=$1
     local RUN_TIME=${2-00:05:00}
-    local OUTPUT_PAT=$OUTPUT_DIR/stdout-%j.txt
-    local ERROR_PAT=$OUTPUT_DIR/stderr-%j.txt
+    local OUTPUT_PAT=$OUTPUT_DIR/stdout-%a.txt
+    local ERROR_PAT=$OUTPUT_DIR/stderr-%a.txt
     echo "-t $RUN_TIME -p atlas_all -c 2 -o $OUTPUT_PAT -e $ERROR_PAT"
 }
 # _______________________________________________________________________
@@ -75,5 +75,5 @@ function get-output-name() {
     local INPUT_FILE=$(basename $1)
     local DS=$(echo $INPUT_DIR | sed -r $DS_RE)
     local IDX=$(echo $INPUT_FILE | sed -r $IDX_RE)
-    echo $DS.$IDX
+    echo d${DS}_i${IDX}_j${SLURM_ARRAY_TASK_ID}
 }
