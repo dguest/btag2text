@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """
 Merge hists from different samples
+
+Inputs should be grouped by 'file_path,label'
 """
 from h5py import File
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
+# from ndhist.hist import Hist, is_h5_hist
+from ndhist.hadd import add_tree, build_h5_tree
 
 import os
 
 def hist_pair(string):
-    path, label = string.split()
+    pars = string.split(',')
+    if len(pars) != 2:
+        raise ArgumentTypeError("can't split '{}'".format(string))
+    path, label = pars
     if not os.path.isfile(path):
-        raise argparse.ArgumentTypeError("can't find {}".format(path))
-    if not label.isdecimal():
-        raise argparse.ArgumentTypeError(
-            "{} isn't a flavor label".format(label))
-    return path, int(label)
+        raise ArgumentTypeError("can't find {}".format(path))
+    return path, label
 
 def _get_args():
     d = "default: %(default)s"
@@ -28,16 +32,11 @@ def run():
     with File(args.out_file, 'w') as h5out:
         out_hists = h5out.create_group('hists')
         for path, label in args.inputs:
+            tree = {}
             with File(path,'r') as h5in:
-                dest_group_name = str(label)
-                # print('req group')
-                dest = out_hists.require_group(dest_group_name)
-                # print('copy')
-                # print('dest', list(dest.keys()))
-                # print('src', list(h5in.keys()))
-                h5in.copy('hists', dest)
-                # print('copied')
-
+                add_tree(tree, h5in['hists'])
+            out_group = out_hists.create_group(label)
+            build_h5_tree(out_group, tree)
 
 if __name__ == '__main__':
     run()
