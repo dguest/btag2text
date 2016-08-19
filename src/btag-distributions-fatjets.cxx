@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-const std::string description = "build distributions for fat jets";
+const std::string DESCRIPTION = "build distributions for fat jets";
 
 // various plotting constants
 const double MAX_VX_MASS = 10*GeV;
@@ -36,21 +36,24 @@ private:
   Histogram eta;
 };
 
-// _____________________________________________________________________
-// main function
+struct Options
+{
+  std::vector<std::string> input_files;
+  std::string output_file;
+  double weight;
+};
 
-int main(int argc, char* argv[]) {
-  unshittify();
-  // command parsing
+Options get_opts(int argc, char* argv[]) {
   namespace po = boost::program_options;
-  std::string out_name = "";
-  po::options_description opt(description);
+  Options opts;
+  po::options_description opt(DESCRIPTION);
   opt.add_options()
-    ("files", po::value<std::vector<std::string> >(), "list of input files")
-    ("out_file,o", po::value<std::string>(&out_name)->required(),
+    ("files", po::value<std::vector<std::string> >(&opts.input_files)->required(),
+     "list of input files")
+    ("out_file,o", po::value<std::string>(&opts.output_file)->required(),
      "output file")
     ("help,h", "Print help messages")
-    ("weight,w", po::value<double>()->default_value(1.0),
+    ("weight,w", po::value<double>(&opts.weight)->default_value(1.0),
      "weights for this file");
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);
@@ -60,23 +63,27 @@ int main(int argc, char* argv[]) {
             .positional(pos_opts).run(), vm);
   if ( vm.count("help") ) {
     std::cout << opt << std::endl;
-    return 0;
+    exit(1);
   }
   try {
     po::notify(vm);
   } catch (po::error& err) {
     std::cerr << opt << "\nERROR: " << err.what() << std::endl;
-    return 1;
+    exit(1);
   }
-  auto files = vm["files"].as<std::vector<std::string> >();
-  if (files.size() == 0) {
-    std::cerr << "ERROR: need files" << std::endl;
-    return 1;
-  }
+  return opts;
+}
 
+// _____________________________________________________________________
+// main function
+
+int main(int argc, char* argv[]) {
+  unshittify();
+  // command parsing
+  const auto opts = get_opts(argc, argv);
   // running
-  SmartChain chain(get_tree(files.at(0)));
-  for (const auto& in: files) {
+  SmartChain chain(get_tree(opts.input_files.at(0)));
+  for (const auto& in: opts.input_files) {
     chain.add(in);
   }
   Jets jets(chain);
@@ -84,20 +91,19 @@ int main(int argc, char* argv[]) {
   std::cout << n_entries << " entries in chain" << std::endl;
 
   JetHists hists;
-  double weight = vm["weight"].as<double>();
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       if (! select_jet(jet) ) continue;
-      hists.fill(jet, weight);
+      hists.fill(jet, opts.weight);
     }
   }
 
   // save histograms
   using namespace grp;
-  H5::H5File out_file(out_name, H5F_ACC_TRUNC);
+  H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   // hists
   hists.save(out_file, HIST);
 }
