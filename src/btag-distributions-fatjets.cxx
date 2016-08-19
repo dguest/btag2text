@@ -1,7 +1,6 @@
-#include "FileCLI.hh"
+#include "Options.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
-// #include "FlavorPtEtaDistributions.hh"
 #include "constants.hh"
 #include "hist_tools.hh"
 #include "select_jet.hh"
@@ -13,7 +12,8 @@
 #include "H5Cpp.h"
 #include "TROOT.h"
 
-#include <iostream>
+
+const std::string DESCRIPTION = "build distributions for fat jets";
 
 // various plotting constants
 const double MAX_VX_MASS = 10*GeV;
@@ -39,31 +39,30 @@ private:
 
 int main(int argc, char* argv[]) {
   unshittify();
-  FileCLI cli(argc, argv);
-
-  SmartChain chain(get_tree(cli.in_files().at(0)));
-  for (const auto& in: cli.in_files()) {
+  // command parsing
+  const auto opts = get_opts(argc, argv, DESCRIPTION);
+  // running
+  SmartChain chain(get_tree(opts.input_files.at(0)));
+  for (const auto& in: opts.input_files) {
     chain.add(in);
   }
   Jets jets(chain);
   int n_entries = chain.GetEntries();
-  std::cout << n_entries << " entries in chain" << std::endl;
 
   JetHists hists;
-
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       if (! select_jet(jet) ) continue;
-      hists.fill(jet);
+      hists.fill(jet, opts.weight);
     }
   }
 
   // save histograms
   using namespace grp;
-  H5::H5File out_file(cli.out_file(), H5F_ACC_TRUNC);
+  H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   // hists
   hists.save(out_file, HIST);
 }

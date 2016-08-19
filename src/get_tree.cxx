@@ -3,9 +3,26 @@
 #include "TFile.h"
 #include <stdexcept>
 #include <set>
+#include <fstream>
+
 #include "TKey.h"
 
+namespace {
+  bool exists(const std::string& file_name) {
+    std::ifstream file(file_name.c_str(), std::ios::binary);
+    if (!file) {
+      file.close();
+      return false;
+    }
+    file.close();
+    return true;
+  }
+}
+
 std::string get_tree(const std::string& file_name) {
+  if (!exists(file_name)) {
+    throw std::logic_error(file_name + " doesn't exist");
+  }
   TFile file(file_name.c_str());
   std::set<std::string> keys;
   int n_keys = file.GetListOfKeys()->GetSize();

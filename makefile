@@ -94,6 +94,12 @@ LIBS         += $(shell covol-config --libs)
 CXXFLAGS     += $(shell covol-config --cflags)
 CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
 
+# boost
+ifdef BOOST_PATH
+LIBS         += -L$(BOOST_PATH)/lib -Wl,-rpath,$(BOOST_PATH)/lib
+endif
+LIBS         += -lboost_program_options
+
 # --- first call here
 all: $(ALL_TOP_LEVEL)
 

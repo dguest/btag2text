@@ -9,6 +9,7 @@ cd $SLURM_SUBMIT_DIR
 
 # read in some common tools
 . $1
+PY_DIR=$(dirname $1)
 
 IN_FILE_FILE=$2
 if [[ ! -f $IN_FILE_FILE ]]; then
@@ -17,9 +18,19 @@ if [[ ! -f $IN_FILE_FILE ]]; then
 fi
 
 INPUT_FILE=$(get-input-file $IN_FILE_FILE)
-OUTPUT_PT_ETA=$(get-output-name $INPUT_FILE)
+OUTPUT_FILE=$(get-output-name $INPUT_FILE)
 
 echo "running on $INPUT_FILE"
 mkdir -p $OUTPUT_DIR
-btag-distributions-fatjets $INPUT_FILE -o ${OUTPUT_DIR}/$OUTPUT_PT_ETA.h5
+OUTPUT_PATH=${OUTPUT_DIR}/$OUTPUT_FILE.h5
+XSEC_FILE=$PY_DIR/../data/xsec.txt
+if [[ ! -f $XSEC_FILE ]] ; then
+    echo "ERROR: no xsec file found" >&2
+    exit 1
+fi
+DSID=$(echo $OUTPUT_FILE | sed -r 's/d([0-9]*).*/\1/')
+if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE) ; then
+    WEIGHT=1
+fi
+btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT
 

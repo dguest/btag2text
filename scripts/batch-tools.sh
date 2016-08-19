@@ -77,3 +77,10 @@ function get-output-name() {
     local IDX=$(echo $INPUT_FILE | sed -r $IDX_RE)
     echo d${DS}_i${IDX}_j${SLURM_ARRAY_TASK_ID}
 }
+
+# Get the cross section for a dataset
+# arg 1: output file name
+# arg 2: path to data file
+# function get-cross-secion() {
+#     local DS=$(echo $1
+#     local DATA_PATH

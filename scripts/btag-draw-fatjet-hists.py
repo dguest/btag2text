@@ -12,12 +12,11 @@ import numpy as np
 import os
 
 _default_output = "plots"
-_labels = {0: "light", 4: "charm", 5: "bottom", -1: "???"}
 red = (1, 0, 0, 0.8)
 green = (0, 0.5, 0, 0.8)
 blue = (0, 0, 1, 0.8)
 black = (0, 0, 0, 1.0)
-_colors = {0: blue, 4: green, 5: red, -1: black}
+_colors = {'qcd': blue, 4: green, 'signal': red, -1: black}
 _force_log = {'pt', 'd0', 'd0sig', 'z0', 'z0sig', 'd0_signed',
               'JVT', 'mv1c00', 'mv1c10', 'mv1c20'}
 
@@ -43,11 +42,8 @@ def _get_hists(ds):
 
 def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
     hists = []
-    for ftl, name in _labels.items():
-        if not str(ftl) in hist_dict:
-            continue
-        hist = hist_dict[str(ftl)][var]
-        hist.color = _colors[ftl]
+    for name, hist in hist_dict.items():
+        hist.color = _colors[name]
         hist.label = name
         hists.append(hist)
     if not os.path.isdir(output_dir):
@@ -60,18 +56,20 @@ def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
 
 def run():
     args = _get_args()
-    subdirs = {}
     with File(args.input, 'r') as h5in:
         hists = h5in['hists']
-        for hist_type in hists:
-            subdirs[hist_type] = _get_hists(hists[hist_type])
+        processes = _get_hists(hists)
 
-    for hist_type, hists in subdirs.items():
-        for hname in hists.get('0') or next(iter(hists.values())):
-            output_path = os.path.join(args.output_dir, hist_type)
-            _draw_hists(hists, output_path, hname, log=args.log, ext=args.ext)
-            if hname in _force_log and not args.log:
-                _draw_hists(hists, output_path, hname, log=True, ext=args.ext)
+    variables = {}
+    for proc_name, proc_vars in processes.items():
+        for var, hist in proc_vars.items():
+            variables.setdefault(var, {})[proc_name] = hist
+
+    for var, hists in variables.items():
+        output_path = os.path.join(args.output_dir)
+        _draw_hists(hists, output_path, var, log=args.log, ext=args.ext)
+        if var in _force_log and not args.log:
+            _draw_hists(hists, output_path, var, log=True, ext=args.ext)
 
 if __name__ == '__main__':
     run()

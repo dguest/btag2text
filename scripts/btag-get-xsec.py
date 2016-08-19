@@ -20,8 +20,9 @@ def input_itr():
         yield from (int(x) for x in line.split())
 
 class CrossSections:
-    def __init__(self, file_name):
+    def __init__(self, file_name, lumi_fb=20):
         self.datasets = {}
+        self.lumi_fb = lumi_fb
         with open(file_name) as infile:
             for rawline in infile:
                 self._add_line(rawline)
@@ -30,20 +31,26 @@ class CrossSections:
         line = rawline.strip()
         if not line or line.startswith('#'):
             return
-        _, dsid_s, xsec_s, filteff_s, *crap = line.split()
+        _, dsid_s, xsec_s, filteff_s, evts_s = line.split()
         self.datasets[int(dsid_s)] = {
-            'xsec': float(xsec_s), 'filteff': float(filteff_s)}
+            'xsec': float(xsec_s) * 1e-3,
+            'filteff': float(filteff_s),
+            'nevt': float(evts_s)}
 
     def get_weight(self, dsid):
         rec = self.datasets[dsid]
-        return rec['xsec'] * rec['filteff']
+        return self.lumi_fb * rec['xsec'] * rec['filteff'] / rec['nevt']
 
 def run():
     args = _get_args()
     xsecs = CrossSections(args.xsec_file)
     for dsid in input_itr():
-        outline = '{}\n'.format(xsecs.get_weight(dsid))
+        try:
+            outline = '{}\n'.format(xsecs.get_weight(dsid))
+        except KeyError as err:
+            exit(1)
         sys.stdout.write(outline)
+
 
 
 if __name__ == '__main__':
