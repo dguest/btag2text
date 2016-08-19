@@ -48,12 +48,12 @@ Options get_opts(int argc, char* argv[]) {
   Options opts;
   po::options_description opt(DESCRIPTION);
   opt.add_options()
-    ("files", po::value<std::vector<std::string> >(&opts.input_files)->required(),
+    ("files", po::value(&opts.input_files)->required(),
      "list of input files")
-    ("out_file,o", po::value<std::string>(&opts.output_file)->required(),
+    ("out_file,o", po::value(&opts.output_file)->required(),
      "output file")
     ("help,h", "Print help messages")
-    ("weight,w", po::value<double>(&opts.weight)->default_value(1.0),
+    ("weight,w", po::value(&opts.weight)->default_value(1.0),
      "weights for this file");
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);
