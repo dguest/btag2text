@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make b-tagging reweighting histograms
+Draw b-tagging hists
 """
 from ndhist.hist import Hist
 from ndhist.hist import HistError
