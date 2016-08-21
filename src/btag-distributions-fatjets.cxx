@@ -6,6 +6,7 @@
 #include "select_jet.hh"
 #include "unshittify.hh"
 #include "get_tree.hh"
+#include "h5_tools.hh"
 
 #include "ndhist/Histogram.hh"
 
@@ -65,6 +66,7 @@ int main(int argc, char* argv[]) {
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   // hists
   hists.save(out_file, HIST);
+  write_attr(out_file, "n_entries", n_entries);
 }
 
 // ______________________________________________________________________
