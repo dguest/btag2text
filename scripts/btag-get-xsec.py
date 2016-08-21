@@ -31,15 +31,15 @@ class CrossSections:
         line = rawline.strip()
         if not line or line.startswith('#'):
             return
-        _, dsid_s, xsec_s, filteff_s, evts_s = line.split()
+        _, dsid_s, xsec_nb_s, filteff_s, evts_s = line.split()
         self.datasets[int(dsid_s)] = {
-            'xsec': float(xsec_s) * 1e-3,
+            'xsec_fb': float(xsec_nb_s) * 1e-6,
             'filteff': float(filteff_s),
             'nevt': float(evts_s)}
 
     def get_weight(self, dsid):
         rec = self.datasets[dsid]
-        return self.lumi_fb * rec['xsec'] * rec['filteff'] / rec['nevt']
+        return self.lumi_fb * rec['xsec_fb'] * rec['filteff'] / rec['nevt']
 
 def run():
     args = _get_args()
