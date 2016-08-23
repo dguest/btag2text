@@ -21,7 +21,7 @@ def write_metadata(meta_dict, xsecfile, output=sys.stdout):
                 n_events = meta_dict[dsid]['n_events']
             else:
                 n_events = '?'
-            line = '{} {}'.format(front, n_events)
+            line = '{} {:>9}'.format(front, n_events)
         output.write(line + part + comment + '\n')
 
 def run():
