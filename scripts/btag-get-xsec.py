@@ -35,7 +35,7 @@ class CrossSections:
         self.datasets[int(dsid_s)] = {
             'xsec_fb': float(xsec_nb_s) * 1e-6,
             'filteff': float(filteff_s),
-            'nevt': float(evts_s)}
+            'nevt': float('nan') if evts_s == '?' else float(evts_s)}
 
     def get_weight(self, dsid):
         rec = self.datasets[dsid]
