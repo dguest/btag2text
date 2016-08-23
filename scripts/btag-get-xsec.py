@@ -33,7 +33,7 @@ class CrossSections:
             return
         _, dsid_s, xsec_nb_s, filteff_s, evts_s = line.split()
         self.datasets[int(dsid_s)] = {
-            'xsec_fb': float(xsec_nb_s) * 1e-6,
+            'xsec_fb': float(xsec_nb_s) * 1e6,
             'filteff': float(filteff_s),
             'nevt': float('nan') if evts_s == '?' else float(evts_s)}
 
