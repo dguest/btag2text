@@ -2,6 +2,7 @@
 #include "Jets.hh"
 #include "SmartChain.hh"
 #include "constants.hh"
+#include "ClusterImages.hh"
 #include "hist_tools.hh"
 #include "select_jet.hh"
 #include "unshittify.hh"
@@ -51,6 +52,7 @@ int main(int argc, char* argv[]) {
   int n_entries = chain.GetEntries();
 
   JetHists hists;
+  ClusterImages images(125*GeV);
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
@@ -58,6 +60,8 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
       if (! select_jet(jet) ) continue;
       hists.fill(jet, opts.weight);
+      auto clusters = build_clusters(jet);
+      images.fill(clusters, jet, opts.weight);
     }
   }
 
@@ -66,6 +70,7 @@ int main(int argc, char* argv[]) {
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   // hists
   hists.save(out_file, HIST);
+  images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
 }
 

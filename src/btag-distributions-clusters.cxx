@@ -1,6 +1,7 @@
 #include "FileCLI.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
+#include "ClusterImages.hh"
 #include "constants.hh"
 #include "hist_tools.hh"
 #include "get_tree.hh"
@@ -27,18 +28,6 @@ private:
   Histogram eta;
   Histogram phi;
   Histogram e;
-};
-
-class ClusterImages
-{
-public:
-  ClusterImages(double mass);
-  void fill(const std::vector<Cluster>& points, const Jet& jet);
-  void save(H5::CommonFG& out) const;
-  void save(H5::CommonFG& out, std::string subdir) const;
-private:
-  Histogram image;
-  double m_mass;
 };
 
 class FlavoredHists
@@ -127,37 +116,6 @@ void ClusterHists::save(H5::CommonFG& out, std::string subdir) const {
   save(group);
 }
 
-// ________________________________________________________________________
-// cluster images
-const double JET_R = 1.0;
-ClusterImages::ClusterImages(double mass):
-  image({{"x", 100, -JET_R, JET_R}, {"y", 100, -JET_R, JET_R}}),
-  m_mass(mass)
-{}
-void ClusterImages::fill(const std::vector<Cluster>& clusters, const Jet& jet) {
-  std::vector<Point> points;
-  for (const auto& cluster: clusters) {
-    double dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
-    double deta = cluster.eta - jet.jet_eta;
-    double jet_r = 2 * m_mass / jet.jet_pt;
-    points.push_back({deta / jet_r, dphi / jet_r, cluster.e});
-  }
-  const auto rotated_points = get_points_along_principal(points);
-  for (const auto& point: rotated_points) {
-    std::map<std::string, double> eta_phi {
-      {"x", point.x}, {"y", point.y} };
-    image.fill(eta_phi, point.w);
-  }
-}
-void ClusterImages::save(H5::CommonFG& out) const {
-#define BYNAME(name) name.write_to(out, #name)
-  BYNAME(image);
-#undef BYNAME
-}
-void ClusterImages::save(H5::CommonFG& out, std::string subdir) const {
-  H5::Group group(out.createGroup(subdir));
-  save(group);
-}
 // ________________________________________________________________________
 // flavored hists
 
