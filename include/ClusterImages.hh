@@ -10,6 +10,7 @@ namespace H5 {
 #include "Cluster.hh"
 
 #include <vector>
+#include <string>
 
 class ClusterImages
 {

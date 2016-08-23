@@ -6,6 +6,8 @@
 #include "ndhist/Histogram.hh"
 #include "H5Cpp.h"
 
+#include <string>
+
 // ________________________________________________________________________
 // cluster images
 const double JET_R = 1.0;
