@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Add metadata to xsec file"""
 from argparse import ArgumentParser
+import sys
+import json
 
 def _get_args():
     parser = ArgumentParser(description=__doc__)
@@ -9,21 +11,25 @@ def _get_args():
     parser.add_argument('-v', '--verbose', action='store_true')
     return parser.parse_args()
 
-def write_metadata(metafile, xsecfile):
+def write_metadata(meta_dict, xsecfile, output=sys.stdout):
     for dirty_line in xsecfile:
         line, part, comment = dirty_line.strip().partition('#')
         if line:
-            print(line)
             front, n_events = line.rsplit(maxsplit=1)
-            dsid = int(front.split()[1])
-            line = '{} {}'.format(front, meta_dict.get(dsid, '?'))
-        output_file.write(line + part + comment + '\n')
+            dsid = front.split()[1]
+            if dsid in meta_dict:
+                n_events = meta_dict[dsid]['n_events']
+            else:
+                n_events = '?'
+            line = '{} {}'.format(front, n_events)
+        output.write(line + part + comment + '\n')
 
 def run():
     args = _get_args()
     with open(args.meta_file) as metafile:
-        with open(args.xsec_file, 'w') as xsecfile:
-            write_metadata(metafile, xsecfile)
+        meta_dict = json.load(metafile)
+    with open(args.xsec_file) as xsecfile:
+        write_metadata(meta_dict, xsecfile)
 
 if __name__ == '__main__':
     run()
