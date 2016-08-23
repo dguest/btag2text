@@ -24,7 +24,7 @@ def _get_args():
     d = "default: %(default)s"
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('inputs', nargs='+', type=hist_pair)
-    parser.add_argument('-o', '--out-file', default='.pdf', help=d)
+    parser.add_argument('-o', '--out-file', default='hists.h5', help=d)
     return parser.parse_args()
 
 def run():
