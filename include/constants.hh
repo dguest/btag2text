@@ -30,5 +30,6 @@ namespace grp {
   static const char* COV = "cov";
   static const char* REWEIGHTED = "reweighted";
   static const char* RAW = "raw";
+  static const char* IMAGE = "image";
 }
 #endif

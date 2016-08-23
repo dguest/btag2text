@@ -42,7 +42,7 @@ def run():
     args = _get_args()
     subdirs = {}
     with File(args.input, 'r') as h5in:
-        hists = _get_hists(h5in['images/raw'])
+        hists = _get_hists(h5in['image'])
         for hist_name, hist in hists.items():
             _draw_hists(hist, hist_name, args.output_dir, ext=args.ext)
 
