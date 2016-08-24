@@ -26,15 +26,15 @@ INPUT=''
 OUTPUT=''
 
 while getopts ":hi:o:" opt $@; do
-	  case $opt in
-	      h) _help; exit 1;;
-	      i) INPUT=${OPTARG} ;;
+    case $opt in
+        h) _help; exit 1;;
+        i) INPUT=${OPTARG} ;;
         o) OUTPUT=${OPTARG} ;;
-	      # handle errors
-	      \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
+        # handle errors
+        \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :) _usage; echo "Missing argument for -$OPTARG" >&2; exit 1;;
         *) _usage; echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
-	  esac
+    esac
 done
 if [[ -z $INPUT || -z $OUTPUT ]] ; then
     echo "ERROR: -i and -o are required" >&2
