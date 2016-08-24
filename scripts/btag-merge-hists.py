@@ -6,7 +6,6 @@ Inputs should be grouped by 'file_path,label'
 """
 from h5py import File
 from argparse import ArgumentParser, ArgumentTypeError
-# from ndhist.hist import Hist, is_h5_hist
 from ndhist.hadd import add_tree, build_h5_tree
 
 import os
@@ -30,13 +29,13 @@ def _get_args():
 def run():
     args = _get_args()
     with File(args.out_file, 'w') as h5out:
-        out_hists = h5out.create_group('hists')
         for path, label in args.inputs:
-            tree = {}
             with File(path,'r') as h5in:
-                add_tree(tree, h5in['hists'])
-            out_group = out_hists.create_group(label)
-            build_h5_tree(out_group, tree)
+                for top in h5in:
+                    tree = {}
+                    add_tree(tree, h5in[top])
+                    out_group = h5out.require_group(top).create_group(label)
+                    build_h5_tree(out_group, tree)
 
 if __name__ == '__main__':
     run()
