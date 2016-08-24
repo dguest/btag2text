@@ -14,6 +14,7 @@
 #include "H5Cpp.h"
 #include "TROOT.h"
 
+#include <iostream>
 
 const std::string DESCRIPTION = "build distributions for fat jets";
 
@@ -43,6 +44,7 @@ int main(int argc, char* argv[]) {
   unshittify();
   // command parsing
   const auto opts = get_opts(argc, argv, DESCRIPTION);
+  if (opts.verbose) std::cout << opts << std::endl;
   // running
   SmartChain chain(get_tree(opts.input_files.at(0)));
   for (const auto& in: opts.input_files) {
