@@ -33,18 +33,19 @@ def _get_hists(ds):
     return hists
 
 def _draw_hists(hist, hist_name, output_dir, ext='.pdf'):
-    name = '{}/{}{}'.format(output_dir, 'image', ext)
+    name = '{}/{}{}'.format(output_dir, hist_name, ext)
     print("drawing {}".format(name))
     with Canvas(name) as can:
-        draw2d(can, hist)
+        draw2d(can, hist, log=True)
 
 def run():
     args = _get_args()
     subdirs = {}
     with File(args.input, 'r') as h5in:
         hists = _get_hists(h5in['image'])
-        for hist_name, hist in hists.items():
-            _draw_hists(hist, hist_name, args.output_dir, ext=args.ext)
+        for process, var_group in hists.items():
+            for var, hist in var_group.items():
+                _draw_hists(hist, process, args.output_dir, ext=args.ext)
 
 if __name__ == '__main__':
     run()
