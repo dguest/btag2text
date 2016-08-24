@@ -52,18 +52,20 @@ int main(int argc, char* argv[]) {
   }
   Jets jets(chain);
   int n_entries = chain.GetEntries();
+  double sum_event_weights = 0;
 
   JetHists hists;
   ClusterImages images(125*GeV);
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
+    sum_event_weights += jets.eventWeight();
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       if (! select_jet(jet) ) continue;
       hists.fill(jet, opts.weight);
       auto clusters = build_clusters(jet);
-      images.fill(clusters, jet, opts.weight);
+      images.fill(clusters, jet, opts.weight * jet.mc_event_weight);
     }
   }
 
@@ -74,6 +76,7 @@ int main(int argc, char* argv[]) {
   hists.save(out_file, HIST);
   images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
+  write_attr(out_file, "sum_event_weights", sum_event_weights);
 }
 
 // ______________________________________________________________________

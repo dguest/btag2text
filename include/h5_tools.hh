@@ -6,6 +6,7 @@
 #include "H5Cpp.h"
 
 H5::PredType get_type(int val);
+H5::PredType get_type(double val);
 
 template<typename M>
 void write_attr(H5::H5Location& loc, const std::string& name, M value) {

@@ -211,6 +211,7 @@ Jets::Jets(SmartChain& chain):
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
   SET_BRANCH(avgmu);
+  m_chain->SetBranch("mcwg", &mc_event_weight);
 
   // kinematics
   SET_BRANCH(jet_pt);
@@ -334,6 +335,7 @@ Jet Jets::getJet(int pos) const {
   Jet o;
   // event
   o.avgmu = avgmu;
+  o.mc_event_weight = mc_event_weight;
 
   // kinematics                   // kinematics
   o.jet_pt = jet_pt->at(pos)*MeV;
@@ -467,6 +469,10 @@ Jet Jets::getJet(int pos) const {
 
   return o;
 };
+double Jets::eventWeight() const {
+  return mc_event_weight;
+}
+
 
 template<typename T>
 T checked(const std::vector<T>& vec, int num, const std::string& err) {

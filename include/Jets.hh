@@ -30,6 +30,7 @@ struct Jet
 {
   // event
   double avgmu;
+  double mc_event_weight;
 
   // kinematics
   float jet_pt;
@@ -287,6 +288,7 @@ public:
   Jets(SmartChain& chain);
   Jet getJet(int) const;
   int size() const;
+  double eventWeight() const;
 private:
   SmartChain* m_chain;
   Subjets m_trkjet;
@@ -294,6 +296,7 @@ private:
 
   // event
   double avgmu;
+  double mc_event_weight;
 
   // kinematics
   std::vector<float>* jet_pt;
