@@ -25,6 +25,7 @@ const double MV2_LOW = -MV2_HIGH;
 const double PT_MAX = 2*TeV;
 const double ETA_MAX = 3.0;
 
+namespace {
 class JetHists
 {
 public:
@@ -36,7 +37,7 @@ private:
   Histogram pt;
   Histogram eta;
 };
-
+}
 // _____________________________________________________________________
 // main function
 
@@ -81,7 +82,7 @@ int main(int argc, char* argv[]) {
 
 // ______________________________________________________________________
 // hist methods
-
+namespace {
 JetHists::JetHists():
   // MV2
   ENERGY(pt, PT_MAX),
@@ -107,3 +108,4 @@ void JetHists::save(H5::CommonFG& out, std::string subdir) const {
   save(group);
 }
 
+}
