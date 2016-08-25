@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       if (! select_jet(jet) ) continue;
-      hists.fill(jet, opts.weight);
+      hists.fill(jet, opts.weight * jet.mc_event_weight);
       auto clusters = build_clusters(jet);
       images.fill(clusters, jet, opts.weight * jet.mc_event_weight);
     }
