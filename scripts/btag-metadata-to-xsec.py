@@ -18,10 +18,10 @@ def write_metadata(meta_dict, xsecfile, output=sys.stdout):
             front, n_events = line.rsplit(maxsplit=1)
             dsid = front.split()[1]
             if dsid in meta_dict:
-                n_events = meta_dict[dsid]['n_events']
+                sum_weights = meta_dict[dsid]['sum_event_weights']
             else:
-                n_events = '?'
-            line = '{} {:>9}'.format(front, n_events)
+                sum_weights = '?'
+            line = '{} {:>9}'.format(front, sum_weights)
         output.write(line + part + comment + '\n')
 
 def run():
