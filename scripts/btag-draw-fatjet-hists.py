@@ -56,9 +56,13 @@ def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
 
 def extended_variable_iter(proc_vars):
     for subjet, varhists in proc_vars.items():
-        for var, hist in varhists.items():
-            extended_var_name = '_'.join([subjet, var])
-            yield extended_var_name, hist
+        try:
+            for var, hist in varhists.items():
+                extended_var_name = '_'.join([subjet, var])
+                yield extended_var_name, hist
+        # catch for old way of saving things, can remove soon
+        except AttributeError as err:
+            yield subjet, varhists
 
 def run():
     args = _get_args()
