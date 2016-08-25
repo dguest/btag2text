@@ -54,6 +54,12 @@ def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
         draw1d(can, hists, log=log)
         can.ax.legend(framealpha=0)
 
+def extended_variable_iter(proc_vars):
+    for subjet, varhists in proc_vars.items():
+        for var, hist in varhists.items():
+            extended_var_name = '_'.join([subjet, var])
+            yield extended_var_name, hist
+
 def run():
     args = _get_args()
     with File(args.input, 'r') as h5in:
@@ -62,7 +68,7 @@ def run():
 
     variables = {}
     for proc_name, proc_vars in processes.items():
-        for var, hist in proc_vars.items():
+        for var, hist in extended_variable_iter(proc_vars):
             variables.setdefault(var, {})[proc_name] = hist
 
     for var, hists in variables.items():
