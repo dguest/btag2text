@@ -5,6 +5,8 @@
 
 #include "H5Cpp.h"
 
+#include <cmath> // isnan
+
 // various plotting constants
 const double MAX_VX_MASS = 10*GeV;
 const double JET_WIDTH = 0.5;
@@ -72,7 +74,11 @@ void JetHists::fill(const Jet& jet, double weight) {
   BYNAME(jf_efc);
   BYNAME(jf_deta);
   BYNAME(jf_dphi);
-  BYNAME(jf_ntrkAtVx);
+  if (!std::isnan(jet.jet_jf_ntrkAtVx)) {
+    jf_ntrkAtVx.fill(jet.jet_jf_ntrkAtVx, weight);
+  } else {
+    jf_ntrkAtVx.fill(0, weight);
+  }
   BYNAME(jf_nvtx);
   BYNAME(jf_sig3d);
   BYNAME(jf_nvtx1t);
