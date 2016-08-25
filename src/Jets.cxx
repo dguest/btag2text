@@ -467,9 +467,9 @@ Jet Jets::getJet(int pos) const {
     o.vrtrkjets.push_back(m_vrtrkjet.getJet(pos, sub_pos));
   }
   std::sort(o.trkjets.begin(), o.trkjets.end(),
-            [](Jet& f, Jet& s){return f.jet_pt > s.jet_pt; });
+            [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
   std::sort(o.vrtrkjets.begin(), o.vrtrkjets.end(),
-            [](Jet& f,Jet& s){return f.jet_pt > s.jet_pt; });
+            [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
 
   return o;
 };
