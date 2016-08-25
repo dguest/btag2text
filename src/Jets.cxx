@@ -177,12 +177,12 @@ Jet Subjets::getJet(int jet, int subjet) const {
 
   COPY(sv1_ntrkv);
   COPY(sv1_n2t);
-  COPY(sv1_m);
+  o.jet_sv1_m = getValue(*sv1_m, jet, subjet, "sv1_m")*MeV;
   COPY(sv1_efc);
   COPY(sv1_normdist);
   COPY(sv1_Nvtx);
 
-  COPY(jf_m);
+  o.jet_jf_m = getValue(*jf_m, jet, subjet, "jf_m")*MeV;
   COPY(jf_efc);
   COPY(jf_deta);
   COPY(jf_dphi);

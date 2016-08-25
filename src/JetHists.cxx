@@ -74,11 +74,7 @@ void JetHists::fill(const Jet& jet, double weight) {
   BYNAME(jf_efc);
   BYNAME(jf_deta);
   BYNAME(jf_dphi);
-  if (!std::isnan(jet.jet_jf_ntrkAtVx)) {
-    jf_ntrkAtVx.fill(jet.jet_jf_ntrkAtVx, weight);
-  } else {
-    jf_ntrkAtVx.fill(0, weight);
-  }
+  BYNAME(jf_ntrkAtVx);
   BYNAME(jf_nvtx);
   BYNAME(jf_sig3d);
   BYNAME(jf_nvtx1t);

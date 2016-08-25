@@ -266,7 +266,7 @@ private:
   std::vector<std::vector<float> >* jf_efc;
   std::vector<std::vector<float> >* jf_deta;
   std::vector<std::vector<float> >* jf_dphi;
-  std::vector<std::vector<float> >* jf_ntrkAtVx;
+  std::vector<std::vector<int> >* jf_ntrkAtVx;
   std::vector<std::vector<int> >* jf_nvtx;
   std::vector<std::vector<float> >* jf_sig3d;
   std::vector<std::vector<int> >* jf_nvtx1t;
