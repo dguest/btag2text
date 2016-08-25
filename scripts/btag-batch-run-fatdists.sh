@@ -29,8 +29,7 @@ if [[ ! -f $XSEC_FILE ]] ; then
     exit 1
 fi
 DSID=$(echo $OUTPUT_FILE | sed -r 's/d([0-9]*).*/\1/')
-if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE) ; then
-    WEIGHT=1
-fi
+WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE)
+echo "weighted by $WEIGHT"
 btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT
 
