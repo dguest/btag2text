@@ -57,7 +57,8 @@ function require() {
     done
 }
 
-QCD_FILES=$(echo $INPUT/3610{20..32}.h5)
+# we don't use 20 through 22 for some reason
+QCD_FILES=$(echo $INPUT/3610{23..32}.h5)
 require $QCD_FILES
 SIG_FILES=$(echo $INPUT/301{488..507}.h5)
 require $SIG_FILES
