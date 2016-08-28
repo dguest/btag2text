@@ -108,7 +108,7 @@ Subjets::Subjets(SmartChain& chain, const std::string& name) {
   // SET_BRANCH(E);
   SET_BRANCH(m);
 
-  // jet_ntrk is defined from the size of a vector later
+  SET_BRANCH(ntrk);
   SET_BRANCH(ip3d_ntrk);
 
   // SET_BRANCH(ip2d_pb);
@@ -168,6 +168,7 @@ Jet Subjets::getJet(int jet, int subjet) const {
   o.jet_m = m->at(jet).at(subjet)*MeV;
 
   // track counts
+  COPY(ntrk);
   COPY(ip3d_ntrk);
 
   // track variables
@@ -197,6 +198,9 @@ Jet Subjets::getJet(int jet, int subjet) const {
   COPY(mv2c20);
 
 #undef COPY
+
+  fill_derived(o);
+
   return o;
 }
 int Subjets::size(int jet) const {
