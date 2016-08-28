@@ -57,8 +57,9 @@ function require() {
     done
 }
 
-# we don't use 20 through 22 for some reason
-QCD_FILES=$(echo $INPUT/3610{23..32}.h5)
+# other h->bb don't use 20 through 22 for some reason
+# but 22 (JZ2W) seems to be ok
+QCD_FILES=$(echo $INPUT/3610{22..32}.h5)
 require $QCD_FILES
 SIG_FILES=$(echo $INPUT/301{488..507}.h5)
 require $SIG_FILES
