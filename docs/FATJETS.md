@@ -120,13 +120,10 @@ and using the same names as these `.json` files.
 
 There are three 'special' variables included in the description:
 
- - "..." is used in the description files to indicate that the
+ - `...` is used in the description files to indicate that the
    structure it's inside is a variable-length array.
 
- - "jet_truthflav" is the target 'flavor'. It should take the values 0
-   (light-jet), 4 (charm-jet), 5 (b-jet), and 15 (tau-jet).
-
- - "weight" is the jet weighting. This should be used to remove any
+ - `weight` is the jet weighting. This should be used to remove any
    flavor bias the pt and eta spectra may have. Two jets with weight
    0.5 should be given equal priority as one jet with weight 1.0.
 
