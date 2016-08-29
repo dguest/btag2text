@@ -65,7 +65,8 @@ describe the number of sensors that detected the particle.
 
 After particles leave the tracker they form "clusters" in the
 calorimeter. There can be any number of these in a given jet, and the
-distribution can tell us something about the jet's origin. The clusters are summarized as follows:
+distribution can tell us something about the jet's origin. The
+clusters are summarized as follows:
 
  - `cluster_pt`: energy of the cluster projected along the direction
    transverse to the beam axis, assuming that the energy came from the
@@ -107,9 +108,9 @@ discriminant on `mv2*` variables will add some undesirable dependencies.
 Description Files
 -----------------
 
-There are also several files to describe the outputs. The file that
-ends in `.txt` is a (mostly) plain-English description of the
-variables we're using, in the same order as the data files.
+There are also several `labels` files to describe the outputs. The
+file that ends in `.txt` is a (mostly) plain-English description of
+the variables we're using, in the same order as the data files.
 
 The `.json` files are valid JSON, and give the shorter names we use
 for these variables internally. Ideally any NN trained on this data
