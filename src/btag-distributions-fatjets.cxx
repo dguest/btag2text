@@ -31,6 +31,7 @@ private:
   std::vector<JetHists> m_subjets;
   JetHists m_fatjet;
   SubstructureHists m_substruct;
+  int m_n_one_cluster;
 };
 
 // _____________________________________________________________________
@@ -78,7 +79,8 @@ int main(int argc, char* argv[]) {
 
 FatJetHists::FatJetHists(int n_subjets):
   m_subjets(n_subjets),
-  m_fatjet()
+  m_fatjet(),
+  m_n_one_cluster(0)
 {
 }
 void FatJetHists::fill(const Jet& jet, double weight) {
@@ -88,13 +90,18 @@ void FatJetHists::fill(const Jet& jet, double weight) {
     m_subjets.at(jet_idx).fill(subjets.at(jet_idx), weight);
   }
   m_fatjet.fill(jet, weight);
-  m_substruct.fill(jet.moments, weight);
+  if (jet.jet_cluster_pt.size() > 1) {
+    m_substruct.fill(jet.moments, weight);
+  } else {
+    m_n_one_cluster++;
+  }
 }
 
 void FatJetHists::save(H5::CommonFG& out) const {
   H5::Group fatjet(out.createGroup("fatjet"));
   m_fatjet.save(fatjet);
   m_substruct.save(fatjet);
+  write_attr(fatjet, "n_one_cluster", m_n_one_cluster);
   for (size_t jet_idx = 0; jet_idx < m_subjets.size(); jet_idx++) {
     m_subjets.at(jet_idx).save(out, "subjet_" + std::to_string(jet_idx));
   }

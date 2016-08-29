@@ -14,7 +14,6 @@ const double MAX_SIGNIFICANCE = 50;
 const double MV2_HIGH = 1.00001;
 const double MV2_LOW = -MV2_HIGH;
 
-
 SubstructureHists::SubstructureHists():
   // IP3D
   ZERO_ONE(tau21),
