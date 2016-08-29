@@ -24,3 +24,9 @@ bool select_jet(const Jet& jet) {
   if ( std::abs(jet.jet_eta) > 2.5) return false;
   return true;
 }
+
+bool select_fat_jet(const Jet& jet) {
+  if (jet.jet_pt < 200*GeV) return false;
+  if (std::abs(jet.jet_eta) > 2.5) return false;
+  return true;
+}
