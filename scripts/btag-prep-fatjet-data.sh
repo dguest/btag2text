@@ -69,10 +69,12 @@ function require() {
 
 # other h->bb don't use 20 through 22 for some reason
 # but 22 (JZ2W) seems to be ok
+msg "getting background files..."
 QCD_FILES=$(echo ${INPUT%/}/d3610{22..32}_*.gz)
-# require $QCD_FILES
+require $QCD_FILES
+msg "getting signal files..."
 SIG_FILES=$(echo ${INPUT%/}/d301{488..507}_*.gz)
-# require $SIG_FILES
+require $SIG_FILES
 
 btag-dump-jet-labels-fatjets > $TMP/labels.txt
 btag-dump-jet-labels-fatjets-terse > $TMP/labels.json
@@ -91,8 +93,9 @@ if [[ -d $OUTPUT ]]; then
     fi
 fi
 
+cp -r $TMP $OUTPUT
+
 msg "combining backgrounds..."
-echo $QCD_FILES > $TMP/background.txt
+cat $QCD_FILES > $OUTPUT/background.txt.gz
 msg "combining signal..."
-echo $SIG_FILES > $TMP/signal.txt
-mv $TMP $OUTPUT
+cat $SIG_FILES > $OUTPUT/signal.txt.gz
