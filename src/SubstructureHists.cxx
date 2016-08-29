@@ -16,13 +16,13 @@ const double MV2_LOW = -MV2_HIGH;
 
 SubstructureHists::SubstructureHists():
   // IP3D
-  ZERO_ONE(tau21),
-  ZERO_ONE(c1),
-  ZERO_ONE(c2),
-  ZERO_ONE(c1_beta2),
-  ZERO_ONE(c2_beta2),
-  ZERO_ONE(d2),
-  ZERO_ONE(d2_beta2)
+  RANGE(tau21, 0, 1.5),
+  RANGE(c1, 0, 0.5),
+  RANGE(c2, 0, 0.7),
+  RANGE(c1_beta2, 0, 0.8),
+  RANGE(c2_beta2, 0, 0.8),
+  RANGE(d2, 0, 200),
+  RANGE(d2_beta2, 0, 200)
 {
 }
 

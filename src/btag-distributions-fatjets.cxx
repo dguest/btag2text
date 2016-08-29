@@ -49,6 +49,7 @@ int main(int argc, char* argv[]) {
   }
   Jets jets(chain);
   int n_entries = chain.GetEntries();
+  if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
   double sum_event_weights = 0;
 
   FatJetHists hists(2);
