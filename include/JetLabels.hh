@@ -9,6 +9,17 @@
 // ________________________________________________________________________
 // verbose labels
 
+struct SubstructureMomentLabels
+{
+  const std::string tau21 = "tau21";
+  const std::string c1 = "c1";
+  const std::string c2 = "c2";
+  const std::string c1_beta2 = "c1_beta2";
+  const std::string c2_beta2 = "c2_beta2";
+  const std::string d2 = "d2";
+  const std::string d2_beta2 = "d2_beta2";
+};
+
 class JetLabels
 {
 public:
@@ -59,8 +70,9 @@ public:
   const std::string n_tracks_over_d0_threshold = "n_tracks_over_d0_threshold";
 
   const std::vector<JetLabels> vrtrkjets;
-  JetLabels() = default;
-  JetLabels(int iii): vrtrkjets(iii) {}
+  const SubstructureMomentLabels moments;
+  JetLabels(): vrtrkjets(0), moments() {}
+  JetLabels(int iii): vrtrkjets(iii), moments() {}
 };
 
 class TrackLabels
@@ -142,6 +154,17 @@ std::string quoted(const std::string& in);
 
 #define LABELED(label) const std::string label = quoted(#label)
 
+struct TerseSubstructureMomentLabels
+{
+  LABELED(tau21);
+  LABELED(c1);
+  LABELED(c2);
+  LABELED(c1_beta2);
+  LABELED(c2_beta2);
+  LABELED(d2);
+  LABELED(d2_beta2);
+};
+
 class TerseJetLabels
 {
 public:
@@ -192,8 +215,9 @@ public:
   LABELED(n_tracks_over_d0_threshold);
 
   const std::vector<TerseJetLabels> vrtrkjets;
-  TerseJetLabels() = default;
-  TerseJetLabels(int iii): vrtrkjets(iii) {}
+  const TerseSubstructureMomentLabels moments;
+  TerseJetLabels(): vrtrkjets(0), moments() {}
+  TerseJetLabels(int iii): vrtrkjets(iii), moments() {}
 };
 
 class TerseTrackLabels

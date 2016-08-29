@@ -55,6 +55,18 @@ std::string str_from_ip2d(const T& j) {
   OUT(jet_ip2d_pu);
   return out.str();
 }
+template<typename T>
+std::string str_from_moments(const T& j) {
+  CleanStream out;
+  OUT_COMMA(tau21);
+  OUT_COMMA(c1);
+  OUT_COMMA(c2);
+  OUT_COMMA(c1_beta2);
+  OUT_COMMA(c2_beta2);
+  OUT_COMMA(d2);
+  OUT(d2_beta2);
+  return out.str();
+}
 
 template<typename T>
 std::string str_from_hl_vars(const T& j) {
@@ -364,8 +376,10 @@ std::string str_from_fat_jet(const T& j, const U& weight = "weight") {
     CS;
     OPEN_LIST {
       out << str_from_all_clusters(j);
-    } CLOSE_LIST;
-    CS;
+    } CLOSE_LIST; CS;
+    OPEN {
+      out << str_from_moments(j.moments);
+    } CLOSE; CS;
     OPEN_LIST {
       out << str_from_subjets(j.vrtrkjets);
     } CLOSE_LIST;

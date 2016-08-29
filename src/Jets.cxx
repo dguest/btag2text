@@ -207,10 +207,43 @@ int Subjets::size(int jet) const {
   return pt->at(jet).size();
 }
 
+SubstructureMomentArray::SubstructureMomentArray(SmartChain& chain) {
+  auto nm = [](const std::string& var) {
+    return "jet_substructure_moment_" + var;
+  };
+#define SET_BRANCH(var) chain.SetBranch(nm(#var), &m_ ## var)
+  SET_BRANCH(tau21);
+  SET_BRANCH(c1);
+  SET_BRANCH(c2);
+  SET_BRANCH(c1_beta2);
+  SET_BRANCH(c2_beta2);
+  SET_BRANCH(d2);
+  SET_BRANCH(d2_beta2);
+#undef SET_BRANCH
+}
+
+SubstructureMoments SubstructureMomentArray::getMoments(int number) const {
+#define COPY(var) o.var = m_ ## var->at(number)
+  SubstructureMoments o;
+  COPY(tau21);
+  COPY(c1);
+  COPY(c2);
+  COPY(c1_beta2);
+  COPY(c2_beta2);
+  COPY(d2);
+  COPY(d2_beta2);
+  return o;
+#undef COPY
+}
+int SubstructureMomentArray::size() const {
+  return m_tau21->size();
+}
+
 Jets::Jets(SmartChain& chain):
   m_chain(&chain),
   m_trkjet(chain, "trkjet"),
-  m_vrtrkjet(chain, "vrtrkjet")
+  m_vrtrkjet(chain, "vrtrkjet"),
+  m_moments(chain)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
@@ -475,6 +508,7 @@ Jet Jets::getJet(int pos) const {
   std::sort(o.vrtrkjets.begin(), o.vrtrkjets.end(),
             [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
 
+  o.moments = m_moments.getMoments(pos);
   return o;
 };
 double Jets::eventWeight() const {
@@ -639,4 +673,10 @@ std::vector<CovVar> get_jet_variables() {
     {"ip3d_pc", ""},
     {"ip3d_pb", ""}
   };
+}
+
+
+std::ostream& operator<<(std::ostream& out, const SubstructureMoments& mom) {
+  assert(false);
+  return out;
 }

@@ -10,7 +10,6 @@ struct Jet;
 
 #include <string>
 
-
 class JetHists
 {
 public:

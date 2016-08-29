@@ -4,6 +4,7 @@
 #include "constants.hh"
 #include "ClusterImages.hh"
 #include "JetHists.hh"
+#include "SubstructureHists.hh"
 #include "hist_tools.hh"
 #include "select_jet.hh"
 #include "unshittify.hh"
@@ -29,6 +30,7 @@ public:
 private:
   std::vector<JetHists> m_subjets;
   JetHists m_fatjet;
+  SubstructureHists m_substruct;
 };
 
 // _____________________________________________________________________
@@ -57,9 +59,10 @@ int main(int argc, char* argv[]) {
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       if (! select_fat_jet(jet) ) continue;
-      hists.fill(jet, opts.weight * jet.mc_event_weight);
+      double weight = opts.weight * jet.mc_event_weight;
+      hists.fill(jet, weight);
       auto clusters = build_clusters(jet);
-      images.fill(clusters, jet, opts.weight * jet.mc_event_weight);
+      images.fill(clusters, jet, weight);
     }
   }
 
@@ -85,10 +88,13 @@ void FatJetHists::fill(const Jet& jet, double weight) {
     m_subjets.at(jet_idx).fill(subjets.at(jet_idx), weight);
   }
   m_fatjet.fill(jet, weight);
+  m_substruct.fill(jet.moments, weight);
 }
 
 void FatJetHists::save(H5::CommonFG& out) const {
-  m_fatjet.save(out, "fatjet");
+  H5::Group fatjet(out.createGroup("fatjet"));
+  m_fatjet.save(fatjet);
+  m_substruct.save(fatjet);
   for (size_t jet_idx = 0; jet_idx < m_subjets.size(); jet_idx++) {
     m_subjets.at(jet_idx).save(out, "subjet_" + std::to_string(jet_idx));
   }
