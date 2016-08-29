@@ -70,10 +70,10 @@ function require() {
 # other h->bb don't use 20 through 22 for some reason
 # but 22 (JZ2W) seems to be ok
 msg "getting background files..."
-QCD_FILES=$(echo ${INPUT%/}/d3610{22..32}_*.gz)
+QCD_FILES=$(echo ${INPUT%/}/d3610{22..32}_*.txt.gz)
 require $QCD_FILES
 msg "getting signal files..."
-SIG_FILES=$(echo ${INPUT%/}/d301{488..507}_*.gz)
+SIG_FILES=$(echo ${INPUT%/}/d301{488..507}_*.txt.gz)
 require $SIG_FILES
 
 btag-dump-jet-labels-fatjets > $TMP/labels.txt
