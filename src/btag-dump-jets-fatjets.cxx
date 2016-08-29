@@ -42,7 +42,8 @@ int main(int argc, char* argv[]) {
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
       if (! select_fat_jet(jet) ) continue;
-      std::cout << str_from_fat_jet(jet, opts.weight) << std::endl;
+      double weight = opts.weight * jet.mc_event_weight;
+      std::cout << str_from_fat_jet(jet, weight) << std::endl;
     }
   }
 }
