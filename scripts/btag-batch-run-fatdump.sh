@@ -22,7 +22,7 @@ OUTPUT_FILE=$(get-output-name $INPUT_FILE)
 
 echo "running on $INPUT_FILE"
 mkdir -p $OUTPUT_DIR
-OUTPUT_PATH=${OUTPUT_DIR}/$OUTPUT_FILE.txt
+OUTPUT_PATH=${OUTPUT_DIR}/$OUTPUT_FILE.gz
 XSEC_FILE=$PY_DIR/../data/xsec.txt
 if [[ ! -f $XSEC_FILE ]] ; then
     echo "ERROR: no xsec file found" >&2
@@ -31,5 +31,5 @@ fi
 DSID=$(echo $OUTPUT_FILE | sed -r 's/d([0-9]*).*/\1/')
 WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE)
 echo "weighted by $WEIGHT"
-btag-dump-jets-fatjets $INPUT_FILE -w $WEIGHT > $OUTPUT_PATH
+btag-dump-jets-fatjets $INPUT_FILE -w $WEIGHT | gzip - > $OUTPUT_PATH
 
