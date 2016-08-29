@@ -13,11 +13,12 @@ struct Jet;
 class JetHists
 {
 public:
-  JetHists();
+  JetHists(bool is_subjet = false);
   void fill(const Jet& jet, double weight = 1);
   void save(H5::CommonFG& out) const;
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
+  bool m_is_subjet;
   Histogram mv2c10;
   Histogram mv2c20;
 
@@ -47,6 +48,8 @@ private:
 
   Histogram pt;
   Histogram eta;
+
+  Histogram dphi_fatjet;
 };
 
 

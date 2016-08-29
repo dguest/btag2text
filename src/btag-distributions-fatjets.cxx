@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 }
 
 FatJetHists::FatJetHists(int n_subjets):
-  m_subjets(n_subjets),
+  m_subjets(n_subjets, true),
   m_fatjet(),
   m_n_one_cluster(0)
 {

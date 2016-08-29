@@ -342,6 +342,10 @@ std::string str_from_subjets(const T& jets) {
     const auto& j = jets.at(jetn);
     OPEN {
       OPEN {
+        out << str_from_jet_kinematics(j); CS;
+        out << j.dphi_fatjet;
+      } CLOSE; CS;
+      OPEN {
         out << str_from_hl_jf_vertex(j);
       } CLOSE; CS;
       OPEN {

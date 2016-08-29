@@ -498,10 +498,14 @@ Jet Jets::getJet(int pos) const {
   assert(pass_checks(o));
 
   for (int sub_pos = 0; sub_pos < m_trkjet.size(pos); sub_pos++) {
-    o.trkjets.push_back(m_trkjet.getJet(pos, sub_pos));
+    auto jet = m_trkjet.getJet(pos, sub_pos);
+    jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
+    o.trkjets.push_back(jet);
   }
   for (int sub_pos = 0; sub_pos < m_vrtrkjet.size(pos); sub_pos++) {
-    o.vrtrkjets.push_back(m_vrtrkjet.getJet(pos, sub_pos));
+    auto jet = m_vrtrkjet.getJet(pos, sub_pos);
+    jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
+    o.vrtrkjets.push_back(jet);
   }
   std::sort(o.trkjets.begin(), o.trkjets.end(),
             [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });

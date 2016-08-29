@@ -176,6 +176,9 @@ struct Jet
   std::vector<Jet> vrtrkjets;
 
   SubstructureMoments moments;
+
+  // only defined for subjets
+  float dphi_fatjet;
 };
 
 struct JfVertex

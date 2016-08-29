@@ -15,7 +15,8 @@ const double MV2_HIGH = 1.00001;
 const double MV2_LOW = -MV2_HIGH;
 
 
-JetHists::JetHists():
+JetHists::JetHists(bool is_subjet):
+  m_is_subjet(is_subjet),
   // MV2
   RANGE(mv2c10, MV2_LOW, MV2_HIGH),
   RANGE(mv2c20, MV2_LOW, MV2_HIGH),
@@ -48,7 +49,9 @@ JetHists::JetHists():
   COUNT(jf_VTXsize, 10),
 
   pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, BASE_UNITS} }),
-  eta({ {"eta", N_BINS, -2.8, 2.8 }})
+  eta({ {"eta", N_BINS, -2.8, 2.8 }}),
+
+  dphi_fatjet({ {"dphi_fatjet", N_BINS, -1.2, 1.2} })
 {
 }
 
@@ -83,6 +86,9 @@ void JetHists::fill(const Jet& jet, double weight) {
 
   BYNAME(pt);
   BYNAME(eta);
+  if (m_is_subjet) {
+    dphi_fatjet.fill(jet.dphi_fatjet, weight);
+  }
 
 #undef BYNAME
 }
@@ -118,6 +124,10 @@ void JetHists::save(H5::CommonFG& out) const {
 
   BYNAME(pt);
   BYNAME(eta);
+
+  if (m_is_subjet) {
+    BYNAME(dphi_fatjet);
+  }
 
 #undef BYNAME
 }

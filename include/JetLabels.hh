@@ -71,6 +71,8 @@ public:
 
   const std::vector<JetLabels> vrtrkjets;
   const SubstructureMomentLabels moments;
+
+  const std::string dphi_fatjet = "dphi with respect to fat jet";
   JetLabels(): vrtrkjets(0), moments() {}
   JetLabels(int iii): vrtrkjets(iii), moments() {}
 };
@@ -216,6 +218,9 @@ public:
 
   const std::vector<TerseJetLabels> vrtrkjets;
   const TerseSubstructureMomentLabels moments;
+
+  LABELED(dphi_fatjet);
+
   TerseJetLabels(): vrtrkjets(0), moments() {}
   TerseJetLabels(int iii): vrtrkjets(iii), moments() {}
 };
