@@ -23,7 +23,9 @@ Several Variables describe each jet:
    the beam line
  - `weight`: the weight the jet should be given in training. Two jets
    with weight 0.5 should be given the same priority as one with
-   weight 1.0.
+   weight 1.0. These weights are an artifact of the Monte Carlo
+   techniques we use to simulate the physical processes we're
+   studying.
 
 #### Raw Track Information ####
 
@@ -119,13 +121,9 @@ and using the same names as these `.json` files.
 
 ### Special Variables ###
 
-There are three 'special' variables included in the description:
+There is one 'special' variables included in the description:
 
  - `...` is used in the description files to indicate that the
    structure it's inside is a variable-length array.
-
- - `weight` is the jet weighting. This should be used to remove any
-   flavor bias the pt and eta spectra may have. Two jets with weight
-   0.5 should be given equal priority as one jet with weight 1.0.
 
 [eta]: https://en.wikipedia.org/wiki/Pseudorapidity
