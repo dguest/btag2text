@@ -3,13 +3,16 @@
 
 #include <vector>
 #include <string>
+#include <ostream>
 
 struct Options
 {
   std::vector<std::string> input_files;
   std::string output_file;
   double weight;
+  bool verbose;
 };
+std::ostream& operator<<(std::ostream&, const Options&);
 struct StreamOptions
 {
   std::vector<std::string> input_files;

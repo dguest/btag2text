@@ -3,6 +3,8 @@
 #include "SmartChain.hh"
 #include "constants.hh"
 #include "ClusterImages.hh"
+#include "JetHists.hh"
+#include "SubstructureHists.hh"
 #include "hist_tools.hh"
 #include "select_jet.hh"
 #include "unshittify.hh"
@@ -14,26 +16,22 @@
 #include "H5Cpp.h"
 #include "TROOT.h"
 
+#include <iostream>
 
 const std::string DESCRIPTION = "build distributions for fat jets";
 
-// various plotting constants
-const double MAX_VX_MASS = 10*GeV;
-const double MV2_HIGH = 1.00001;
-const double MV2_LOW = -MV2_HIGH;
-const double PT_MAX = 2*TeV;
-const double ETA_MAX = 3.0;
-
-class JetHists
+class FatJetHists
 {
 public:
-  JetHists();
+  FatJetHists(int n_subjets);
   void fill(const Jet& jet, double weight = 1);
   void save(H5::CommonFG& out) const;
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
-  Histogram pt;
-  Histogram eta;
+  std::vector<JetHists> m_subjets;
+  JetHists m_fatjet;
+  SubstructureHists m_substruct;
+  int m_n_one_cluster;
 };
 
 // _____________________________________________________________________
@@ -43,6 +41,7 @@ int main(int argc, char* argv[]) {
   unshittify();
   // command parsing
   const auto opts = get_opts(argc, argv, DESCRIPTION);
+  if (opts.verbose) std::cout << opts << std::endl;
   // running
   SmartChain chain(get_tree(opts.input_files.at(0)));
   for (const auto& in: opts.input_files) {
@@ -50,18 +49,22 @@ int main(int argc, char* argv[]) {
   }
   Jets jets(chain);
   int n_entries = chain.GetEntries();
+  if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
+  double sum_event_weights = 0;
 
-  JetHists hists;
+  FatJetHists hists(2);
   ClusterImages images(125*GeV);
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
+    sum_event_weights += jets.eventWeight();
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      if (! select_jet(jet) ) continue;
-      hists.fill(jet, opts.weight);
+      if (! select_fat_jet(jet) ) continue;
+      double weight = opts.weight * jet.mc_event_weight;
+      hists.fill(jet, weight);
       auto clusters = build_clusters(jet);
-      images.fill(clusters, jet, opts.weight);
+      images.fill(clusters, jet, weight);
     }
   }
 
@@ -72,33 +75,39 @@ int main(int argc, char* argv[]) {
   hists.save(out_file, HIST);
   images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
+  write_attr(out_file, "sum_event_weights", sum_event_weights);
 }
 
-// ______________________________________________________________________
-// hist methods
-
-JetHists::JetHists():
-  // MV2
-  ENERGY(pt, PT_MAX),
-  RANGE(eta, -ETA_MAX, ETA_MAX)
+FatJetHists::FatJetHists(int n_subjets):
+  m_subjets(n_subjets, true),
+  m_fatjet(),
+  m_n_one_cluster(0)
 {
 }
-
-void JetHists::fill(const Jet& jet, double weight) {
-#define BYNAME(name) name.fill(jet.jet_ ## name, weight)
-  BYNAME(pt);
-  BYNAME(eta);
-#undef BYNAME
+void FatJetHists::fill(const Jet& jet, double weight) {
+  const auto& subjets = jet.vrtrkjets;
+  const size_t max_idx = std::min(subjets.size(), m_subjets.size());
+  for (size_t jet_idx = 0; jet_idx < max_idx; jet_idx++) {
+    m_subjets.at(jet_idx).fill(subjets.at(jet_idx), weight);
+  }
+  m_fatjet.fill(jet, weight);
+  if (jet.jet_cluster_pt.size() > 1) {
+    m_substruct.fill(jet.moments, weight);
+  } else {
+    m_n_one_cluster++;
+  }
 }
 
-void JetHists::save(H5::CommonFG& out) const {
-#define BYNAME(name) name.write_to(out, #name)
-  BYNAME(pt);
-  BYNAME(eta);
-#undef BYNAME
+void FatJetHists::save(H5::CommonFG& out) const {
+  H5::Group fatjet(out.createGroup("fatjet"));
+  m_fatjet.save(fatjet);
+  m_substruct.save(fatjet);
+  write_attr(fatjet, "n_one_cluster", m_n_one_cluster);
+  for (size_t jet_idx = 0; jet_idx < m_subjets.size(); jet_idx++) {
+    m_subjets.at(jet_idx).save(out, "subjet_" + std::to_string(jet_idx));
+  }
 }
-void JetHists::save(H5::CommonFG& out, std::string subdir) const {
+void FatJetHists::save(H5::CommonFG& out, std::string subdir) const {
   H5::Group group(out.createGroup(subdir));
   save(group);
 }
-

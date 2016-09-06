@@ -2,6 +2,12 @@
 #include <boost/program_options.hpp>
 #include <iostream>
 
+std::ostream& operator<<(std::ostream& in, const Options& opt) {
+  in << "output: " << opt.output_file << "\n";
+  in << "weight: " << opt.weight;
+  return in;
+}
+
 Options get_opts(int argc, char* argv[], const std::string& description) {
   namespace po = boost::program_options;
   Options opts;
@@ -13,7 +19,9 @@ Options get_opts(int argc, char* argv[], const std::string& description) {
      "output file")
     ("help,h", "Print help messages")
     ("weight,w", po::value(&opts.weight)->default_value(1.0),
-     "weights for this file");
+     "weights for this file")
+    ("verbose,v", po::bool_switch(&opts.verbose), "extra output");
+
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);
 
@@ -32,6 +40,7 @@ Options get_opts(int argc, char* argv[], const std::string& description) {
   }
   return opts;
 }
+
 
 StreamOptions get_stream_opts(int argc, char* argv[],
                               const std::string& description) {

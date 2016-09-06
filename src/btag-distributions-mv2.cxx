@@ -22,6 +22,7 @@ const double MV2_HIGH = 1.00001;
 const double MV2_LOW = -MV2_HIGH;
 const int MV2_2D_BINS = 2000;
 
+namespace {
 class JetHists
 {
 public:
@@ -36,7 +37,7 @@ private:
   Histogram mv2c20;
   Histogram mv2;
 };
-
+}
 class FlavoredHists
 {
 public:
@@ -92,7 +93,7 @@ int main(int argc, char* argv[]) {
 
 // ______________________________________________________________________
 // hist methods
-
+namespace {
 JetHists::JetHists():
   // MV2
   RANGE(mv2c00, MV2_LOW, MV2_HIGH),
@@ -129,7 +130,7 @@ void JetHists::save(H5::CommonFG& out, std::string subdir) const {
   H5::Group group(out.createGroup(subdir));
   save(group);
 }
-
+}
 // ________________________________________________________________________
 // flavored hists
 

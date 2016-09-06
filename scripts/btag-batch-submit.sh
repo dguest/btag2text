@@ -30,17 +30,17 @@ PREFIX=''
 WALLTIME=00:45:00
 
 while getopts ":hs:r:tw:" opt $@; do
-	  case $opt in
-	      h) _help; exit 1;;
-	      s) RUN_SCRIPT=${OPTARG} ;;
+    case $opt in
+        h) _help; exit 1;;
+        s) RUN_SCRIPT=${OPTARG} ;;
         r) ROOT_DIR=${OPTARG} ;;
         t) PREFIX=echo ;;
         w) WALLTIME=${OPTARG} ;;
-	      # handle errors
-	      \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
+        # handle errors
+        \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :) _usage; echo "Missing argument for -$OPTARG" >&2; exit 1;;
         *) _usage; echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
-	  esac
+    esac
 done
 shift $(($OPTIND - 1))
 ROOT_FILE_LIST=root-files.txt

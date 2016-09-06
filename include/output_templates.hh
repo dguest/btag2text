@@ -24,11 +24,17 @@ std::string str_from_jet(const T&);
 #define CS out << ", "
 
 // basic building blocks
+template<typename T>
+std::string str_from_jet_kinematics(const T& j) {
+  CleanStream out;
+  OUT_COMMA(jet_pt);
+  OUT(jet_eta);
+  return out.str();
+}
 template<typename T, typename U = std::string>
 std::string str_from_basic_jet_pars(const T& j, const U& weight = "weight") {
   CleanStream out;
-  OUT_COMMA(jet_pt);
-  OUT_COMMA(jet_eta);
+  out << str_from_jet_kinematics(j); CS;
   OUT_COMMA(jet_truthflav);
   out << weight;
   return out.str();
@@ -49,6 +55,18 @@ std::string str_from_ip2d(const T& j) {
   OUT(jet_ip2d_pu);
   return out.str();
 }
+template<typename T>
+std::string str_from_moments(const T& j) {
+  CleanStream out;
+  OUT_COMMA(tau21);
+  OUT_COMMA(c1);
+  OUT_COMMA(c2);
+  OUT_COMMA(c1_beta2);
+  OUT_COMMA(c2_beta2);
+  OUT_COMMA(d2);
+  OUT(d2_beta2);
+  return out.str();
+}
 
 template<typename T>
 std::string str_from_hl_vars(const T& j) {
@@ -62,56 +80,59 @@ std::string str_from_hl_vars(const T& j) {
   } CLOSE;
   CS;
 
-  // high level tracking
+  // ip2d, ip3d
   OPEN {
-    // ip2d, ip3d
-    OPEN {
-      out << str_from_ip2d(j);
-    } CLOSE;
-    CS;
-    OPEN {
-      out << str_from_ip3d(j);
-    } CLOSE;
-    CS;
-
-    // track significance
-    OPEN {
-      OUT_COMMA(track_2_d0_significance);
-      OUT_COMMA(track_3_d0_significance);
-      OUT_COMMA(track_2_z0_significance);
-      OUT_COMMA(track_3_d0_significance);
-      OUT(n_tracks_over_d0_threshold);
-    } CLOSE;
+    out << str_from_ip2d(j);
+  } CLOSE;
+  CS;
+  OPEN {
+    out << str_from_ip3d(j);
   } CLOSE;
   CS;
 
-  // high level vertex
+  // track significance
   OPEN {
-    // sv1
-    OPEN {
-      OUT_COMMA(jet_sv1_ntrkj);
-      OUT_COMMA(jet_sv1_ntrkv);
-      OUT_COMMA(jet_sv1_n2t);
-      OUT_COMMA(jet_sv1_m);
-      OUT_COMMA(jet_sv1_efc);
-      OUT_COMMA(jet_sv1_normdist);
-      OUT_COMMA(jet_sv1_Nvtx);
-      OUT(jet_sv1_sig3d);
-    } CLOSE;
-    CS;
-    OPEN {
-      OUT_COMMA(jet_jf_m);
-      OUT_COMMA(jet_jf_efc);
-      OUT_COMMA(jet_jf_deta);
-      OUT_COMMA(jet_jf_dphi);
-      OUT_COMMA(jet_jf_ntrkAtVx);
-      OUT_COMMA(jet_jf_nvtx);
-      OUT_COMMA(jet_jf_sig3d);
-      OUT_COMMA(jet_jf_nvtx1t);
-      OUT_COMMA(jet_jf_n2t);
-      OUT(jet_jf_VTXsize);
-    } CLOSE;
+    OUT_COMMA(track_2_d0_significance);
+    OUT_COMMA(track_3_d0_significance);
+    OUT_COMMA(track_2_z0_significance);
+    OUT_COMMA(track_3_d0_significance);
+    OUT(n_tracks_over_d0_threshold);
+  } CLOSE; CS;
+  OPEN {
+    out << str_from_hl_jf_vertex(j);
+  } CLOSE; CS;
+  OPEN {
+    out << str_from_sv_vertex(j);
   } CLOSE;
+  return out.str();
+}
+template<typename T>
+std::string str_from_hl_jf_vertex(const T& j) {
+  CleanStream out;
+  OUT_COMMA(jet_jf_m);
+  OUT_COMMA(jet_jf_efc);
+  OUT_COMMA(jet_jf_deta);
+  OUT_COMMA(jet_jf_dphi);
+  OUT_COMMA(jet_jf_ntrkAtVx);
+  OUT_COMMA(jet_jf_nvtx);
+  OUT_COMMA(jet_jf_sig3d);
+  OUT_COMMA(jet_jf_nvtx1t);
+  OUT_COMMA(jet_jf_n2t);
+  OUT(jet_jf_VTXsize);
+  return out.str();
+}
+template<typename T>
+std::string str_from_sv_vertex(const T& j) {
+  CleanStream out;
+  // sv1
+  OUT_COMMA(jet_sv1_ntrkj);
+  OUT_COMMA(jet_sv1_ntrkv);
+  OUT_COMMA(jet_sv1_n2t);
+  OUT_COMMA(jet_sv1_m);
+  OUT_COMMA(jet_sv1_efc);
+  OUT_COMMA(jet_sv1_normdist);
+  OUT_COMMA(jet_sv1_Nvtx);
+  OUT(jet_sv1_sig3d);
   return out.str();
 }
 
@@ -305,9 +326,7 @@ std::string str_from_all_jet(const T& j, const U& weight = "weight") {
     OPEN {
       out << str_from_ip3d(j);
     } CLOSE; CS;
-    OPEN {
-      out << str_from_hl_vars(j);
-    } CLOSE;
+    out << str_from_hl_vars(j);
   } CLOSE;
   return out.str();
 }
@@ -320,18 +339,29 @@ std::string str_from_subjets(const T& jets) {
   CleanStream out;
   int n_jets = jets.size();
   for (int jetn = 0; jetn < n_jets; jetn++) {
-    const auto& jet = jets.at(jetn);
+    const auto& j = jets.at(jetn);
     OPEN {
       OPEN {
-        out << str_from_ip3d(jet);
+        out << str_from_jet_kinematics(j); CS;
+        out << j.dphi_fatjet;
       } CLOSE; CS;
       OPEN {
-        out << str_from_hl_vars(jet);
+        out << str_from_hl_jf_vertex(j);
+      } CLOSE; CS;
+      OPEN {
+        out << str_from_sv_vertex(j);
+      } CLOSE; CS;
+      OPEN {
+        out << str_from_ip3d(j);
+      } CLOSE; CS;
+      OPEN {
+        OUT_COMMA(jet_mv2c10);
+        OUT(jet_mv2c20);
       } CLOSE;
     } CLOSE;
     // by default this next line does nothing, it can be overloaded
     // for classes that spit out names
-    out << ellipsis(jet);
+    out << ellipsis(j);
     if (jetn < n_jets - 1) CS;
   }
   return out.str();
@@ -342,17 +372,17 @@ template<typename T, typename U = std::string>
 std::string str_from_fat_jet(const T& j, const U& weight = "weight") {
   CleanStream out;
   OPEN {
-    out << str_from_basic_jet_pars(j, weight) << ", ";
+    out << str_from_jet_kinematics(j); CS;
+    out << weight; CS;
     OPEN_LIST {
       out << str_from_all_track_ip(j);
     } CLOSE_LIST;
     CS;
     OPEN_LIST {
       out << str_from_all_clusters(j);
-    } CLOSE_LIST;
-    CS;
+    } CLOSE_LIST; CS;
     OPEN {
-      out << str_from_ip3d(j);
+      out << str_from_moments(j.moments);
     } CLOSE; CS;
     OPEN_LIST {
       out << str_from_subjets(j.vrtrkjets);

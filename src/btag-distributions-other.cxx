@@ -21,50 +21,52 @@ const double MAX_SIGNIFICANCE = 50;
 const double MV2_HIGH = 1.00001;
 const double MV2_LOW = -MV2_HIGH;
 
-class JetHists
-{
-public:
-  JetHists();
-  void fill(const Jet& jet, double weight = 1);
-  void save(H5::CommonFG& out) const;
-  void save(H5::CommonFG& out, std::string subdir) const;
-private:
-  Histogram mv2c00;
-  Histogram mv2c10;
-  Histogram mv2c20;
-  Histogram mv2c100;
+namespace {
 
-  Histogram ip3d_pu;
-  Histogram ip3d_pc;
-  Histogram ip3d_pb;
+  class JetHists
+  {
+  public:
+    JetHists();
+    void fill(const Jet& jet, double weight = 1);
+    void save(H5::CommonFG& out) const;
+    void save(H5::CommonFG& out, std::string subdir) const;
+  private:
+    Histogram mv2c00;
+    Histogram mv2c10;
+    Histogram mv2c20;
+    Histogram mv2c100;
 
-  Histogram ip3d_ntrk;
-  Histogram ntrk;
-  Histogram JVT;
+    Histogram ip3d_pu;
+    Histogram ip3d_pc;
+    Histogram ip3d_pb;
 
-  // Histogram sv1_ntrkj; // never seems to exist...
-  Histogram sv1_ntrkv;
-  Histogram sv1_n2t;
-  Histogram sv1_m;
-  Histogram sv1_efc;
-  Histogram sv1_normdist;
-  Histogram sv1_Nvtx;
-  Histogram sv1_sig3d;
-  Histogram jf_m;
-  Histogram jf_efc;
-  Histogram jf_deta;
-  Histogram jf_dphi;
-  Histogram jf_ntrkAtVx;
-  Histogram jf_nvtx;
-  Histogram jf_sig3d;
-  Histogram jf_nvtx1t;
-  Histogram jf_n2t;
-  Histogram jf_VTXsize;
+    Histogram ip3d_ntrk;
+    Histogram ntrk;
+    Histogram JVT;
 
-  Histogram pt;
-  Histogram eta;
-};
+    // Histogram sv1_ntrkj; // never seems to exist...
+    Histogram sv1_ntrkv;
+    Histogram sv1_n2t;
+    Histogram sv1_m;
+    Histogram sv1_efc;
+    Histogram sv1_normdist;
+    Histogram sv1_Nvtx;
+    Histogram sv1_sig3d;
+    Histogram jf_m;
+    Histogram jf_efc;
+    Histogram jf_deta;
+    Histogram jf_dphi;
+    Histogram jf_ntrkAtVx;
+    Histogram jf_nvtx;
+    Histogram jf_sig3d;
+    Histogram jf_nvtx1t;
+    Histogram jf_n2t;
+    Histogram jf_VTXsize;
 
+    Histogram pt;
+    Histogram eta;
+  };
+}
 class FlavoredHists
 {
 public:
@@ -128,134 +130,135 @@ int main(int argc, char* argv[]) {
 // ______________________________________________________________________
 // hist methods
 
-JetHists::JetHists():
-  // MV2
-  RANGE(mv2c00, MV2_LOW, MV2_HIGH),
-  RANGE(mv2c10, MV2_LOW, MV2_HIGH),
-  RANGE(mv2c20, MV2_LOW, MV2_HIGH),
-  RANGE(mv2c100,MV2_LOW, MV2_HIGH),
+namespace {
+  JetHists::JetHists():
+    // MV2
+    RANGE(mv2c00, MV2_LOW, MV2_HIGH),
+    RANGE(mv2c10, MV2_LOW, MV2_HIGH),
+    RANGE(mv2c20, MV2_LOW, MV2_HIGH),
+    RANGE(mv2c100,MV2_LOW, MV2_HIGH),
 
-  // IP3D
-  ZERO_ONE(ip3d_pu),
-  ZERO_ONE(ip3d_pc),
-  ZERO_ONE(ip3d_pb),
+    // IP3D
+    ZERO_ONE(ip3d_pu),
+    ZERO_ONE(ip3d_pc),
+    ZERO_ONE(ip3d_pb),
 
-  COUNT(ip3d_ntrk, 30),
-  COUNT(ntrk, 30),
-  ZERO_ONE(JVT),
+    COUNT(ip3d_ntrk, 30),
+    COUNT(ntrk, 30),
+    ZERO_ONE(JVT),
 
-  // SV1
-  COUNT(sv1_ntrkv, 20),
-  COUNT(sv1_n2t, 20),
-  ENERGY(sv1_m, MAX_VX_MASS),
-  ZERO_ONE(sv1_efc),
-  RANGE(sv1_normdist, 0, MAX_SIGNIFICANCE),
-  COUNT(sv1_Nvtx, 2),
-  RANGE(sv1_sig3d, 0, MAX_SIGNIFICANCE),
+    // SV1
+    COUNT(sv1_ntrkv, 20),
+    COUNT(sv1_n2t, 20),
+    ENERGY(sv1_m, MAX_VX_MASS),
+    ZERO_ONE(sv1_efc),
+    RANGE(sv1_normdist, 0, MAX_SIGNIFICANCE),
+    COUNT(sv1_Nvtx, 2),
+    RANGE(sv1_sig3d, 0, MAX_SIGNIFICANCE),
 
-  // jetfitter
-  ENERGY(jf_m, MAX_VX_MASS),
-  ZERO_ONE(jf_efc),
-  RANGE(jf_deta, 0, JET_WIDTH),
-  RANGE(jf_dphi, 0, JET_WIDTH),
-  COUNT(jf_ntrkAtVx, 10),
-  COUNT(jf_nvtx, 4),
-  RANGE(jf_sig3d, 0, MAX_SIGNIFICANCE),
-  COUNT(jf_nvtx1t, 10),
-  COUNT(jf_n2t, 15),
-  COUNT(jf_VTXsize, 10),
+    // jetfitter
+    ENERGY(jf_m, MAX_VX_MASS),
+    ZERO_ONE(jf_efc),
+    RANGE(jf_deta, 0, JET_WIDTH),
+    RANGE(jf_dphi, 0, JET_WIDTH),
+    COUNT(jf_ntrkAtVx, 10),
+    COUNT(jf_nvtx, 4),
+    RANGE(jf_sig3d, 0, MAX_SIGNIFICANCE),
+    COUNT(jf_nvtx1t, 10),
+    COUNT(jf_n2t, 15),
+    COUNT(jf_VTXsize, 10),
 
-  pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, BASE_UNITS} }),
-  eta({ {"eta", N_BINS, -2.8, 2.8 }})
-{
-}
+    pt({ {"pt", PT_REWEIGHT_NBINS, 0, PT_REWEIGHT_MAX, BASE_UNITS} }),
+    eta({ {"eta", N_BINS, -2.8, 2.8 }})
+  {
+  }
 
-void JetHists::fill(const Jet& jet, double weight) {
+  void JetHists::fill(const Jet& jet, double weight) {
 #define BYNAME(name) name.fill(jet.jet_ ## name, weight)
-  BYNAME(mv2c00);
-  BYNAME(mv2c10);
-  BYNAME(mv2c20);
-  BYNAME(mv2c100);
+    BYNAME(mv2c00);
+    BYNAME(mv2c10);
+    BYNAME(mv2c20);
+    BYNAME(mv2c100);
 
-  BYNAME(pt);
-  BYNAME(eta);
+    BYNAME(pt);
+    BYNAME(eta);
 
-  BYNAME(ip3d_pu);
-  BYNAME(ip3d_pc);
-  BYNAME(ip3d_pb);
+    BYNAME(ip3d_pu);
+    BYNAME(ip3d_pc);
+    BYNAME(ip3d_pb);
 
-  BYNAME(ip3d_ntrk);
-  BYNAME(ntrk);
+    BYNAME(ip3d_ntrk);
+    BYNAME(ntrk);
 
-  BYNAME(JVT);
+    BYNAME(JVT);
 
-  // BYNAME(sv1_ntrkj);
-  BYNAME(sv1_ntrkv);
-  BYNAME(sv1_n2t);
-  BYNAME(sv1_m);
-  BYNAME(sv1_efc);
-  BYNAME(sv1_normdist);
-  BYNAME(sv1_Nvtx);
-  BYNAME(sv1_sig3d);
-  BYNAME(jf_m);
-  BYNAME(jf_efc);
-  BYNAME(jf_deta);
-  BYNAME(jf_dphi);
-  BYNAME(jf_ntrkAtVx);
-  BYNAME(jf_nvtx);
-  BYNAME(jf_sig3d);
-  BYNAME(jf_nvtx1t);
-  BYNAME(jf_n2t);
-  BYNAME(jf_VTXsize);
+    // BYNAME(sv1_ntrkj);
+    BYNAME(sv1_ntrkv);
+    BYNAME(sv1_n2t);
+    BYNAME(sv1_m);
+    BYNAME(sv1_efc);
+    BYNAME(sv1_normdist);
+    BYNAME(sv1_Nvtx);
+    BYNAME(sv1_sig3d);
+    BYNAME(jf_m);
+    BYNAME(jf_efc);
+    BYNAME(jf_deta);
+    BYNAME(jf_dphi);
+    BYNAME(jf_ntrkAtVx);
+    BYNAME(jf_nvtx);
+    BYNAME(jf_sig3d);
+    BYNAME(jf_nvtx1t);
+    BYNAME(jf_n2t);
+    BYNAME(jf_VTXsize);
 
 #undef BYNAME
-}
+  }
 
-void JetHists::save(H5::CommonFG& out) const {
+  void JetHists::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
-  BYNAME(mv2c00);
-  BYNAME(mv2c10);
-  BYNAME(mv2c20);
-  BYNAME(mv2c100);
+    BYNAME(mv2c00);
+    BYNAME(mv2c10);
+    BYNAME(mv2c20);
+    BYNAME(mv2c100);
 
-  BYNAME(pt);
-  BYNAME(eta);
+    BYNAME(pt);
+    BYNAME(eta);
 
-  BYNAME(ip3d_pu);
-  BYNAME(ip3d_pc);
-  BYNAME(ip3d_pb);
+    BYNAME(ip3d_pu);
+    BYNAME(ip3d_pc);
+    BYNAME(ip3d_pb);
 
-  BYNAME(ip3d_ntrk);
-  BYNAME(ntrk);
+    BYNAME(ip3d_ntrk);
+    BYNAME(ntrk);
 
-  BYNAME(JVT);
+    BYNAME(JVT);
 
 // BYNAME(sv1_ntrkj);
-  BYNAME(sv1_ntrkv);
-  BYNAME(sv1_n2t);
-  BYNAME(sv1_m);
-  BYNAME(sv1_efc);
-  BYNAME(sv1_normdist);
-  BYNAME(sv1_Nvtx);
-  BYNAME(sv1_sig3d);
-  BYNAME(jf_m);
-  BYNAME(jf_efc);
-  BYNAME(jf_deta);
-  BYNAME(jf_dphi);
-  BYNAME(jf_ntrkAtVx);
-  BYNAME(jf_nvtx);
-  BYNAME(jf_sig3d);
-  BYNAME(jf_nvtx1t);
-  BYNAME(jf_n2t);
-  BYNAME(jf_VTXsize);
+    BYNAME(sv1_ntrkv);
+    BYNAME(sv1_n2t);
+    BYNAME(sv1_m);
+    BYNAME(sv1_efc);
+    BYNAME(sv1_normdist);
+    BYNAME(sv1_Nvtx);
+    BYNAME(sv1_sig3d);
+    BYNAME(jf_m);
+    BYNAME(jf_efc);
+    BYNAME(jf_deta);
+    BYNAME(jf_dphi);
+    BYNAME(jf_ntrkAtVx);
+    BYNAME(jf_nvtx);
+    BYNAME(jf_sig3d);
+    BYNAME(jf_nvtx1t);
+    BYNAME(jf_n2t);
+    BYNAME(jf_VTXsize);
 
 #undef BYNAME
+  }
+  void JetHists::save(H5::CommonFG& out, std::string subdir) const {
+    H5::Group group(out.createGroup(subdir));
+    save(group);
+  }
 }
-void JetHists::save(H5::CommonFG& out, std::string subdir) const {
-  H5::Group group(out.createGroup(subdir));
-  save(group);
-}
-
 // ________________________________________________________________________
 // flavored hists
 

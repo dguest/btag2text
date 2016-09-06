@@ -26,10 +26,22 @@ enum TRKORIGIN { PUFAKE=-1,
 // ______________________________________________________________________
 // classes
 
+struct SubstructureMoments
+{
+  float tau21;
+  float c1;
+  float c2;
+  float c1_beta2;
+  float c2_beta2;
+  float d2;
+  float d2_beta2;
+};
+
 struct Jet
 {
   // event
   double avgmu;
+  double mc_event_weight;
 
   // kinematics
   float jet_pt;
@@ -163,6 +175,10 @@ struct Jet
   std::vector<Jet> trkjets;
   std::vector<Jet> vrtrkjets;
 
+  SubstructureMoments moments;
+
+  // only defined for subjets
+  float dphi_fatjet;
 };
 
 struct JfVertex
@@ -245,6 +261,7 @@ private:
   std::vector<std::vector<float> >* m;
 
   // track counts
+  std::vector<std::vector<int> >* ntrk;
   std::vector<std::vector<int> >* ip3d_ntrk;
 
   // ip2d, ip3d
@@ -265,7 +282,7 @@ private:
   std::vector<std::vector<float> >* jf_efc;
   std::vector<std::vector<float> >* jf_deta;
   std::vector<std::vector<float> >* jf_dphi;
-  std::vector<std::vector<float> >* jf_ntrkAtVx;
+  std::vector<std::vector<int> >* jf_ntrkAtVx;
   std::vector<std::vector<int> >* jf_nvtx;
   std::vector<std::vector<float> >* jf_sig3d;
   std::vector<std::vector<int> >* jf_nvtx1t;
@@ -281,19 +298,38 @@ private:
 
 };
 
+class SubstructureMomentArray
+{
+public:
+  SubstructureMomentArray(SmartChain& chain);
+  SubstructureMoments getMoments(int) const;
+  int size() const;
+private:
+  std::vector<float>* m_tau21;
+  std::vector<float>* m_c1;
+  std::vector<float>* m_c2;
+  std::vector<float>* m_c1_beta2;
+  std::vector<float>* m_c2_beta2;
+  std::vector<float>* m_d2;
+  std::vector<float>* m_d2_beta2;
+};
+
 class Jets
 {
 public:
   Jets(SmartChain& chain);
   Jet getJet(int) const;
   int size() const;
+  double eventWeight() const;
 private:
   SmartChain* m_chain;
   Subjets m_trkjet;
   Subjets m_vrtrkjet;
+  SubstructureMomentArray m_moments;
 
   // event
   double avgmu;
+  double mc_event_weight;
 
   // kinematics
   std::vector<float>* jet_pt;
@@ -419,6 +455,7 @@ private:
 
 std::vector<TrkUnit> build_tracks(const Jet& jet);
 std::ostream& operator<<(std::ostream&, Jets&);
+std::ostream& operator<<(std::ostream&, const SubstructureMoments&);
 
 std::vector<Cluster> build_clusters(const Jet& jet);
 
