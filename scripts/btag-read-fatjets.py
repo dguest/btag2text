@@ -25,7 +25,7 @@ def run():
     else:
         line_iter = sys.stdin
 
-    for batch in _batch_iter(_track_iter(line_iter), 5, 3, ['pt']):
+    for batch in _batch_iter(_track_iter(line_iter), 5, 3, _track_types):
         print('batch:')
         print(batch)
 
@@ -50,17 +50,16 @@ def _cluster_iter(line_iter):
         cluster_array = np.fromiter(jet.clusters, dtype=_cluster_types)
         yield cluster_array
 
-def _batch_iter(line_iter, n_objects, batchsize, features):
+def _batch_iter(line_iter, n_objects, batchsize, dtype):
     """Group objects into batches for ML (or just plotting)
 
     `line_iter` should yield a structured np array (which can be
     selected using `features`
     """
-    batch = np.zeros((batchsize, n_objects, len(features)))
+    batch = np.zeros((batchsize, n_objects), dtype=dtype)
     sample_n = 0
     for array in line_iter:
-        for feature_n, feature in enumerate(features):
-            batch[sample_n, :, feature_n] = array[feature][:n_objects]
+        batch[sample_n, :] = array[:n_objects]
         sample_n += 1
         if sample_n == batchsize:
             yield batch
