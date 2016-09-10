@@ -9,17 +9,16 @@
 
 namespace h5 {
   // use float to save space, could also use double...
-  typedef double outfloat_t;
+  typedef float outfloat_t;
 
   // forward declare templates
-  template <typename T> H5::CompType get_type();
+  template <typename T> H5::DataType get_type();
   template <typename T> T get_empty();
-  template <typename T> H5::DataType get_native_type();
 
   // forward declare native primative types
-  template<> H5::DataType get_native_type<float>();
-  template<> H5::DataType get_native_type<double>();
-  template<> H5::DataType get_native_type<bool>();
+  template<> H5::DataType get_type<float>();
+  template<> H5::DataType get_type<double>();
+  template<> H5::DataType get_type<bool>();
 
   // cluster struct and associated template specialization
   struct Cluster {
@@ -30,7 +29,7 @@ namespace h5 {
     bool mask;
     outfloat_t weight;
   };
-  template<> H5::CompType get_type<Cluster>();
+  template<> H5::DataType get_type<Cluster>();
   template<> Cluster get_empty<Cluster>();
 
   // track struct and associated template specialization
@@ -41,8 +40,12 @@ namespace h5 {
     bool mask;
     outfloat_t weight;
   };
-  template<> H5::CompType get_type<Track>();
+  template<> H5::DataType get_type<Track>();
   template<> Track get_empty<Track>();
+
+  // Utility function to get a ``packed'' version of the datatype.
+  // This lets us buffer structures which have stuff we don't want to write.
+  H5::DataType packed(H5::DataType);
 
   // The actual writer class
   template <typename T>
@@ -93,7 +96,7 @@ namespace h5 {
     params.setDeflate(7);
 
     // create ds
-    _ds = group.createDataSet(name, _type, space, params);
+    _ds = group.createDataSet(name, packed(_type), space, params);
   }
 
   template <typename T>

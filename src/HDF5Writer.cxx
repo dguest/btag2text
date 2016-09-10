@@ -17,43 +17,52 @@ namespace {
 namespace h5 {
 
   // actual template specializations
-  template <>
-  H5::DataType get_native_type<float>() {
+  template<>
+  H5::DataType get_type<float>() {
     return H5::PredType::NATIVE_FLOAT;
   }
-  template <>
-  H5::DataType get_native_type<double>() {
+  template<>
+  H5::DataType get_type<double>() {
     return H5::PredType::NATIVE_DOUBLE;
   }
-  template <>
-  H5::DataType get_native_type<bool>() {
+  template<>
+  H5::DataType get_type<bool>() {
     return get_bool_type();
   }
 
-  template <>
-  H5::CompType get_type<Cluster>() {
+  template<>
+  H5::DataType get_type<Cluster>() {
     return get_cluster_type();
   }
-  template <>
+  template<>
   Cluster get_empty<Cluster>() {
     return get_empty_cluster();
   }
 
-  template <>
-  H5::CompType get_type<Track>() {
+  template<>
+  H5::DataType get_type<Track>() {
     return get_track_type();
   }
-  template <>
+  template<>
   Track get_empty<Track>() {
     return get_empty_track();
+  }
+
+  // packing utility
+  H5::DataType packed(H5::DataType in) {
+    // TODO: Figure out why a normal copy constructor doesn't work here.
+    //       The normal one seems to create shallow copies.
+    auto out = H5::CompType(H5Tcopy(in.getId()));
+    out.pack();
+    return out;
   }
 
 }
 
 namespace {
   H5::CompType get_cluster_type() {
-    auto ftype = h5::get_native_type<h5::outfloat_t>();
-    auto btype = h5::get_native_type<bool>();
+    auto ftype = h5::get_type<h5::outfloat_t>();
+    auto btype = h5::get_type<bool>();
     H5::CompType type(sizeof(h5::Cluster));
 #define INSERT(name, intype)                                      \
     type.insertMember(#name, offsetof(h5::Cluster, name), intype)
@@ -79,8 +88,8 @@ namespace {
 
 
   H5::CompType get_track_type() {
-    auto ftype = h5::get_native_type<h5::outfloat_t>();
-    auto btype = h5::get_native_type<bool>();
+    auto ftype = h5::get_type<h5::outfloat_t>();
+    auto btype = h5::get_type<bool>();
     H5::CompType type(sizeof(h5::Track));
 #define INSERT(name, intype)                                      \
     type.insertMember(#name, offsetof(h5::Track, name), intype)
