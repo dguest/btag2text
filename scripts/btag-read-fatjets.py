@@ -90,16 +90,21 @@ def fill_hists(producer, dest_dir, ext):
         for var in batch.dtype.names:
             valid = all_valid if var == 'mask' else valid_mask
             if var not in hists:
+                wt = batch['weight'][valid]
                 if var in _binning:
                     nbin, low, high = _binning[var]
+                    bins = np.linspace(low, high, nbin)
+                elif np.all(wt == 1.0):
+                    bins = 'fd'
+                    wt = None
                 else:
-                    nbin = 100
                     low, high = batch[var].min(), batch[var].max()
-                bins = np.linspace(low, high, nbin)
-                wt = batch['weight'][valid]
+                    bins = np.linspace(low, high, 100)
+
                 vals = batch[var][valid]
                 hist, bins = np.histogram(vals, weights=wt, bins=bins)
-                hists[var] = {'h':hist, 'bins':bins}
+                hists[var] = {'h':np.array(hist, dtype=float), 'bins':bins}
+
             else:
                 bins = hists[var]['bins']
                 wt = batch['weight'][valid]
