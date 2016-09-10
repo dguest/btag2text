@@ -9,9 +9,8 @@ from argparse import ArgumentParser
 import sys
 import numpy as np
 from itertools import chain
-from h5py import File
-# from matplotlib.backends.backend_pdf import FigureCanvas as Canvas
-# from matplotlib.figure import Figure
+import os
+
 
 BIG_BATCH=1000*1000
 
@@ -29,6 +28,8 @@ def _get_args():
     outputs = parser.add_mutually_exclusive_group(required=True)
     outputs.add_argument('-p', '--plots', **const('plots directory', 'plots'))
     outputs.add_argument('-f', '--hdf', **const('hdf output', 'jets.h5'))
+
+    parser.add_argument('-e', '--ext', help='filename extension')
     return parser.parse_args()
 
 def run():
@@ -42,11 +43,15 @@ def run():
     producer = Clusters(line_iter, max_length=40, batchsize=args.batchsize)
 
     if args.plots:
-        raise NotImplementedError("do this dude")
+        fill_hists(producer, args.plots, args.ext)
     elif args.hdf:
         fill_hdf(producer, args.hdf)
 
+# __________________________________________________________________________
+# hdf5 export
+
 def fill_hdf(producer, dest_file):
+    from h5py import File
     obj_iter = iter(producer)
     first = next(obj_iter)
     shape = first.shape
@@ -67,6 +72,96 @@ def fill_hdf(producer, dest_file):
             ds[block_end:new_end, ...] = batch
             block_end = new_end
 
+# _________________________________________________________________________
+# plotting
+
+_binning = {
+    'energy': (101, 0, 20),
+    'pt': (101, 0, 20),
+    'eta': (101, -1, 1),
+    'dphi': (101, -1, 1),
+    'mask': (3, -0.5, 1.5),
+}
+def fill_hists(producer, dest_dir, ext):
+    hists = {}
+    for batch in producer:
+        valid_mask = ~batch['mask']
+        all_valid = np.ones(batch.shape, dtype=bool)
+        for var in batch.dtype.names:
+            valid = all_valid if var == 'mask' else valid_mask
+            if var not in hists:
+                if var in _binning:
+                    nbin, low, high = _binning[var]
+                else:
+                    nbin = 100
+                    low, high = batch[var].min(), batch[var].max()
+                bins = np.linspace(low, high, nbin)
+                wt = batch['weight'][valid]
+                vals = batch[var][valid]
+                hist, bins = np.histogram(vals, weights=wt, bins=bins)
+                hists[var] = {'h':hist, 'bins':bins}
+            else:
+                bins = hists[var]['bins']
+                wt = batch['weight'][valid]
+                vals = batch[var][valid]
+                add_hist = np.histogram(vals, weights=wt, bins=bins)[0]
+                hists[var]['h'] += add_hist
+
+    for name, hist in hists.items():
+        path = os.path.join(dest_dir, name + (ext or '.pdf'))
+        print('plotting {}'.format(path))
+        with Canvas(path) as can:
+            draw_opts = dict(drawstyle='steps-post')
+            can.ax.plot(*getxy(hist), **draw_opts)
+            can.ax.set_xlabel(name)
+
+def getxy(hist):
+    """
+    Return values for `plot` by clipping overflow bins and duplicating
+    the final y-value.
+    Assume we'll use `drawstyle='steps-post'`
+    """
+    y_vals = hist['h']
+    x_vals = hist['bins']
+    return x_vals, np.r_[y_vals, y_vals[-1]]
+
+
+class Canvas:
+    default_name = 'test.pdf'
+    def __init__(self, out_path=None, figsize=(5.0,5.0*3/4), ext=None):
+        # lazy import
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
+        from matplotlib.figure import Figure
+
+        self.fig = Figure(figsize)
+        self.canvas = FigureCanvasAgg(self.fig)
+        self.ax = self.fig.add_subplot(1,1,1)
+        self.out_path = out_path
+        self.ext = ext
+
+    def save(self, out_path=None, ext=None):
+        output = out_path or self.out_path
+        assert output, "an output file name is required"
+        out_dir, out_file = os.path.split(output)
+        if ext:
+            out_file = '{}.{}'.format(out_file, ext.lstrip('.'))
+        if out_dir and not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
+        self.canvas.print_figure(output, bbox_inches='tight')
+
+    def __enter__(self):
+        if not self.out_path:
+            self.out_path = self.default_name
+        return self
+    def __exit__(self, extype, exval, extb):
+        if extype:
+            return None
+        self.save(self.out_path, ext=self.ext)
+        return True
+
+
+# _________________________________________________________________________
+# data handlers
 
 class Jet:
     """class to load in and organize jet information"""
@@ -87,12 +182,12 @@ class Clusters:
         self._n_obj = max_length
         self._batchsize = batchsize
         self._keys = ['pt', 'eta', 'dphi', 'energy']
-        self._types = np.dtype([(x,'f8') for x in self._keys])
+        self._types = np.dtype([(x,float) for x in self._keys])
     def _iter(self, line_iter):
         for line in line_iter:
             jet = Jet(line)
             cluster_array = np.fromiter(jet.clusters, dtype=self._types)
-            yield cluster_array
+            yield cluster_array, jet.wt
     def __iter__(self):
         return _batch_iter(self._iter(self._line_iter),
                            self._n_obj,
@@ -109,12 +204,12 @@ class Tracks:
             ["d0", "d0sig", "z0", "z0sig"],
             ["chi2", "ndf", "nBLHits", "expectBLayerHit",
              "nInnHits", "nNextToInnHits", "nPixHits", "nSCTHits"]]
-        self._types = np.dtype([(x, 'f8') for x in chain(*self._keys)])
+        self._types = np.dtype([(x,float) for x in chain(*self._keys)])
     def _iter(self, line_iter):
         for line in line_iter:
             jet = Jet(line)
             track_array = np.fromiter(jet.tracks, dtype=self._types)
-            yield track_array
+            yield track_array, jet.wt
     def __iter__(self):
         return _batch_iter(self._iter(self._line_iter),
                            self._n_obj,
@@ -130,15 +225,16 @@ def _batch_iter(line_iter, n_objects, batchsize, dtype):
       truncated, smaller values should be masked off)
 
     """
-    new_dt = np.dtype(dtype.descr + [('mask',bool)])
+    new_dt = np.dtype(dtype.descr + [('mask',bool), ('weight', float)])
     batch = np.zeros((batchsize, n_objects), dtype=new_dt)
     sample_n = 0
-    for array in line_iter:
+    for array, wt in line_iter:
 
         n_missing = n_objects - array.size
 
         array.resize(n_objects, refcheck=False)
         batch[sample_n, :] = array
+        batch['weight'][sample_n, :] = wt
         if n_missing > 0:
             batch['mask'][sample_n, -n_missing:] = True
 
