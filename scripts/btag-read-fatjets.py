@@ -30,6 +30,9 @@ def _get_args():
     outputs.add_argument('-f', '--hdf', **const('hdf output', 'jets.h5'))
 
     parser.add_argument('-e', '--ext', help='filename extension')
+
+    parser.add_argument('-c', '--constituents', choices=_constituents.keys(),
+                        default='clusters')
     return parser.parse_args()
 
 def run():
@@ -40,7 +43,8 @@ def run():
         line_iter = sys.stdin
 
     # the producer should read in data and provide as an ndarray
-    producer = Clusters(line_iter, max_length=40, batchsize=args.batchsize)
+    producer = _constituents[args.constituents](
+        line_iter, max_length=40, batchsize=args.batchsize)
 
     if args.plots:
         fill_hists(producer, args.plots, args.ext)
@@ -58,7 +62,7 @@ def fill_hdf(producer, dest_file):
     block_size = shape[0]
     with File(dest_file,'w') as h5file:
         ds = h5file.create_dataset(
-            'clusters',
+            producer.name,
             shape=shape,
             chunks=shape,
             maxshape=( (None,) + shape[1:]),
@@ -182,6 +186,7 @@ class Jet:
 
 # cluster reader / iterator
 class Clusters:
+    name = 'clusters'
     def __init__(self, in_file, max_length, batchsize):
         self._line_iter = in_file
         self._n_obj = max_length
@@ -200,6 +205,7 @@ class Clusters:
                            self._types)
 
 class Tracks:
+    name = 'tracks'
     def __init__(self, in_file, max_length, batchsize=BIG_BATCH):
         self._line_iter = in_file
         self._n_obj = max_length
@@ -250,6 +256,8 @@ def _batch_iter(line_iter, n_objects, batchsize, dtype):
             batch.fill(0)
     yield batch[:sample_n, ...]
 
+# to look up the builder by name we have this dictionary
+_constituents = {'clusters':Clusters, 'tracks':Tracks}
 
 if __name__ == '__main__':
     run()
