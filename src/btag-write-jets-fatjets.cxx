@@ -38,7 +38,8 @@ int main(int argc, char* argv[]) {
   if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
 
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
-  h5::Writer writer(out_file, "clusters", 20, 256);
+  h5::Writer<h5::Cluster> cluster_ds(out_file, "clusters", 20, 256);
+  h5::Writer<h5::Track> track_ds(out_file, "tracks", 20, 256);
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
@@ -48,13 +49,18 @@ int main(int argc, char* argv[]) {
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       std::vector<h5::Cluster> clusters;
+      std::vector<h5::Track> tracks;
       for (int n = 0; n < 15; n++) {
         float d = n;
         clusters.push_back({d, d, d, d, false, d});
+        tracks.push_back({d, d, d, false, d});
       }
-      writer.add_jet(clusters);
+      cluster_ds.add_jet(clusters);
+      track_ds.add_jet(tracks);
     }
   }
-  writer.flush();
-  writer.close();
+  cluster_ds.flush();
+  cluster_ds.close();
+  track_ds.flush();
+  track_ds.close();
 }
