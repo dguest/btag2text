@@ -6,6 +6,7 @@
 #include "constants.hh"
 #include "unshittify.hh"
 #include "select_jet.hh"
+#include "math.hh"
 #include "get_tree.hh"
 
 #include "H5Cpp.h"
@@ -49,11 +50,26 @@ int main(int argc, char* argv[]) {
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       std::vector<h5::Cluster> clusters;
+      for (const auto& cluster: build_clusters(jet)) {
+        h5::Cluster cl;
+        cl.pt = cluster.pt;
+        cl.deta = cluster.eta - jet.jet_eta;
+        cl.dphi = cluster.dphi_jet;
+        cl.energy = cluster.e;
+        cl.weight = weight;
+        cl.mask = false;
+        clusters.push_back(cl);
+      }
       std::vector<h5::Track> tracks;
-      for (int n = 0; n < 15; n++) {
-        float d = n;
-        clusters.push_back({d, d, d, d, false, d});
-        tracks.push_back({d, d, d, false, d});
+      for (const auto& track_vx: build_tracks(jet)) {
+        const auto& track = track_vx.track;
+        h5::Track tk;
+        tk.pt = track.pt;
+        tk.deta = track.eta - jet.jet_eta;
+        tk.dphi = phi_mpi_pi(track.phi, jet.jet_phi);
+        tk.weight = weight;
+        tk.mask = false;
+        tracks.push_back(tk);
       }
       cluster_ds.add_jet(clusters);
       track_ds.add_jet(tracks);
