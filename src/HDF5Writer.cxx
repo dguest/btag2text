@@ -2,6 +2,9 @@
 
 #include "H5Cpp.h"
 
+#include <stdexcept>
+#include <cassert>
+
 namespace {
   H5::CompType get_cluster_type();
   h5::Cluster get_empty_cluster();
@@ -15,6 +18,9 @@ namespace h5 {
     _batch_size(batch_size),
     _offset(0)
   {
+    if (batch_size < 1) {
+      throw std::logic_error("batch size must be > 0");
+    }
     // create space
     hsize_t initial[2] = {0, max_length};
     hsize_t eventual[2] = {H5S_UNLIMITED, max_length};
@@ -31,7 +37,7 @@ namespace h5 {
   }
 
   void Writer::add_jet(std::vector<Cluster> jet) {
-    if (_buffer.size() == _batch_size) {
+    if (buffer_size() == _batch_size) {
       flush();
     }
     auto dummy = get_empty_cluster();
@@ -39,10 +45,10 @@ namespace h5 {
     _buffer.insert(_buffer.begin(), jet.begin(), jet.end());
   }
   void Writer::flush() {
-    if (_buffer.size() == 0) return;
+    if (buffer_size() == 0) return;
     // extend the ds
-    hsize_t slab_dims[2] = {_buffer.size(), _max_length};
-    hsize_t total_dims[2] = {_buffer.size() + _offset, _max_length};
+    hsize_t slab_dims[2] = {buffer_size(), _max_length};
+    hsize_t total_dims[2] = {buffer_size() + _offset, _max_length};
     _ds.extend(total_dims);
 
     // setup dataspaces
@@ -53,11 +59,15 @@ namespace h5 {
 
     // write out
     _ds.write(_buffer.data(), _type, mem_space, file_space);
-    _offset += _buffer.size();
+    _offset += buffer_size();
     _buffer.clear();
   }
   void Writer::close() {
     _ds.close();
+  }
+  hsize_t Writer::buffer_size() const {
+    assert(_buffer.size() % _max_length == 0);
+    return _buffer.size() / _max_length;
   }
 
 }

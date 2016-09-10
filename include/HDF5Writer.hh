@@ -28,6 +28,7 @@ namespace h5 {
     void flush();
     void close();
   private:
+    hsize_t buffer_size() const;
     H5::DataType _type;
     hsize_t _max_length;
     hsize_t _batch_size;
