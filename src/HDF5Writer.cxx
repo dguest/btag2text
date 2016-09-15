@@ -64,14 +64,13 @@ namespace {
     auto ftype = h5::get_type<h5::outfloat_t>();
     auto btype = h5::get_type<bool>();
     H5::CompType type(sizeof(h5::Cluster));
-#define INSERT(name, intype)                                      \
-    type.insertMember(#name, offsetof(h5::Cluster, name), intype)
-    INSERT(pt, ftype);
-    INSERT(deta, ftype);
-    INSERT(dphi, ftype);
-    INSERT(energy, ftype);
-    INSERT(mask, btype);
-    INSERT(weight, ftype);
+#define INSERT(name) H5_INSERT(type, h5::Cluster, name)
+    INSERT(pt);
+    INSERT(deta);
+    INSERT(dphi);
+    INSERT(energy);
+    INSERT(mask);
+    INSERT(weight);
 #undef INSERT
     return type;
   }
@@ -91,13 +90,12 @@ namespace {
     auto ftype = h5::get_type<h5::outfloat_t>();
     auto btype = h5::get_type<bool>();
     H5::CompType type(sizeof(h5::Track));
-#define INSERT(name, intype)                                      \
-    type.insertMember(#name, offsetof(h5::Track, name), intype)
-    INSERT(pt, ftype);
-    INSERT(deta, ftype);
-    INSERT(dphi, ftype);
-    INSERT(mask, btype);
-    INSERT(weight, ftype);
+#define INSERT(name) H5_INSERT(type, h5::Track, name)
+    INSERT(pt);
+    INSERT(deta);
+    INSERT(dphi);
+    INSERT(mask);
+    INSERT(weight);
 #undef INSERT
     return type;
   }

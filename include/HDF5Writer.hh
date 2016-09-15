@@ -7,6 +7,11 @@
 #include <stdexcept>
 #include <cassert>
 
+// utility macro to insert H5 types in a struct
+#define H5_INSERT(INTO, CLASS, MEMBER)					\
+  h5::insert(INTO, #MEMBER, offsetof(CLASS, MEMBER), &CLASS::MEMBER)
+
+
 namespace h5 {
   // use float to save space, could also use double...
   typedef float outfloat_t;
@@ -15,10 +20,45 @@ namespace h5 {
   template <typename T> H5::DataType get_type();
   template <typename T> T get_empty();
 
+  // for insertion into compound types (H5_INSERT macro above)
+  template <typename struct_t, typename member_t>
+  void insert(H5::CompType& into, // compound type
+              const std::string& nm, // name in file
+              size_t offset, // offset in memory
+              member_t struct_t::*); // pointer to member in memory
+
+  // The actual writer class
+  template <typename T>
+  class Writer {
+  public:
+    Writer(H5::CommonFG& group, const std::string& name,
+           hsize_t max_length, hsize_t batch_size);
+    Writer(const Writer&) = delete;
+    Writer& operator=(Writer&) = delete;
+    void add_jet(std::vector<T>);
+    void flush();
+    void close();
+  private:
+    hsize_t buffer_size() const;
+    H5::DataType _type;
+    hsize_t _max_length;
+    hsize_t _batch_size;
+    hsize_t _offset;
+    std::vector<T> _buffer;
+    H5::DataSet _ds;
+  };
+
+  // Utility function to get a ``packed'' version of the datatype.
+  // This lets us buffer structures which have stuff we don't want to write.
+  H5::DataType packed(H5::DataType);
+
   // forward declare native primative types
   template<> H5::DataType get_type<float>();
   template<> H5::DataType get_type<double>();
   template<> H5::DataType get_type<bool>();
+
+  // === application specific things ===
+  // concrete implementation is in the cxx file
 
   // cluster struct and associated template specialization
   struct Cluster {
@@ -43,36 +83,23 @@ namespace h5 {
   template<> H5::DataType get_type<Track>();
   template<> Track get_empty<Track>();
 
-  // Utility function to get a ``packed'' version of the datatype.
-  // This lets us buffer structures which have stuff we don't want to write.
-  H5::DataType packed(H5::DataType);
 
-  // The actual writer class
-  template <typename T>
-  class Writer {
-  public:
-    Writer(H5::CommonFG& group, const std::string& name,
-           hsize_t max_length, hsize_t batch_size);
-    Writer(const Writer&) = delete;
-    Writer& operator=(Writer&) = delete;
-    void add_jet(std::vector<T>);
-    void flush();
-    void close();
-  private:
-    hsize_t buffer_size() const;
-    H5::DataType _type;
-    hsize_t _max_length;
-    hsize_t _batch_size;
-    hsize_t _offset;
-    std::vector<T> _buffer;
-    H5::DataSet _ds;
-  };
 }
 
 // _________________________________________________________________________
 // implementation
 
 namespace h5 {
+
+  template <typename struct_t, typename member_t>
+  void insert(H5::CompType& into,
+              const std::string& nm,
+              size_t offset,
+              member_t struct_t::*) {
+    into.insertMember(nm, offset, get_type<member_t>());
+  }
+
+
   template <typename T>
   Writer<T>::Writer(H5::CommonFG& group, const std::string& name,
                  hsize_t max_length, hsize_t batch_size):
