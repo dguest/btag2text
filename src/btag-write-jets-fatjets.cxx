@@ -15,9 +15,7 @@
 #include <limits>
 
 const std::string DESCRIPTION = (
-  "Dump information for jets\n"
-  "Should be pretty comprehensive, including "
-  "subjets, tracks, and clusters"
+  "Dump information for jets to HDF5"
   );
 
 // _____________________________________________________________________

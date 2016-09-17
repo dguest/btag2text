@@ -11,7 +11,9 @@ std::ostream& operator<<(std::ostream& in, const Options& opt) {
 Options get_opts(int argc, char* argv[], const std::string& description) {
   namespace po = boost::program_options;
   Options opts;
-  po::options_description opt(description);
+  std::string usage = "usage: " + std::string(argv[0]) + " <files...>"
+    + " -o <output> [-h] [opts...]\n";
+  po::options_description opt(usage + "\n" + description);
   opt.add_options()
     ("files", po::value(&opts.input_files)->required(),
      "list of input files")
@@ -35,7 +37,7 @@ Options get_opts(int argc, char* argv[], const std::string& description) {
     }
     po::notify(vm);
   } catch (po::error& err) {
-    std::cerr << opt << "\nERROR: " << err.what() << std::endl;
+    std::cerr << usage << "ERROR: " << err.what() << std::endl;
     exit(1);
   }
   return opts;
