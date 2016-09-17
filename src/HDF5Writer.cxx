@@ -5,6 +5,8 @@
 
 namespace {
   // concrete functions used in template specialization
+  H5::CompType get_jet_type();
+
   H5::CompType get_cluster_type();
   h5::Cluster get_empty_cluster();
 
@@ -30,6 +32,10 @@ namespace h5 {
     return get_bool_type();
   }
 
+  template<>
+  H5::DataType get_type<Jet>() {
+    return get_jet_type();
+  }
   template<>
   H5::DataType get_type<Cluster>() {
     return get_cluster_type();
@@ -60,6 +66,15 @@ namespace h5 {
 }
 
 namespace {
+  H5::CompType get_jet_type() {
+    auto ftype = h5::get_type<h5::outfloat_t>();
+    H5::CompType type(sizeof(h5::Jet));
+    H5_INSERT(type, h5::Jet, weight);
+    H5_INSERT(type, h5::Jet, pt);
+    H5_INSERT(type, h5::Jet, eta);
+    return type;
+  }
+
   H5::CompType get_cluster_type() {
     auto ftype = h5::get_type<h5::outfloat_t>();
     auto btype = h5::get_type<bool>();
@@ -70,7 +85,6 @@ namespace {
     INSERT(dphi);
     INSERT(energy);
     INSERT(mask);
-    INSERT(weight);
 #undef INSERT
     return type;
   }
@@ -81,7 +95,6 @@ namespace {
     cl.dphi = 0;
     cl.energy = 0;
     cl.mask = true;
-    cl.weight = 0;
     return cl;
   }
 
@@ -95,7 +108,6 @@ namespace {
     INSERT(deta);
     INSERT(dphi);
     INSERT(mask);
-    INSERT(weight);
 #undef INSERT
     return type;
   }
@@ -105,7 +117,6 @@ namespace {
     cl.deta = 0;
     cl.dphi = 0;
     cl.mask = true;
-    cl.weight = 0;
     return cl;
   }
 

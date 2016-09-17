@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   h5::Writer<h5::Cluster> cluster_ds(out_file, "clusters", 20, 256);
   h5::Writer<h5::Track> track_ds(out_file, "tracks", 20, 256);
+  h5::Writer1d<h5::Jet> jet_ds(out_file, "jets", 256);
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
@@ -56,7 +57,6 @@ int main(int argc, char* argv[]) {
         cl.deta = cluster.eta - jet.jet_eta;
         cl.dphi = cluster.dphi_jet;
         cl.energy = cluster.e;
-        cl.weight = weight;
         cl.mask = false;
         clusters.push_back(cl);
       }
@@ -67,16 +67,20 @@ int main(int argc, char* argv[]) {
         tk.pt = track.pt;
         tk.deta = track.eta - jet.jet_eta;
         tk.dphi = phi_mpi_pi(track.phi, jet.jet_phi);
-        tk.weight = weight;
         tk.mask = false;
         tracks.push_back(tk);
       }
       cluster_ds.add_jet(clusters);
       track_ds.add_jet(tracks);
+      h5::Jet hjet{jet.jet_pt, jet.jet_eta};
+      hjet.weight = weight;
+      jet_ds.add_jet(hjet);
     }
   }
   cluster_ds.flush();
   cluster_ds.close();
   track_ds.flush();
   track_ds.close();
+  jet_ds.flush();
+  jet_ds.close();
 }
