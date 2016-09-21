@@ -24,6 +24,9 @@ public:
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
   Histogram* m_image;
+  Histogram* m_tracks;
+  Histogram* m_em_energy;
+  Histogram* m_had_energy;
   double m_mass;
 };
 

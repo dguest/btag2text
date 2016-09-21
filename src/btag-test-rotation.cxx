@@ -16,7 +16,8 @@ int main(int argc, char* argv[]) {
     inputs.push_back({ x, y, w});
     inputs.push_back({ x,-y, w});
   }
-  auto out = get_points_along_principal(inputs);
+  auto principal = get_principal(inputs);
+  auto out = get_points_along_principal(principal,inputs);
   for (int nnn = 0; nnn < out.size(); nnn++) {
     std::cout << "in: " << inputs.at(nnn) << ", out: " << out.at(nnn)
               << std::endl;

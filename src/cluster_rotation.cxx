@@ -72,12 +72,25 @@ namespace {
 
 }
 
-std::vector<Point> get_points_along_principal(const std::vector<Point>& in) {
+Point get_principal(const std::vector<Point>& in) {
   using namespace Eigen;
   Points raw = points_from_vector(in);
   VectorXd weights = weights_from_vector(in);
   Vector2d principal = get_principal_axis(raw, weights);
+  return {principal(0), principal(1)};
+}
+
+
+std::vector<Point> get_points_along_principal(
+  const Point& ppoint,
+  const std::vector<Point>& in) {
+  using namespace Eigen;
+  Vector2d principal;
+  principal << ppoint.x, ppoint.y;
   Matrix2d rotation = get_rotation_matrix(principal);
+
+  Points raw = points_from_vector(in);
+  VectorXd weights = weights_from_vector(in);
   Points rotated = rotation * raw;
   int n_points = in.size();
   std::vector<Point> out;

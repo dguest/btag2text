@@ -10,7 +10,10 @@ struct Point
   double w;
 };
 
-std::vector<Point> get_points_along_principal(const std::vector<Point>& in);
+Point get_principal(const std::vector<Point>& in);
+std::vector<Point> get_points_along_principal(
+  const Point& principal,
+  const std::vector<Point>& in);
 
 
 #endif
