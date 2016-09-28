@@ -81,7 +81,6 @@ struct Jet
 
   // track counts
   int jet_ntrk;
-  int jet_ip3d_ntrk;
 
   // high level
   // ip2d, ip3d
@@ -135,6 +134,7 @@ struct Jet
   double jet_mv2c100;
 
   // track level
+  int jet_ip3d_ntrk;
   std::vector<float> jet_trk_pt;
   std::vector<float> jet_trk_eta;
   std::vector<float> jet_trk_theta;
@@ -485,6 +485,8 @@ private:
 
   // turn some branches off if they aren't valid
   bool m_clusters_valid;
+  bool m_ipmp_valid;
+  bool m_tracks_valid;
 };
 
 // ______________________________________________________________________

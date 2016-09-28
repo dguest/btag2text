@@ -297,7 +297,9 @@ Jets::Jets(SmartChain& chain):
   m_trkjet(chain, "trkjet"),
   m_vrtrkjet(chain, "vrtrkjet"),
   m_moments(chain),
-  m_clusters_valid(true)
+  m_clusters_valid(true),
+  m_ipmp_valid(true),
+  m_tracks_valid(true)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
@@ -343,9 +345,6 @@ Jets::Jets(SmartChain& chain):
     m_clusters_valid = false;
   }
 
-  // jet_ntrk is defined from the size of a vector later
-  SET_BRANCH(jet_ip3d_ntrk);
-
   SET_BRANCH(jet_ip2d_pb);
   SET_BRANCH(jet_ip2d_pc);
   SET_BRANCH(jet_ip2d_pu);
@@ -353,10 +352,14 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_ip3d_pc);
   SET_BRANCH(jet_ip3d_pu);
 
-  SET_BRANCH(jet_ipmp_pb);
-  SET_BRANCH(jet_ipmp_pc);
-  SET_BRANCH(jet_ipmp_pu);
-  SET_BRANCH(jet_ipmp_ptau);
+  try {
+    SET_BRANCH(jet_ipmp_pb);
+    SET_BRANCH(jet_ipmp_pc);
+    SET_BRANCH(jet_ipmp_pu);
+    SET_BRANCH(jet_ipmp_ptau);
+  } catch (MissingBranchError& err) {
+    m_ipmp_valid = false;
+  }
 
   SET_BRANCH(jet_sv1_ntrkj);
   SET_BRANCH(jet_sv1_ntrkv);
@@ -393,6 +396,9 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_mv2c20);
   SET_BRANCH(jet_mv2c100);
 
+  try {
+  // jet_ntrk is defined from the size of a vector later
+  SET_BRANCH(jet_ip3d_ntrk);
 
   SET_BRANCH(jet_trk_pt);
   SET_BRANCH(jet_trk_eta);
@@ -425,8 +431,10 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_trk_nSCTHits);
   SET_BRANCH(jet_trk_nsharedSCTHits);
   SET_BRANCH(jet_trk_expectBLayerHit);
-
   SET_BRANCH(jet_trk_jf_Vertex);
+  } catch (MissingBranchError& err) {
+    m_tracks_valid = false;
+  }
 
 #undef SET_BRANCH
 }
@@ -479,9 +487,6 @@ Jet Jets::getJet(int pos) const {
     COPY(jet_cluster_first_eng_dens     );
   }
 
-  // track counts
-  o.jet_ntrk = jet_trk_pt->at(pos).size();
-  COPY(jet_ip3d_ntrk);
 
   // high level                   // high level
   // ip2d, ip3d                   // ip2d, ip3d
@@ -492,10 +497,12 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_ip3d_pc);
   COPY(jet_ip3d_pu);
   // ipmp
+  if (m_ipmp_valid) {
   COPY(jet_ipmp_pb);
   COPY(jet_ipmp_pc);
   COPY(jet_ipmp_pu);
   COPY(jet_ipmp_ptau);
+  }
 
   // sv1                          // sv1
   COPY(jet_sv1_ntrkj);
@@ -534,40 +541,45 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_mv2c20);
   COPY(jet_mv2c100);
 
-  // track level
-  // multiply is used here to give the vector the right units
-  o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
-  COPY(jet_trk_eta);
-  COPY(jet_trk_theta);
-  COPY(jet_trk_phi);
-  COPY(jet_trk_dr);
-  COPY(jet_trk_chi2);
-  COPY(jet_trk_ndf);
+  if (m_tracks_valid) {
+    // track counts
+    o.jet_ntrk = m_tracks_valid ? jet_trk_pt->at(pos).size() : -1;
+    COPY(jet_ip3d_ntrk);
+    // track level
+    // multiply is used here to give the vector the right units
+    o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
+    COPY(jet_trk_eta);
+    COPY(jet_trk_theta);
+    COPY(jet_trk_phi);
+    COPY(jet_trk_dr);
+    COPY(jet_trk_chi2);
+    COPY(jet_trk_ndf);
 
-  COPY(jet_trk_algo);
-  COPY(jet_trk_orig);
+    COPY(jet_trk_algo);
+    COPY(jet_trk_orig);
 
-  // TODO: check these units
-  COPY_MULTV(jet_trk_d0, mm); // Units?
-  COPY_MULTV(jet_trk_z0, mm); // Units?
-  o.jet_trk_ip3d_signed_d0 = multiply<float>(jet_trk_ip3d_d0->at(pos), mm);
-  COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
-  COPY(jet_trk_ip3d_d0sig);
-  COPY(jet_trk_ip3d_z0sig);
-  COPY(jet_trk_ip3d_grade);
-  COPY(jet_trk_jf_Vertex);
+    // TODO: check these units
+    COPY_MULTV(jet_trk_d0, mm); // Units?
+    COPY_MULTV(jet_trk_z0, mm); // Units?
+    o.jet_trk_ip3d_signed_d0 = multiply<float>(jet_trk_ip3d_d0->at(pos), mm);
+    COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
+    COPY(jet_trk_ip3d_d0sig);
+    COPY(jet_trk_ip3d_z0sig);
+    COPY(jet_trk_ip3d_grade);
+    COPY(jet_trk_jf_Vertex);
 
-  COPY(jet_trk_nInnHits);
-  COPY(jet_trk_nNextToInnHits);
-  COPY(jet_trk_nBLHits);
-  COPY(jet_trk_nsharedBLHits);
-  COPY(jet_trk_nsplitBLHits);
-  COPY(jet_trk_nPixHits);
-  COPY(jet_trk_nsharedPixHits);
-  COPY(jet_trk_nsplitPixHits);
-  COPY(jet_trk_nSCTHits);
-  COPY(jet_trk_nsharedSCTHits);
-  COPY(jet_trk_expectBLayerHit);
+    COPY(jet_trk_nInnHits);
+    COPY(jet_trk_nNextToInnHits);
+    COPY(jet_trk_nBLHits);
+    COPY(jet_trk_nsharedBLHits);
+    COPY(jet_trk_nsplitBLHits);
+    COPY(jet_trk_nPixHits);
+    COPY(jet_trk_nsharedPixHits);
+    COPY(jet_trk_nsplitPixHits);
+    COPY(jet_trk_nSCTHits);
+    COPY(jet_trk_nsharedSCTHits);
+    COPY(jet_trk_expectBLayerHit);
+  }
 
 #undef COPY
 #undef COPY_MULT
@@ -686,7 +698,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     if (track.usedFor(IP3D)) n_ip3d++;
   }
   // safety check
-  assert(n_ip3d == jet.jet_ip3d_ntrk);
+  assert(n_ip3d == 0 || n_ip3d == jet.jet_ip3d_ntrk);
   return out;
 }
 std::vector<Cluster> build_clusters(const Jet& jet) {
