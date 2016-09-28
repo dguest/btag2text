@@ -4,6 +4,8 @@
 
 #include "SmartChain.hh"
 
+#include "TVector3.h"
+
 #include <vector>
 #include <algorithm> // sort
 #include <cassert>
@@ -21,6 +23,26 @@ namespace {
                               std::numeric_limits<vtype>::infinity());
     return in;
   }
+
+  void fill_sv1_vertex(Jet& j) {
+    size_t nvtx = j.jet_sv1_vtx_x.size();
+    if (nvtx == 0) {
+      j.jet_sv1_dR = NAN;
+      j.jet_sv1_Lxy = NAN;
+      j.jet_sv1_Lxyz = NAN;
+      return;
+    }
+    double dx = j.jet_sv1_vtx_x.at(0) - j.PVx;
+    double dy = j.jet_sv1_vtx_y.at(0) - j.PVy;
+    double dz = j.jet_sv1_vtx_z.at(0) - j.PVz;
+    TVector3 vx(dx, dy, dz);
+    TVector3 jet_ax;
+    jet_ax.SetPtEtaPhi(j.jet_pt, j.jet_eta, j.jet_phi);
+    j.jet_sv1_dR = vx.DeltaR(jet_ax);
+    j.jet_sv1_Lxy = vx.Perp();
+    j.jet_sv1_Lxyz = vx.Mag();
+  }
+
   void fill_derived(Jet& jet) {
     auto sorted_d0 = sort_and_pad(jet.jet_trk_ip3d_d0sig, 3);
     jet.track_2_d0_significance = sorted_d0.at(1);
@@ -35,6 +57,8 @@ namespace {
     }
     jet.n_tracks_over_d0_threshold = n_over;
     // TODO: add jet width
+
+    fill_sv1_vertex(jet);
 
     // fill track-level stuff
     int n_tracks = jet.jet_trk_ip3d_z0.size();
@@ -84,7 +108,7 @@ namespace {
 
   template<typename T>
   T getValue(const std::vector<std::vector<T> >& vec,
-             int p1, int p2, const std::string& name) {
+             size_t p1, size_t p2, const std::string& name) {
     if (vec.size() <= p1) {
       throw std::logic_error(
         "can't access jet " + std::to_string(p1) + " in vector " + name);
@@ -97,7 +121,16 @@ namespace {
   }
 }
 
-Subjets::Subjets(SmartChain& chain, const std::string& name) {
+Subjets::Subjets(SmartChain& chain, const std::string& name):
+  m_valid(true)
+{
+  try {
+    init_branches(chain, name);
+  } catch (MissingBranchError& err) {
+    m_valid = false;
+  }
+}
+void Subjets::init_branches(SmartChain& chain, const std::string& name) {
   auto nm = [&name](const std::string& var) {
     return "jet_" + name + "_" + var;
   };
@@ -156,8 +189,8 @@ Subjets::Subjets(SmartChain& chain, const std::string& name) {
 #undef SET_BRANCH
 }
 
-Jet Subjets::getJet(int jet, int subjet) const {
-// #define COPY(var) o.jet_ ## var = var->at(jet).at(subjet)
+Jet Subjets::getJet(size_t jet, size_t subjet) const {
+  if (!m_valid) throw DisabledBranchError("no subjets to access");
 #define COPY(var) o.jet_ ## var = getValue(*var, jet, subjet, #var)
   Jet o;
 
@@ -203,11 +236,25 @@ Jet Subjets::getJet(int jet, int subjet) const {
 
   return o;
 }
-int Subjets::size(int jet) const {
+size_t Subjets::size(size_t jet) const {
+  if (!m_valid) throw DisabledBranchError("no subjets");
   return pt->at(jet).size();
 }
+bool Subjets::valid() const {
+  return m_valid;
+}
 
-SubstructureMomentArray::SubstructureMomentArray(SmartChain& chain) {
+
+SubstructureMomentArray::SubstructureMomentArray(SmartChain& chain):
+  m_valid(true)
+{
+  try {
+    init_branches(chain);
+  } catch (MissingBranchError& err) {
+    m_valid = false;
+  }
+}
+void SubstructureMomentArray::init_branches(SmartChain& chain) {
   auto nm = [](const std::string& var) {
     return "jet_substructure_moment_" + var;
   };
@@ -223,6 +270,7 @@ SubstructureMomentArray::SubstructureMomentArray(SmartChain& chain) {
 }
 
 SubstructureMoments SubstructureMomentArray::getMoments(int number) const {
+  if (!m_valid) throw DisabledBranchError("no moments to access");
 #define COPY(var) o.var = m_ ## var->at(number)
   SubstructureMoments o;
   COPY(tau21);
@@ -235,20 +283,30 @@ SubstructureMoments SubstructureMomentArray::getMoments(int number) const {
   return o;
 #undef COPY
 }
-int SubstructureMomentArray::size() const {
+size_t SubstructureMomentArray::size() const {
+  if (!m_valid) throw DisabledBranchError("no moments to access");
   return m_tau21->size();
 }
+bool SubstructureMomentArray::valid() const {
+  return m_valid;
+}
+
 
 Jets::Jets(SmartChain& chain):
   m_chain(&chain),
   m_trkjet(chain, "trkjet"),
   m_vrtrkjet(chain, "vrtrkjet"),
-  m_moments(chain)
+  m_moments(chain),
+  m_clusters_valid(true)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
   SET_BRANCH(avgmu);
   m_chain->SetBranch("mcwg", &mc_event_weight);
+
+  SET_BRANCH(PVx);
+  SET_BRANCH(PVy);
+  SET_BRANCH(PVz);
 
   // kinematics
   SET_BRANCH(jet_pt);
@@ -261,8 +319,10 @@ Jets::Jets(SmartChain& chain):
 
   // flavor label
   SET_BRANCH(jet_truthflav);
+  SET_BRANCH(jet_LabDr_HadF);
 
   // cluster and calo
+  try {
   SET_BRANCH(jet_cluster_pt                 );
   SET_BRANCH(jet_cluster_eta                );
   SET_BRANCH(jet_cluster_phi                );
@@ -279,6 +339,9 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_cluster_em_probability     );
   SET_BRANCH(jet_cluster_eng_frac_max       );
   SET_BRANCH(jet_cluster_first_eng_dens     );
+  } catch (MissingBranchError& err) {
+    m_clusters_valid = false;
+  }
 
   // jet_ntrk is defined from the size of a vector later
   SET_BRANCH(jet_ip3d_ntrk);
@@ -289,6 +352,11 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_ip3d_pb);
   SET_BRANCH(jet_ip3d_pc);
   SET_BRANCH(jet_ip3d_pu);
+
+  SET_BRANCH(jet_ipmp_pb);
+  SET_BRANCH(jet_ipmp_pc);
+  SET_BRANCH(jet_ipmp_pu);
+  SET_BRANCH(jet_ipmp_ptau);
 
   SET_BRANCH(jet_sv1_ntrkj);
   SET_BRANCH(jet_sv1_ntrkv);
@@ -362,7 +430,7 @@ Jets::Jets(SmartChain& chain):
 
 #undef SET_BRANCH
 }
-int Jets::size() const {
+size_t Jets::size() const {
   return jet_pt->size();
 }
 Jet Jets::getJet(int pos) const {
@@ -373,6 +441,10 @@ Jet Jets::getJet(int pos) const {
   // event
   o.avgmu = avgmu;
   o.mc_event_weight = mc_event_weight;
+
+  o.PVx = PVx*mm;
+  o.PVy = PVy*mm;
+  o.PVz = PVz*mm;
 
   // kinematics                   // kinematics
   o.jet_pt = jet_pt->at(pos)*MeV;
@@ -385,24 +457,27 @@ Jet Jets::getJet(int pos) const {
 
   // flavor label                 // flavor label
   COPY(jet_truthflav);
+  COPY(jet_LabDr_HadF);
 
   // cluster
-  o.jet_cluster_pt = multiply<float>(jet_cluster_pt->at(pos),MeV);
-  COPY(jet_cluster_eta);
-  COPY(jet_cluster_phi);
-  o.jet_cluster_e = multiply<float>(jet_cluster_e->at(pos), MeV);
-  COPY(jet_cluster_clustersize        );
-  COPY(jet_cluster_isolation          );
-  COPY(jet_cluster_lateral            );
-  COPY(jet_cluster_longitudinal       );
-  COPY(jet_cluster_second_lambda      );
-  COPY(jet_cluster_second_r           );
-  COPY(jet_cluster_center_lambda      );
-  COPY(jet_cluster_center_mag         );
-  COPY(jet_cluster_eng_pos            );
-  COPY(jet_cluster_em_probability     );
-  COPY(jet_cluster_eng_frac_max       );
-  COPY(jet_cluster_first_eng_dens     );
+  if (m_clusters_valid) {
+    o.jet_cluster_pt = multiply<float>(jet_cluster_pt->at(pos),MeV);
+    COPY(jet_cluster_eta);
+    COPY(jet_cluster_phi);
+    o.jet_cluster_e = multiply<float>(jet_cluster_e->at(pos), MeV);
+    COPY(jet_cluster_clustersize        );
+    COPY(jet_cluster_isolation          );
+    COPY(jet_cluster_lateral            );
+    COPY(jet_cluster_longitudinal       );
+    COPY(jet_cluster_second_lambda      );
+    COPY(jet_cluster_second_r           );
+    COPY(jet_cluster_center_lambda      );
+    COPY(jet_cluster_center_mag         );
+    COPY(jet_cluster_eng_pos            );
+    COPY(jet_cluster_em_probability     );
+    COPY(jet_cluster_eng_frac_max       );
+    COPY(jet_cluster_first_eng_dens     );
+  }
 
   // track counts
   o.jet_ntrk = jet_trk_pt->at(pos).size();
@@ -416,6 +491,12 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_ip3d_pb);
   COPY(jet_ip3d_pc);
   COPY(jet_ip3d_pu);
+  // ipmp
+  COPY(jet_ipmp_pb);
+  COPY(jet_ipmp_pc);
+  COPY(jet_ipmp_pu);
+  COPY(jet_ipmp_ptau);
+
   // sv1                          // sv1
   COPY(jet_sv1_ntrkj);
   COPY(jet_sv1_ntrkv);
@@ -497,22 +578,29 @@ Jet Jets::getJet(int pos) const {
 
   assert(pass_checks(o));
 
-  for (int sub_pos = 0; sub_pos < m_trkjet.size(pos); sub_pos++) {
-    auto jet = m_trkjet.getJet(pos, sub_pos);
-    jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
-    o.trkjets.push_back(jet);
-  }
-  for (int sub_pos = 0; sub_pos < m_vrtrkjet.size(pos); sub_pos++) {
-    auto jet = m_vrtrkjet.getJet(pos, sub_pos);
-    jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
-    o.vrtrkjets.push_back(jet);
-  }
-  std::sort(o.trkjets.begin(), o.trkjets.end(),
-            [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
-  std::sort(o.vrtrkjets.begin(), o.vrtrkjets.end(),
-            [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
+  if (m_trkjet.valid()) {
+    for (size_t sub_pos = 0; sub_pos < m_trkjet.size(pos); sub_pos++) {
+      auto jet = m_trkjet.getJet(pos, sub_pos);
+      jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
+      o.trkjets.push_back(jet);
+    }
+    std::sort(o.trkjets.begin(), o.trkjets.end(),
+              [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
 
-  o.moments = m_moments.getMoments(pos);
+  }
+  if (m_vrtrkjet.valid()) {
+    for (size_t sub_pos = 0; sub_pos < m_vrtrkjet.size(pos); sub_pos++) {
+      auto jet = m_vrtrkjet.getJet(pos, sub_pos);
+      jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
+      o.vrtrkjets.push_back(jet);
+    }
+    std::sort(o.vrtrkjets.begin(), o.vrtrkjets.end(),
+                [](const Jet& f, const Jet& s){return f.jet_pt > s.jet_pt; });
+
+  }
+  if (m_moments.valid()) {
+    o.moments = m_moments.getMoments(pos);
+  }
   return o;
 };
 double Jets::eventWeight() const {
@@ -683,4 +771,11 @@ std::vector<CovVar> get_jet_variables() {
 std::ostream& operator<<(std::ostream& out, const SubstructureMoments& mom) {
   assert(false);
   return out;
+}
+
+// ________________________________________________________________________
+// exceptions
+DisabledBranchError::DisabledBranchError(const std::string& what):
+  std::logic_error(what)
+{
 }

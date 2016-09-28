@@ -43,6 +43,10 @@ struct Jet
   double avgmu;
   double mc_event_weight;
 
+  double PVx;
+  double PVy;
+  double PVz;
+
   // kinematics
   float jet_pt;
   float jet_eta;
@@ -55,6 +59,7 @@ struct Jet
 
   // flavor label
   int jet_truthflav;
+  int jet_LabDr_HadF;
 
   // cluster and calo
   std::vector<float> jet_cluster_pt                  ;
@@ -86,6 +91,12 @@ struct Jet
   float jet_ip3d_pb;
   float jet_ip3d_pc;
   float jet_ip3d_pu;
+
+  double jet_ipmp_pb;
+  double jet_ipmp_pc;
+  double jet_ipmp_pu;
+  double jet_ipmp_ptau;
+
   // sv1
   int jet_sv1_ntrkj;
   int jet_sv1_ntrkv;
@@ -104,7 +115,7 @@ struct Jet
   float jet_jf_efc;
   float jet_jf_deta;
   float jet_jf_dphi;
-  float jet_jf_ntrkAtVx;
+  int jet_jf_ntrkAtVx;
   int jet_jf_nvtx;
   float jet_jf_sig3d;
   int jet_jf_nvtx1t;
@@ -171,10 +182,17 @@ struct Jet
   std::vector<int>   jet_jf_trk_vtx_ntrk;
   std::vector<float> jet_jf_trk_vtx_L3D;
   std::vector<float> jet_jf_trk_vtx_sig3D;
+  // sv1 vertices
+  float jet_sv1_dR;
+  float jet_sv1_Lxy;
+  float jet_sv1_Lxyz;
+  // --- end derived ---
 
+  // subjets
   std::vector<Jet> trkjets;
   std::vector<Jet> vrtrkjets;
 
+  // jet moments
   SubstructureMoments moments;
 
   // only defined for subjets
@@ -249,9 +267,11 @@ class Subjets
 {
 public:
   Subjets(SmartChain& chain, const std::string& name);
-  Jet getJet(int jet, int subjet) const;
-  int size(int jet) const;
+  Jet getJet(size_t jet, size_t subjet) const;
+  size_t size(size_t jet) const;
+  bool valid() const;
 private:
+  void init_branches(SmartChain& chain, const std::string& name);
   // subjet-wise branches
   // kinematics
   std::vector<std::vector<float> >* pt;
@@ -296,6 +316,8 @@ private:
   std::vector<std::vector<float> >* mv2c20;
   // std::vector<std::vector<double> >* mv2c100;
 
+  // disable if any of the branches are missing
+  bool m_valid;
 };
 
 class SubstructureMomentArray
@@ -303,8 +325,10 @@ class SubstructureMomentArray
 public:
   SubstructureMomentArray(SmartChain& chain);
   SubstructureMoments getMoments(int) const;
-  int size() const;
+  size_t size() const;
+  bool valid() const;
 private:
+  void init_branches(SmartChain& chain);
   std::vector<float>* m_tau21;
   std::vector<float>* m_c1;
   std::vector<float>* m_c2;
@@ -312,6 +336,9 @@ private:
   std::vector<float>* m_c2_beta2;
   std::vector<float>* m_d2;
   std::vector<float>* m_d2_beta2;
+
+  // disable if any of the branches are missing
+  bool m_valid;
 };
 
 class Jets
@@ -319,7 +346,7 @@ class Jets
 public:
   Jets(SmartChain& chain);
   Jet getJet(int) const;
-  int size() const;
+  size_t size() const;
   double eventWeight() const;
 private:
   SmartChain* m_chain;
@@ -330,6 +357,10 @@ private:
   // event
   double avgmu;
   double mc_event_weight;
+
+  double PVx;
+  double PVy;
+  double PVz;
 
   // kinematics
   std::vector<float>* jet_pt;
@@ -343,6 +374,7 @@ private:
 
   // flavor label
   std::vector<int>* jet_truthflav;
+  std::vector<int>* jet_LabDr_HadF;
 
   // cluster and calo
   std::vector<std::vector<float> >* jet_cluster_pt                  ;
@@ -373,6 +405,11 @@ private:
   std::vector<float>* jet_ip3d_pb;
   std::vector<float>* jet_ip3d_pc;
   std::vector<float>* jet_ip3d_pu;
+
+  std::vector<double>* jet_ipmp_pb;
+  std::vector<double>* jet_ipmp_pc;
+  std::vector<double>* jet_ipmp_pu;
+  std::vector<double>* jet_ipmp_ptau;
   // sv1
   std::vector<int>* jet_sv1_ntrkj;
   std::vector<int>* jet_sv1_ntrkv;
@@ -446,7 +483,17 @@ private:
 
   std::vector<std::vector<int> >* jet_trk_jf_Vertex;
 
+  // turn some branches off if they aren't valid
+  bool m_clusters_valid;
+};
 
+// ______________________________________________________________________
+// exceptions
+
+class DisabledBranchError: public std::logic_error
+{
+public:
+  DisabledBranchError(const std::string& what_arg);
 };
 
 
