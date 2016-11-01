@@ -87,13 +87,6 @@ CXXFLAGS     += -I$(HDF_PATH)/include
 LIBS         += -L$(HDF_PATH)/lib -Wl,-rpath,$(HDF_PATH)/lib
 LIBS         += -lhdf5_cpp -lhdf5
 
-LIBS         += $(shell ndhist-config --libs)
-CXXFLAGS     += $(shell ndhist-config --cflags)
-
-LIBS         += $(shell covol-config --libs)
-CXXFLAGS     += $(shell covol-config --cflags)
-CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
-
 # boost
 ifdef BOOST_PATH
 LIBS         += -L$(BOOST_PATH)/lib -Wl,-rpath,$(BOOST_PATH)/lib

@@ -773,20 +773,6 @@ std::map<std::string, double> get_map(const Jet& jet) {
   return map;
 }
 
-std::vector<CovVar> get_jet_variables() {
-  return {
-    {"pt", BASE_UNITS},
-    {"eta", ""},
-    {"phi", ""},
-    {"m", BASE_UNITS},
-    {"ntrk", ""},
-    {"ip3d_ntrk", ""},
-    {"ip3d_pu", ""},
-    {"ip3d_pc", ""},
-    {"ip3d_pb", ""}
-  };
-}
-
 
 std::ostream& operator<<(std::ostream& out, const SubstructureMoments& mom) {
   assert(false);

@@ -5,7 +5,6 @@
 #include <map>
 #include <ostream>
 
-#include "covol/CovVar.hh"
 #include "Cluster.hh"
 
 class SmartChain;
@@ -515,7 +514,5 @@ std::vector<Cluster> build_clusters(const Jet& jet);
 // get named maps of variables (last one supplies all)
 std::map<std::string, double> get_pt_eta_map(const Jet& jet);
 std::map<std::string, double> get_map(const Jet& jet);
-
-std::vector<CovVar> get_jet_variables();
 
 #endif // JETS_HH
