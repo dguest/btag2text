@@ -1,14 +1,11 @@
 #include "Options.hh"
 #include "Jets.hh"
 #include "SmartChain.hh"
-// #include "FlavorPtEtaDistributions.hh"
 #include "output_templates.hh"
 #include "constants.hh"
 #include "unshittify.hh"
 #include "select_jet.hh"
 #include "get_tree.hh"
-
-#include "H5Cpp.h"
 
 #include <iostream>
 #include <limits>
@@ -24,8 +21,6 @@ const std::string DESCRIPTION = (
 
 int main(int argc, char* argv[]) {
   unshittify();
-  // required library calls
-  H5::Exception::dontPrint();
 
   // load info
   const auto opts = get_stream_opts(argc, argv, DESCRIPTION);
