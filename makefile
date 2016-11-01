@@ -104,6 +104,20 @@ $(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(BUILD)/$(EXE_PREFIX)%.o
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
 	@$(CXX) -o $@ $^ $(LIBS) $(LDFLAGS)
+	@cp $(DICT)/*.pcm $(OUTPUT)
+
+
+# root dictionary generation
+LINKDEF := $(INC)/LinkDef.h
+$(DICT)/%Dict.cxx: %.h $(LINKDEF)
+	@echo making dict $@
+	@mkdir -p $(DICT)
+	@rootcint -f $@ -c -I$(INC) $(INC)/$*.h $(LINKDEF)
+
+$(BUILD)/%Dict.o: $(DICT)/%Dict.cxx
+	@mkdir -p $(BUILD)
+	@echo compiling dict $@
+	@$(CXX) -I. $(CXXFLAGS) $(ROOTCFLAGS) -c $< -o $@
 
 # compile rule
 $(BUILD)/%.o: %.cxx
@@ -111,22 +125,6 @@ $(BUILD)/%.o: %.cxx
 	@mkdir -p $(BUILD)
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
-# root dictionary generation
-LINKDEF := $(INC)/LinkDef.h
-SEDSTR  := 's,\\\#include "\$(INC)/\(.*\)",\\\#include "\1",g'
-TMPDIR  := $(shell mktemp -d /tmp/rootbuild.XXXX)
-$(DICT)/%Dict.cxx: %.h $(LINKDEF)
-	@echo making dict $@
-	@mkdir -p $(DICT)
-	@rm -f $(DICT)/$*Dict.h $(DICT)/$*Dict.cxx
-	@rootcint $@ -c $(INC)/$*.h $(LINKDEF)
-	@sed $(SEDSTR) $(DICT)/$*Dict.h > $(TMPDIR)/$*Dict.h
-	@mv -f -- $(TMPDIR)/$*Dict.h $(DICT)/$*Dict.h
-
-$(BUILD)/%Dict.o: $(DICT)/%Dict.cxx
-	@mkdir -p $(BUILD)
-	@echo compiling dict $@
-	@$(CXX) $(CXXFLAGS) $(ROOTCFLAGS) -c $< -o $@ 2> /dev/null
 
 # use auto dependency generation
 ALLOBJ       := $(GEN_OBJ)

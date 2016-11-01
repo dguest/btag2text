@@ -13,8 +13,8 @@ if [[ ! -f $RUN_PATH ]]; then
 fi
 
 # read in some common tools
-TOOLS=$(readlink -e $(dirname $0)/batch-tools.sh)
-. $TOOLS
+TOOL_PATH=$(dirname $0)
+. $TOOL_PATH/batch-tools.sh
 
 BASE_DIR=$1
 echo "submit from $BASE_DIR"
@@ -37,5 +37,4 @@ move-if-exists $JOB_DIR
 mkdir -p $OUTPUT_DIR
 BOPTS=$(get-slurm-opts $OUTPUT_DIR)
 BOPTS+=" "$(get-array-opts $ROOT_FILE_LIST)
-sbatch $BOPTS $RUN_PATH $TOOLS $ROOT_FILE_LIST $OUT_FILES
-
+sbatch $BOPTS $RUN_PATH $TOOL_PATH $ROOT_FILE_LIST $OUT_FILES
