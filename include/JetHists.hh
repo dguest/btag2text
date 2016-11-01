@@ -28,6 +28,8 @@ private:
   Histogram ip3d_ntrk;
   Histogram ntrk;
 
+  Histogram ga_ntrk;
+
   Histogram sv1_ntrkv;
   Histogram sv1_n2t;
   Histogram sv1_m;

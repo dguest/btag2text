@@ -26,7 +26,9 @@ JetHists::JetHists(bool is_subjet):
   ZERO_ONE(ip3d_pc),
   ZERO_ONE(ip3d_pb),
   COUNT(ip3d_ntrk, 30),
-  COUNT(ntrk, 30),
+  COUNT(ntrk, 80),
+
+  COUNT(ga_ntrk, 80),
 
   // SV1
   COUNT(sv1_ntrkv, 20),
@@ -66,6 +68,8 @@ void JetHists::fill(const Jet& jet, double weight) {
   BYNAME(ip3d_ntrk);
   BYNAME(ntrk);
 
+  BYNAME(ga_ntrk);
+
   BYNAME(sv1_ntrkv);
   BYNAME(sv1_n2t);
   BYNAME(sv1_m);
@@ -103,6 +107,8 @@ void JetHists::save(H5::CommonFG& out) const {
   BYNAME(ip3d_pb);
   BYNAME(ip3d_ntrk);
   BYNAME(ntrk);
+
+  BYNAME(ga_ntrk);
 
   BYNAME(sv1_ntrkv);
   BYNAME(sv1_n2t);

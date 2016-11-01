@@ -299,7 +299,8 @@ Jets::Jets(SmartChain& chain):
   m_moments(chain),
   m_clusters_valid(true),
   m_ipmp_valid(true),
-  m_tracks_valid(true)
+  m_tracks_valid(true),
+  m_ga_valid(true)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
@@ -434,6 +435,11 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_trk_jf_Vertex);
   } catch (MissingBranchError& err) {
     m_tracks_valid = false;
+  }
+  try {
+    SET_BRANCH(jet_ga_trk_pt);
+  } catch (MissingBranchError& err) {
+    m_ga_valid = false;
   }
 
 #undef SET_BRANCH
@@ -580,6 +586,8 @@ Jet Jets::getJet(int pos) const {
     COPY(jet_trk_nsharedSCTHits);
     COPY(jet_trk_expectBLayerHit);
   }
+  if (m_ga_valid) o.jet_ga_ntrk = jet_ga_trk_pt->at(pos).size();
+  else o.jet_ga_ntrk = -1;
 
 #undef COPY
 #undef COPY_MULT
