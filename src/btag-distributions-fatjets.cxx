@@ -2,7 +2,6 @@
 #include "Jets.hh"
 #include "SmartChain.hh"
 #include "constants.hh"
-#include "ClusterImages.hh"
 #include "JetHists.hh"
 #include "SubstructureHists.hh"
 #include "hist_tools.hh"
@@ -53,7 +52,6 @@ int main(int argc, char* argv[]) {
   double sum_event_weights = 0;
 
   FatJetHists hists(2);
-  ClusterImages images(125*GeV);
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     sum_event_weights += jets.eventWeight();
@@ -63,8 +61,6 @@ int main(int argc, char* argv[]) {
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       hists.fill(jet, weight);
-      auto clusters = build_clusters(jet);
-      images.fill(clusters, jet, weight);
     }
   }
 
@@ -73,7 +69,6 @@ int main(int argc, char* argv[]) {
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   // hists
   hists.save(out_file, HIST);
-  images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
   write_attr(out_file, "sum_event_weights", sum_event_weights);
 }

@@ -90,8 +90,6 @@ LIBS         += -lhdf5_cpp -lhdf5
 LIBS         += $(shell ndhist-config --libs)
 CXXFLAGS     += $(shell ndhist-config --cflags)
 
-CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
-
 # boost
 ifdef BOOST_PATH
 LIBS         += -L$(BOOST_PATH)/lib -Wl,-rpath,$(BOOST_PATH)/lib
