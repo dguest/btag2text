@@ -7,7 +7,6 @@
 #include "select_jet.hh"
 
 #include "ndhist/Histogram.hh"
-#include "covol/Covariance.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
@@ -98,8 +97,6 @@ int main(int argc, char* argv[]) {
   FlavoredHists hists;
   FlavoredHists reweighted_hists;
 
-  Covariance jetcov( get_jet_variables() );
-
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     int n_jets = jets.size();
@@ -110,7 +107,6 @@ int main(int argc, char* argv[]) {
       auto jet_vars = get_map(jet);
       double weight = pt_eta_reweight.get(jet_vars, jet.jet_truthflav);
       reweighted_hists.fill(jet, weight);
-      jetcov.fill(jet_vars, weight);
     }
   }
 
@@ -121,9 +117,6 @@ int main(int argc, char* argv[]) {
   auto hist_group = out_file.createGroup(HIST);
   hists.save(hist_group, RAW);
   reweighted_hists.save(hist_group, REWEIGHTED);
-  // covariance
-  auto cov_group = out_file.createGroup(COV);
-  jetcov.write_to(cov_group, REWEIGHTED);
 
 }
 

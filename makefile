@@ -90,8 +90,6 @@ LIBS         += -lhdf5_cpp -lhdf5
 LIBS         += $(shell ndhist-config --libs)
 CXXFLAGS     += $(shell ndhist-config --cflags)
 
-LIBS         += $(shell covol-config --libs)
-CXXFLAGS     += $(shell covol-config --cflags)
 CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
 
 # boost
