@@ -87,8 +87,8 @@ CXXFLAGS     += -I$(HDF_PATH)/include
 LIBS         += -L$(HDF_PATH)/lib -Wl,-rpath,$(HDF_PATH)/lib
 LIBS         += -lhdf5_cpp -lhdf5
 
-LIBS         += $(shell ndhist-config --libs)
-CXXFLAGS     += $(shell ndhist-config --cflags)
+LIBS         += $(shell $(CURDIR)/ndhist/bin/ndhist-config --libs)
+CXXFLAGS     += $(shell $(CURDIR)/ndhist/bin/ndhist-config --cflags)
 
 CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
 
@@ -101,14 +101,19 @@ LIBS         += -lboost_program_options
 # --- first call here
 all: $(ALL_TOP_LEVEL)
 
+ndhist:
+	make -C ndhist
+
+.PHONY: ndhist
+
 # _______________________________________________________________
 # Add Build Rules
 
 # build exe
-$(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(BUILD)/$(EXE_PREFIX)%.o
+$(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(BUILD)/$(EXE_PREFIX)%.o ndhist
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
-	@$(CXX) -o $@ $^ $(LIBS) $(LDFLAGS)
+	@$(CXX) -o $@ $(filter-out ndhist,$^) $(LIBS) $(LDFLAGS)
 	@cp $(DICT)/*.pcm $(OUTPUT)
 
 
@@ -153,6 +158,7 @@ CLEANLIST     = *~ *.o *.o~ *.d core
 clean:
 	rm -fr $(CLEANLIST) $(CLEANLIST:%=$(BUILD)/%) $(CLEANLIST:%=$(DEP)/%)
 	rm -fr $(BUILD) $(DICT) $(OUTPUT)
+	make -C ndhist clean
 
 rmdep:
 	rm -f $(DEP)/*.d

@@ -1,0 +1,3 @@
+[submodule "ndhist"]
+	path = ndhist
+	url = https://github.com/dguest/ndhist.git
