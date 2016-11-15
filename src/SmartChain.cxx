@@ -28,7 +28,7 @@ int SmartChain::add(std::string file_name, long long nentries) {
 }
 int SmartChain::GetEntry(long long int entry_n, int getall) {
   // have to turn off errors even though I explicetly told root I don't
-  // want them. These fucking designers are retarded.
+  // want them.
   int old_error_level = gErrorIgnoreLevel;
   gErrorIgnoreLevel = kFatal;
   int return_val = TChain::GetEntry(entry_n, getall);
@@ -92,6 +92,7 @@ void SmartChain::SetBranchAddressPrivate(std::string name, void* branch,
     throw std::runtime_error(issue);
   }
   if (!GetBranch(name.c_str())) {
+    m_fake_branches.insert(name);
     throw_bad_branch(name);
   }
 
