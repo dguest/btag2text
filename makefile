@@ -87,9 +87,12 @@ CXXFLAGS     += -I$(HDF_PATH)/include
 LIBS         += -L$(HDF_PATH)/lib -Wl,-rpath,$(HDF_PATH)/lib
 LIBS         += -lhdf5_cpp -lhdf5
 
+# --- add ndhist
+NDHIST       := ndhist/lib/libndhist.so
 LIBS         += $(shell $(CURDIR)/ndhist/bin/ndhist-config --libs)
 CXXFLAGS     += $(shell $(CURDIR)/ndhist/bin/ndhist-config --cflags)
 
+# --- add eigen
 CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
 
 # boost
@@ -102,7 +105,9 @@ LIBS         += -lboost_program_options
 cpp: $(ALL_TOP_LEVEL)
 all: $(ALL_TOP_LEVEL) plotting
 
-ndhist:
+all-top-level: $(ALL_TOP_LEVEL)
+
+$(NDHIST):
 	@echo " -- building ndhist -- "
 	@$(MAKE) -C ndhist
 	@echo " -- done building ndhist -- "
@@ -111,16 +116,17 @@ plotting:
 	@echo "installing plotting scripts"
 	@./ndhist-python/ndhist-install-python install
 
-.PHONY: ndhist plotting all
+.PHONY: plotting all cpp
 
 # _______________________________________________________________
 # Add Build Rules
 
 # build exe
-$(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(BUILD)/$(EXE_PREFIX)%.o ndhist
+EXEC_OBJ_PFX := $(BUILD)/$(EXE_PREFIX)
+$(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(EXEC_OBJ_PFX)%.o $(NDHIST)
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
-	@$(CXX) -o $@ $(filter-out ndhist,$^) $(LIBS) $(LDFLAGS)
+	@$(CXX) -o $@ $^ $(LIBS) $(LDFLAGS)
 	@cp -f $(DICT)/*.pcm $(OUTPUT)
 
 
