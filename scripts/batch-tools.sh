@@ -33,6 +33,18 @@ function build-root-file-list() {
     return 0
 }
 
+# root is stupid: we need to copy the .pcm files from the executables
+# or we'll have problems
+function copy-pcm() {
+    local EXE_LOCATION=$(dirname $(which btag-distributions-clusters))
+    local PCM_FILE
+    for PCM_FILE in ${EXE_LOCATION}/*.pcm; do
+        if [[ ! -f ${PCM_FILE##*/} ]] ; then
+            ln -s $PCM_FILE
+        fi
+    done
+}
+
 # ________________________________________________________________________
 # batch option functions
 # arg 1: list of root files
