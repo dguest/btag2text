@@ -99,12 +99,19 @@ endif
 LIBS         += -lboost_program_options
 
 # --- first call here
-all: $(ALL_TOP_LEVEL)
+cpp: $(ALL_TOP_LEVEL)
+all: $(ALL_TOP_LEVEL) plotting
 
 ndhist:
-	make -C ndhist
+	@echo " -- building ndhist -- "
+	@make -C ndhist
+	@echo " -- done building ndhist -- "
 
-.PHONY: ndhist
+plotting:
+	@echo "installing plotting scripts"
+	@./ndhist-python/ndhist-install-python install
+
+.PHONY: ndhist plotting all
 
 # _______________________________________________________________
 # Add Build Rules
@@ -153,12 +160,13 @@ $(DEP)/%.d: %.cxx
 	@$(CXX) -MM -MP $(DEPTARGSTR) $(CXXFLAGS) $(PY_FLAGS) $< -o $@
 
 # clean
-.PHONY : clean rmdep all
+.PHONY : clean rmdep
 CLEANLIST     = *~ *.o *.o~ *.d core
 clean:
 	rm -fr $(CLEANLIST) $(CLEANLIST:%=$(BUILD)/%) $(CLEANLIST:%=$(DEP)/%)
 	rm -fr $(BUILD) $(DICT) $(OUTPUT)
 	make -C ndhist clean
+	./ndhist-python/ndhist-install-python remove
 
 rmdep:
 	rm -f $(DEP)/*.d

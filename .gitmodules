@@ -1,3 +1,6 @@
 [submodule "ndhist"]
 	path = ndhist
 	url = https://github.com/dguest/ndhist.git
+[submodule "ndhist-python"]
+	path = ndhist-python
+	url = https://github.com/dguest/ndhist-python.git
