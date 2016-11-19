@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Add metadata to xsec file"""
+"""
+Add metadata to xsec file. The resulting (new) xsec file is printed to
+stdout
+"""
 from argparse import ArgumentParser
 import sys
 import json
@@ -8,7 +11,6 @@ def _get_args():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('-m', '--meta-file', required=True)
     parser.add_argument('-x', '--xsec-file', required=True)
-    parser.add_argument('-v', '--verbose', action='store_true')
     return parser.parse_args()
 
 def write_metadata(meta_dict, xsecfile, output=sys.stdout):
