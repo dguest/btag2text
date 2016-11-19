@@ -126,7 +126,7 @@ EXEC_OBJ_PFX := $(BUILD)/$(EXE_PREFIX)
 $(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(EXEC_OBJ_PFX)%.o $(NDHIST)
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
-	@$(CXX) -o $@ $^ $(LIBS) $(LDFLAGS)
+	@$(CXX) -o $@ $(filter-out $(NDHIST),$^) $(LIBS) $(LDFLAGS)
 	@cp -f $(DICT)/*.pcm $(OUTPUT)
 
 
