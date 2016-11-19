@@ -121,7 +121,7 @@ $(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(BUILD)/$(EXE_PREFIX)%.o ndhist
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
 	@$(CXX) -o $@ $(filter-out ndhist,$^) $(LIBS) $(LDFLAGS)
-	@cp $(DICT)/*.pcm $(OUTPUT)
+	@cp -f $(DICT)/*.pcm $(OUTPUT)
 
 
 # root dictionary generation

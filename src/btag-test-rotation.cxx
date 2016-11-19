@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
   }
   auto principal = get_principal(inputs);
   auto out = get_points_along_principal(principal,inputs);
-  for (int nnn = 0; nnn < out.size(); nnn++) {
+  for (size_t nnn = 0; nnn < out.size(); nnn++) {
     std::cout << "in: " << inputs.at(nnn) << ", out: " << out.at(nnn)
               << std::endl;
   }
