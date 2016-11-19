@@ -104,7 +104,7 @@ all: $(ALL_TOP_LEVEL) plotting
 
 ndhist:
 	@echo " -- building ndhist -- "
-	@make -C ndhist
+	@$(MAKE) -C ndhist
 	@echo " -- done building ndhist -- "
 
 plotting:
