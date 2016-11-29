@@ -139,23 +139,23 @@ struct Jet
   std::vector<float> jet_trk_eta;
   std::vector<float> jet_trk_theta;
   std::vector<float> jet_trk_phi;
-  std::vector<float> jet_trk_dr;
+  // std::vector<float> jet_trk_dr;
   std::vector<float> jet_trk_chi2;
   std::vector<float> jet_trk_ndf;
 
-  std::vector<int> jet_trk_algo;
+  // std::vector<int> jet_trk_algo;
   std::vector<int> jet_trk_orig;
 
   // metrics
   std::vector<float> jet_trk_d0;
   std::vector<float> jet_trk_z0;
-  std::vector<float> jet_trk_ip3d_signed_d0;
+  std::vector<float> jet_trk_ip_d0;
   // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
-  std::vector<float> jet_trk_ip3d_z0;
-  std::vector<float> jet_trk_ip3d_d0sig;
-  std::vector<float> jet_trk_ip3d_z0sig;
+  std::vector<float> jet_trk_ip_z0;
+  std::vector<float> jet_trk_ip_d0sig;
+  std::vector<float> jet_trk_ip_z0sig;
   std::vector<int> jet_trk_ip3d_grade;
-  std::vector<int> jet_trk_jf_Vertex;
+  // std::vector<int> jet_trk_jf_Vertex;
 
   std::vector<int> jet_trk_nInnHits;
   std::vector<int> jet_trk_nNextToInnHits;
@@ -221,11 +221,11 @@ struct Track
   float dr;
 
   // bitmasks
-  int algo;
+  // int algo;
   int orig;
 
   // use the IP3D d0/z0 here
-  float signed_d0;
+  float d0;
   float z0;
   float d0sig;
   float z0sig;
@@ -248,7 +248,7 @@ struct Track
 
   // IP3D-like proxy for DL
   float dphi_jet;
-  float d0;
+  // float d0;
   // TODO: figure out how to add the original z0
   // float z0;
 
@@ -395,7 +395,7 @@ private:
   std::vector<std::vector<float> >* jet_cluster_first_eng_dens      ;
 
   // track counts
-  std::vector<int>* jet_ip3d_ntrk;
+  // std::vector<int>* jet_ip3d_ntrk;
 
   // high level
   // ip2d, ip3d
@@ -452,22 +452,22 @@ private:
   std::vector<std::vector<float> >* jet_trk_eta;
   std::vector<std::vector<float> >* jet_trk_theta;
   std::vector<std::vector<float> >* jet_trk_phi;
-  std::vector<std::vector<float> >* jet_trk_dr;
+  // std::vector<std::vector<float> >* jet_trk_dr;
   std::vector<std::vector<float> >* jet_trk_chi2;
   std::vector<std::vector<float> >* jet_trk_ndf;
 
-  std::vector<std::vector<int> >* jet_trk_algo;
-  std::vector<std::vector<int> >* jet_trk_orig;
+  // std::vector<std::vector<int> >* jet_trk_algo;
+  // std::vector<std::vector<int> >* jet_trk_orig;
 
   // metrics
   std::vector<std::vector<float> >* jet_trk_d0;
   std::vector<std::vector<float> >* jet_trk_z0;
-  std::vector<std::vector<float> >* jet_trk_ip3d_d0;
+  std::vector<std::vector<float> >* jet_trk_ip_d0;
   // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
-  std::vector<std::vector<float> >* jet_trk_ip3d_z0;
-  std::vector<std::vector<float> >* jet_trk_ip3d_d0sig;
-  std::vector<std::vector<float> >* jet_trk_ip3d_z0sig;
-  std::vector<std::vector<int> >* jet_trk_ip3d_grade;
+  std::vector<std::vector<float> >* jet_trk_ip_z0;
+  std::vector<std::vector<float> >* jet_trk_ip_d0sig;
+  std::vector<std::vector<float> >* jet_trk_ip_z0sig;
+  // std::vector<std::vector<int> >* jet_trk_ip3d_grade;
 
   std::vector<std::vector<int> >* jet_trk_nInnHits;
   std::vector<std::vector<int> >* jet_trk_nNextToInnHits;
@@ -481,7 +481,7 @@ private:
   std::vector<std::vector<int> >* jet_trk_nsharedSCTHits;
   std::vector<std::vector<int> >* jet_trk_expectBLayerHit;
 
-  std::vector<std::vector<int> >* jet_trk_jf_Vertex;
+  // std::vector<std::vector<int> >* jet_trk_jf_Vertex;
 
   std::vector<std::vector<float> >* jet_ga_trk_pt;
 

@@ -44,15 +44,15 @@ namespace {
   }
 
   void fill_derived(Jet& jet) {
-    auto sorted_d0 = sort_and_pad(jet.jet_trk_ip3d_d0sig, 3);
+    auto sorted_d0 = sort_and_pad(jet.jet_trk_ip_d0sig, 3);
     jet.track_2_d0_significance = sorted_d0.at(1);
     jet.track_3_d0_significance = sorted_d0.at(2);
-    auto sorted_z0 = sort_and_pad(jet.jet_trk_ip3d_z0sig, 3);
+    auto sorted_z0 = sort_and_pad(jet.jet_trk_ip_z0sig, 3);
     jet.track_2_z0_significance = sorted_z0.at(1);
     jet.track_3_z0_significance = sorted_z0.at(2);
 
     int n_over = 0;
-    for (const auto& d0: jet.jet_trk_ip3d_z0sig) {
+    for (const auto& d0: jet.jet_trk_ip_z0sig) {
       if (d0 > D0_THRESHOLD) n_over++;
     }
     jet.n_tracks_over_d0_threshold = n_over;
@@ -61,25 +61,25 @@ namespace {
     fill_sv1_vertex(jet);
 
     // fill track-level stuff
-    int n_tracks = jet.jet_trk_ip3d_z0.size();
+    int n_tracks = jet.jet_trk_ip_z0.size();
     for (int nnn = 0; nnn < n_tracks; nnn++) {
-      int vx_idx = jet.jet_trk_jf_Vertex.at(nnn);
+      // int vx_idx = jet.jet_trk_jf_Vertex.at(nnn);
 
-#define PB(EXT, DEF) jet.jet_jf_trk_vtx_ ## EXT.push_back(  \
-        vx_idx == -1 ? DEF : jet.jet_jf_vtx_ ## EXT.at(vx_idx) )
-      PB(chi2, 0);
-      PB(ndf, 0);
-      PB(ntrk, 0);
-      PB(L3D, 0);
-      PB(sig3D, 0);
-#undef PB
+// #define PB(EXT, DEF) jet.jet_jf_trk_vtx_ ## EXT.push_back(  \
+//         vx_idx == -1 ? DEF : jet.jet_jf_vtx_ ## EXT.at(vx_idx) )
+//       PB(chi2, 0);
+//       PB(ndf, 0);
+//       PB(ntrk, 0);
+//       PB(L3D, 0);
+//       PB(sig3D, 0);
+// #undef PB
     }
   }
 
   bool pass_checks(Jet& jet) {
     size_t n_trk = jet.jet_trk_pt.size();
-    if (n_trk != jet.jet_trk_ip3d_d0sig.size()) return false;
-    if (n_trk != jet.jet_trk_jf_Vertex.size()) return false;
+    if (n_trk != jet.jet_trk_ip_d0sig.size()) return false;
+    // if (n_trk != jet.jet_trk_jf_Vertex.size()) return false;
     return true;
   }
 
@@ -94,7 +94,7 @@ namespace {
 
   void setDerived(Track& track, const Jet& jet) {
     float dphi = phi_mpi_pi(track.phi, jet.jet_phi);
-    float d0 = d0_from_signed_d0_dphi(track.signed_d0, dphi);
+    float d0 = track.d0;
 
     track.dphi_jet = dphi;
     track.d0 = d0;
@@ -397,47 +397,51 @@ Jets::Jets(SmartChain& chain):
   SET_BRANCH(jet_mv2c20);
   SET_BRANCH(jet_mv2c100);
 
-  try {
+  // try {
   // jet_ntrk is defined from the size of a vector later
-  SET_BRANCH(jet_ip3d_ntrk);
+#define SET_TRACK_BRANCH(variable) \
+    m_chain->SetBranch("jet_ga_trk_" #variable, &jet_trk_ ## variable)
+  // SET_BRANCH(jet_ip3d_ntrk);
 
-  SET_BRANCH(jet_trk_pt);
-  SET_BRANCH(jet_trk_eta);
-  SET_BRANCH(jet_trk_theta);
-  SET_BRANCH(jet_trk_phi);
-  SET_BRANCH(jet_trk_dr);
-  SET_BRANCH(jet_trk_chi2);
-  SET_BRANCH(jet_trk_ndf);
+  SET_TRACK_BRANCH(pt);
+  SET_TRACK_BRANCH(eta);
+  SET_TRACK_BRANCH(theta);
+  SET_TRACK_BRANCH(phi);
+  // SET_TRACK_BRANCH(dr);
+  SET_TRACK_BRANCH(chi2);
+  SET_TRACK_BRANCH(ndf);
 
-  SET_BRANCH(jet_trk_algo);
-  SET_BRANCH(jet_trk_orig);
+  // SET_TRACK_BRANCH(algo);
+  // SET_TRACK_BRANCH(orig);
 
-  SET_BRANCH(jet_trk_d0);
-  SET_BRANCH(jet_trk_z0);
-  SET_BRANCH(jet_trk_ip3d_d0);
+  SET_TRACK_BRANCH(d0);
+  SET_TRACK_BRANCH(z0);
+  SET_TRACK_BRANCH(ip_d0);
   // SET_BRANCH(jet_trk_ip3d_d02D);
-  SET_BRANCH(jet_trk_ip3d_z0);
-  SET_BRANCH(jet_trk_ip3d_d0sig);
-  SET_BRANCH(jet_trk_ip3d_z0sig);
-  SET_BRANCH(jet_trk_ip3d_grade);
+  SET_TRACK_BRANCH(ip_z0);
+  SET_TRACK_BRANCH(ip_d0sig);
+  SET_TRACK_BRANCH(ip_z0sig);
+  // SET_TRACK_BRANCH(ip3d_grade);
 
-  SET_BRANCH(jet_trk_nInnHits);
-  SET_BRANCH(jet_trk_nNextToInnHits);
-  SET_BRANCH(jet_trk_nBLHits);
-  SET_BRANCH(jet_trk_nsharedBLHits);
-  SET_BRANCH(jet_trk_nsplitBLHits);
-  SET_BRANCH(jet_trk_nPixHits);
-  SET_BRANCH(jet_trk_nsharedPixHits);
-  SET_BRANCH(jet_trk_nsplitPixHits);
-  SET_BRANCH(jet_trk_nSCTHits);
-  SET_BRANCH(jet_trk_nsharedSCTHits);
-  SET_BRANCH(jet_trk_expectBLayerHit);
-  SET_BRANCH(jet_trk_jf_Vertex);
-  } catch (MissingBranchError& err) {
-    m_tracks_valid = false;
-  }
+  SET_TRACK_BRANCH(nInnHits);
+  SET_TRACK_BRANCH(nNextToInnHits);
+  SET_TRACK_BRANCH(nBLHits);
+  SET_TRACK_BRANCH(nsharedBLHits);
+  SET_TRACK_BRANCH(nsplitBLHits);
+  SET_TRACK_BRANCH(nPixHits);
+  SET_TRACK_BRANCH(nsharedPixHits);
+  SET_TRACK_BRANCH(nsplitPixHits);
+  SET_TRACK_BRANCH(nSCTHits);
+  SET_TRACK_BRANCH(nsharedSCTHits);
+  SET_TRACK_BRANCH(expectBLayerHit);
+  // SET_TRACK_BRANCH(jf_Vertex);
+#undef SET_TRACK_BRANCH
+
+  // } catch (MissingBranchError& err) {
+  //   m_tracks_valid = false;
+  // }
   try {
-    SET_BRANCH(jet_ga_trk_pt);
+    m_chain->SetBranch("jet_trk_pt", &jet_ga_trk_pt);
   } catch (MissingBranchError& err) {
     m_ga_valid = false;
   }
@@ -550,29 +554,29 @@ Jet Jets::getJet(int pos) const {
   if (m_tracks_valid) {
     // track counts
     o.jet_ntrk = m_tracks_valid ? jet_trk_pt->at(pos).size() : -1;
-    COPY(jet_ip3d_ntrk);
+    // COPY(jet_ip3d_ntrk);
     // track level
     // multiply is used here to give the vector the right units
     o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
     COPY(jet_trk_eta);
     COPY(jet_trk_theta);
     COPY(jet_trk_phi);
-    COPY(jet_trk_dr);
+    // COPY(jet_trk_dr);
     COPY(jet_trk_chi2);
     COPY(jet_trk_ndf);
 
-    COPY(jet_trk_algo);
-    COPY(jet_trk_orig);
+    // COPY(jet_trk_algo);
+    // COPY(jet_trk_orig);
 
     // TODO: check these units
     COPY_MULTV(jet_trk_d0, mm); // Units?
     COPY_MULTV(jet_trk_z0, mm); // Units?
-    o.jet_trk_ip3d_signed_d0 = multiply<float>(jet_trk_ip3d_d0->at(pos), mm);
-    COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
-    COPY(jet_trk_ip3d_d0sig);
-    COPY(jet_trk_ip3d_z0sig);
-    COPY(jet_trk_ip3d_grade);
-    COPY(jet_trk_jf_Vertex);
+    o.jet_trk_ip_d0 = multiply<float>(jet_trk_ip_d0->at(pos), mm);
+    COPY_MULTV(jet_trk_ip_z0, mm); // Units?
+    COPY(jet_trk_ip_d0sig);
+    COPY(jet_trk_ip_z0sig);
+    // COPY(jet_trk_ip3d_grade);
+    // COPY(jet_trk_jf_Vertex);
 
     COPY(jet_trk_nInnHits);
     COPY(jet_trk_nNextToInnHits);
@@ -661,9 +665,10 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(eta);
     COPY(theta);
     COPY(phi);
-    COPY(dr);
-    COPY(algo);
-    COPY(orig);
+    track.dr = std::hypot(jet.jet_eta - track.eta,
+                          phi_mpi_pi(jet.jet_phi, track.phi));
+    // COPY(algo);
+    // COPY(orig);
 
     COPY(chi2);
     COPY(ndf);
@@ -681,13 +686,13 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 
 #undef COPY
     // special copy for ip3d vars
-#define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
-    COPY(signed_d0);
+#define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip_ ## par, trkn)
+    COPY(d0);
     COPY(z0);
     COPY(d0sig);
     COPY(z0sig);
 #undef COPY
-    track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
+    // track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
     setDerived(track, jet);
 
     // now copy the jetfitter vertices
@@ -706,7 +711,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     if (track.usedFor(IP3D)) n_ip3d++;
   }
   // safety check
-  assert(n_ip3d == 0 || n_ip3d == jet.jet_ip3d_ntrk);
+  // assert(n_ip3d == 0 || n_ip3d == jet.jet_ip3d_ntrk);
   return out;
 }
 std::vector<Cluster> build_clusters(const Jet& jet) {
@@ -742,10 +747,12 @@ std::vector<Cluster> build_clusters(const Jet& jet) {
 // ______________________________________________________________________
 // track origin checks
 bool Track::usedFor(TAGGERALGO tagger_enum) const {
-  return algo & 0x1 << tagger_enum;
+  assert(false);
+  // return algo & 0x1 << tagger_enum;
 }
 bool Track::hasOrigin(TRKORIGIN orign_enum) const {
-  return orig & 0x1 << orign_enum;
+  assert(false);
+  // return orig & 0x1 << orign_enum;
 }
 
 // ______________________________________________________________________

@@ -33,7 +33,7 @@ private:
   Histogram dr;
   Histogram d0;
   Histogram z0;
-  Histogram signed_d0;
+  // Histogram signed_d0;
   Histogram d0sig;
   Histogram z0sig;
   Histogram dphi_jet;
@@ -118,7 +118,7 @@ TrackHists::TrackHists():
   RANGE(dr, 0, 0.6),
   LENGTH(d0, -D0_MAX, D0_MAX),
   LENGTH(z0, -Z0_MAX, Z0_MAX),
-  LENGTH(signed_d0, -D0_MAX, D0_MAX),
+  // LENGTH(signed_d0, -D0_MAX, D0_MAX),
   RANGE(d0sig, 0, 100),
   RANGE(z0sig, 0, 100),
   RANGE(dphi_jet, -0.5, 0.5),
@@ -148,7 +148,7 @@ void TrackHists::fill(const Track& track, double weight) {
   BYNAME(dr);
   BYNAME(d0);
   BYNAME(z0);
-  BYNAME(signed_d0);
+  // BYNAME(signed_d0);
   BYNAME(d0sig);
   BYNAME(z0sig);
   BYNAME(dphi_jet);
@@ -179,7 +179,7 @@ void TrackHists::save(H5::CommonFG& out) const {
   BYNAME(dr);
   BYNAME(d0);
   BYNAME(z0);
-  BYNAME(signed_d0);
+  // BYNAME(signed_d0);
   BYNAME(d0sig);
   BYNAME(z0sig);
   BYNAME(dphi_jet);
