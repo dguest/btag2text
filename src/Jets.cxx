@@ -697,18 +697,10 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 
     // now copy the jetfitter vertices
     JfVertex vx;
-#define COPY(par) vx.par = CHECK_AT(jet.jet_jf_trk_vtx_ ## par, trkn)
-    COPY(chi2);
-    COPY(ndf);
-    COPY(ntrk);
-#undef COPY
-    vx.l3d = CHECK_AT(jet.jet_jf_trk_vtx_L3D, trkn);
-    vx.sig3d = CHECK_AT(jet.jet_jf_trk_vtx_sig3D, trkn);
-
     out.push_back({track, vx});
 
     // safety check
-    if (track.usedFor(IP3D)) n_ip3d++;
+    // if (track.usedFor(IP3D)) n_ip3d++;
   }
   // safety check
   // assert(n_ip3d == 0 || n_ip3d == jet.jet_ip3d_ntrk);
