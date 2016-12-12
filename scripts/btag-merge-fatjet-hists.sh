@@ -15,6 +15,7 @@ Options:
  -h: get help
  -i <base>: base dir where files are
  -o <output>: output file name (should end in .h5)
+ -f: force combination even if some things are missing
 
 EOF
 }
@@ -24,12 +25,14 @@ EOF
 
 INPUT=''
 OUTPUT=''
+FORCE=''
 
-while getopts ":hi:o:" opt $@; do
+while getopts ":hi:o:f" opt $@; do
     case $opt in
         h) _help; exit 1;;
         i) INPUT=${OPTARG} ;;
         o) OUTPUT=${OPTARG} ;;
+        f) FORCE=-f ;;
         # handle errors
         \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :) _usage; echo "Missing argument for -$OPTARG" >&2; exit 1;;
@@ -48,6 +51,9 @@ function cleanup() {
 trap cleanup EXIT
 
 function require() {
+    if [[ $FORCE ]]; then
+        return 0
+    fi
     local FILE
     for FILE in $@; do
         if [[ ! -f $FILE ]] ; then
@@ -64,6 +70,6 @@ require $QCD_FILES
 SIG_FILES=$(echo $INPUT/301{488..507}.h5)
 require $SIG_FILES
 
-btag-hadd.py $QCD_FILES -o $TMP/qcd.h5
-btag-hadd.py $SIG_FILES -o $TMP/hbb.h5
+btag-hadd.py $QCD_FILES -o $TMP/qcd.h5 $FORCE
+btag-hadd.py $SIG_FILES -o $TMP/hbb.h5 $FORCE
 btag-merge-hists.py $TMP/qcd.h5,qcd $TMP/hbb.h5,signal -o $OUTPUT
