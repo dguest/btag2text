@@ -94,5 +94,7 @@ BOPTS+=" "$(get-array-opts $ROOT_FILE_LIST)
 if [[ $PREFIX ]] ; then
     echo -e "** Test mode ** will submit the following line\n"
 fi
-${PREFIX} sbatch $BOPTS $RUN_PATH $TOOLS $ROOT_FILE_LIST $OUT_FILES
+
+# submit (and check return code)
+${PREFIX} sbatch $BOPTS $RUN_PATH $TOOLS $ROOT_FILE_LIST $OUT_FILES;
 echo -e "\noutput will be in '$OUT_FILES'"

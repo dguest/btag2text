@@ -33,7 +33,9 @@ if [[ ! -f $XSEC_FILE ]] ; then
     exit 1
 fi
 DSID=$(echo $OUTPUT_FILE | sed -r 's/d([0-9]*).*/\1/')
-WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE)
+if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE) ; then
+    echo "WARNING: no cross section data found, quitting"
+    exit 1
+fi
 echo "weighted by $WEIGHT"
 btag-dump-jets-fatjets $INPUT_FILE -w $WEIGHT | gzip - > $OUTPUT_PATH
-
