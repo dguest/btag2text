@@ -7,7 +7,7 @@ ROOT_FILE_LIST=root-files.txt
 ROOT_DIR=root
 
 _usage() {
-    echo "usage: ${0##*/} [-h]"
+    echo "usage: ${0##*/} [-h] [options]"
 }
 _help() {
     _usage

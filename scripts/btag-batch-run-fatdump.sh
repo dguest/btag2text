@@ -23,7 +23,11 @@ OUTPUT_FILE=$(get-output-name $INPUT_FILE)
 echo "running on $INPUT_FILE"
 mkdir -p $OUTPUT_DIR
 OUTPUT_PATH=${OUTPUT_DIR}/$OUTPUT_FILE.txt.gz
-XSEC_FILE=$PY_DIR/../data/xsec.txt
+if [[ -f xsec.txt ]] ; then
+    XSEC_FILE=xsec.txt
+else
+    XSEC_FILE=$PY_DIR/../data/xsec.txt
+fi
 if [[ ! -f $XSEC_FILE ]] ; then
     echo "ERROR: no xsec file found" >&2
     exit 1
