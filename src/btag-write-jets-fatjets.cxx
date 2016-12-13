@@ -1,5 +1,6 @@
 #include "Options.hh"
 #include "Jets.hh"
+#include "hdf5_object_builders.hh"
 #include "SmartChain.hh"
 // #include "FlavorPtEtaDistributions.hh"
 #include "HDF5Writer.hh"
@@ -38,11 +39,19 @@ int main(int argc, char* argv[]) {
 
   size_t n_chunk = opts.chunk_size;
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
-  h5::Writer<h5::Cluster> cluster_ds(
-    out_file, "clusters", opts.cluster_size, n_chunk);
-  h5::Writer<h5::Track> track_ds(
-    out_file, "tracks", opts.track_size, n_chunk);
-  h5::Writer1d<h5::Jet> jet_ds(out_file, "jets", n_chunk);
+  h5::Writer<h5::Cluster>* cluster_ds(nullptr);
+  if (opts.cluster_size > 0) {
+    cluster_ds = new h5::Writer<h5::Cluster>(
+      out_file, "clusters", opts.cluster_size, n_chunk);
+  }
+  h5::Writer<h5::Track>* track_ds(nullptr);
+  if (opts.track_size > 0) {
+    track_ds = new h5::Writer<h5::Track>(
+      out_file, "tracks", opts.track_size, n_chunk);
+  }
+  h5::Writer1d<h5::FatJet> jet_ds(out_file, "jets", n_chunk);
+  h5::Writer1d<h5::HighLevelBTag> subjet1(out_file, "subjet1", n_chunk);
+  h5::Writer1d<h5::HighLevelBTag> subjet2(out_file, "subjet2", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
@@ -51,37 +60,32 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
-      std::vector<h5::Cluster> clusters;
-      for (const auto& cluster: build_clusters(jet)) {
-        h5::Cluster cl;
-        cl.pt = cluster.pt;
-        cl.deta = cluster.eta - jet.jet_eta;
-        cl.dphi = cluster.dphi_jet;
-        cl.energy = cluster.e;
-        cl.mask = false;
-        clusters.push_back(cl);
-      }
-      std::vector<h5::Track> tracks;
-      for (const auto& track_vx: build_tracks(jet)) {
-        const auto& track = track_vx.track;
-        h5::Track tk;
-        tk.pt = track.pt;
-        tk.deta = track.eta - jet.jet_eta;
-        tk.dphi = phi_mpi_pi(track.phi, jet.jet_phi);
-        tk.mask = false;
-        tracks.push_back(tk);
-      }
-      cluster_ds.add_jet(clusters);
-      track_ds.add_jet(tracks);
-      h5::Jet hjet{jet.jet_pt, jet.jet_eta};
-      hjet.weight = weight;
+      std::vector<h5::Cluster> clusters = get_clusters(jet);
+      std::vector<h5::Track> tracks = get_tracks(jet);
+      if (cluster_ds) cluster_ds->add_jet(clusters);
+      if (track_ds) track_ds->add_jet(tracks);
+      h5::FatJet hjet = get_fat_jet(jet, weight);
       jet_ds.add_jet(hjet);
+      const auto& subs = jet.vrtrkjets;
+      subjet1.add_jet(
+        subs.size() > 0 ? get_btagging(subs.at(0)): h5::HighLevelBTag());
+      subjet1.add_jet(
+        subs.size() > 1 ? get_btagging(subs.at(1)): h5::HighLevelBTag());
     }
   }
-  cluster_ds.flush();
-  cluster_ds.close();
-  track_ds.flush();
-  track_ds.close();
+  if (cluster_ds) {
+    cluster_ds->flush();
+    cluster_ds->close();
+  }
+  if (track_ds) {
+    track_ds->flush();
+    track_ds->close();
+  }
   jet_ds.flush();
   jet_ds.close();
+
+  subjet1.flush();
+  subjet1.close();
+  subjet2.flush();
+  subjet2.close();
 }

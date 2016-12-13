@@ -2,6 +2,7 @@
 #define HDF5_WRITER
 
 #include "H5Cpp.h"
+#include "SubstructureMoments.hh"
 
 #include <vector>
 #include <stdexcept>
@@ -82,12 +83,14 @@ namespace h5 {
   // concrete implementation is in the cxx file
 
   // jet structure
-  struct Jet {
+  struct FatJet {
     outfloat_t pt;
     outfloat_t eta;
     outfloat_t weight;
+
+    SubstructureMoments moments;
   };
-  template<> H5::DataType get_type<Jet>();
+  template<> H5::DataType get_type<FatJet>();
 
   // cluster struct and associated template specialization
   struct Cluster {
@@ -112,7 +115,7 @@ namespace h5 {
 
   // struct for high level b-tagger variables
   struct HighLevelBTag {
-
+    HighLevelBTag();
     // kinematic
     outfloat_t pt;
     outfloat_t eta;
@@ -152,9 +155,14 @@ namespace h5 {
     int jf_n2t;
     int jf_VTXsize;
 
+    // MV2
+    outfloat_t mv2c10;
+
     // labeling
     int truthflav;
     int LabDr_HadF;
+
+    bool mask;
 
   };
   template<> H5::DataType get_type<HighLevelBTag>();

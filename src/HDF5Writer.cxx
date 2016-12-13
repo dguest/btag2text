@@ -20,6 +20,10 @@ namespace {
 
 namespace h5 {
 
+  HighLevelBTag::HighLevelBTag(): mask(true)
+  {
+  }
+
   // actual template specializations
   template<>
   H5::DataType get_type<float>() {
@@ -39,7 +43,7 @@ namespace h5 {
   }
 
   template<>
-  H5::DataType get_type<Jet>() {
+  H5::DataType get_type<FatJet>() {
     return get_jet_type();
   }
   template<>
@@ -79,10 +83,25 @@ namespace h5 {
 namespace {
   H5::CompType get_jet_type() {
     auto ftype = h5::get_type<h5::outfloat_t>();
-    H5::CompType type(sizeof(h5::Jet));
-    H5_INSERT(type, h5::Jet, weight);
-    H5_INSERT(type, h5::Jet, pt);
-    H5_INSERT(type, h5::Jet, eta);
+    typedef h5::FatJet jet_t;
+    H5::CompType type(sizeof(jet_t));
+    H5_INSERT(type, jet_t, weight);
+    H5_INSERT(type, jet_t, pt);
+    H5_INSERT(type, jet_t, eta);
+#define H5_INSERT_SUB(MEMBER)                                         \
+    h5::insert(type, #MEMBER,                                         \
+               offsetof(jet_t, moments) +                             \
+               offsetof(SubstructureMoments, MEMBER),                 \
+               &SubstructureMoments::MEMBER)
+    H5_INSERT_SUB(tau21);
+    H5_INSERT_SUB(c1);
+    H5_INSERT_SUB(c2);
+    H5_INSERT_SUB(c1_beta2);
+    H5_INSERT_SUB(c2_beta2);
+    H5_INSERT_SUB(d2);
+    H5_INSERT_SUB(d2_beta2);
+#undef H5_INSERT_SUB
+
     return type;
   }
 
@@ -180,9 +199,14 @@ namespace {
     INSERT(jf_n2t);
     INSERT(jf_VTXsize);
 
+    // MV2
+    INSERT(mv2c10);
+
     // labeling
     INSERT(truthflav);
     INSERT(LabDr_HadF);
+
+    INSERT(mask);
 
 #undef INSERT
     return type;

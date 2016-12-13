@@ -6,6 +6,14 @@
 
 #include <cmath>
 
+h5::FatJet get_fat_jet(const Jet& jet, double weight) {
+  h5::FatJet hjet{jet.jet_pt, jet.jet_eta};
+  hjet.weight = weight;
+  hjet.moments = jet.moments;
+  return hjet;
+
+}
+
 std::vector<h5::Cluster> get_clusters(const Jet& jet) {
   std::vector<h5::Cluster> clusters;
   for (const auto& cluster: build_clusters(jet)) {
@@ -72,9 +80,13 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   COPY(jf_n2t);
   COPY(jf_VTXsize);
 
+  COPY(mv2c10);
+
   // labeling
   COPY(truthflav);
   COPY(LabDr_HadF);
+
+  btag.mask = false;
 
 #undef COPY
 
