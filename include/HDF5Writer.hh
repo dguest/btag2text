@@ -75,6 +75,7 @@ namespace h5 {
   // forward declare native primative types
   template<> H5::DataType get_type<float>();
   template<> H5::DataType get_type<double>();
+  template<> H5::DataType get_type<int>();
   template<> H5::DataType get_type<bool>();
 
   // === application specific things ===
@@ -109,6 +110,54 @@ namespace h5 {
   template<> H5::DataType get_type<Track>();
   template<> Track get_empty<Track>();
 
+  // struct for high level b-tagger variables
+  struct HighLevelBTag {
+
+    // kinematic
+    outfloat_t pt;
+    outfloat_t eta;
+
+    // ip3d
+    outfloat_t ip3d_pu;
+    outfloat_t ip3d_pc;
+    outfloat_t ip3d_pb;
+
+    // ipmp
+    outfloat_t ipmp_pu;
+    outfloat_t ipmp_pc;
+    outfloat_t ipmp_pb;
+    outfloat_t ipmp_ptau;
+
+    // sv1
+    int sv1_Nvtx;
+    int sv1_ntrkv;
+    int sv1_n2t;
+    outfloat_t sv1_m;
+    outfloat_t sv1_efc;
+    outfloat_t sv1_normdist;
+    outfloat_t sv1_dR;
+    outfloat_t sv1_Lxy;
+    outfloat_t sv1_Lxyz;
+
+    // Jetfitter
+    outfloat_t jf_m;
+    outfloat_t jf_efc;
+    outfloat_t jf_deta;
+    outfloat_t jf_dphi;
+    outfloat_t jf_dr;
+    outfloat_t jf_sig3d;
+    int jf_nvtx;
+    int jf_ntrkAtVx;
+    int jf_nvtx1t;
+    int jf_n2t;
+    int jf_VTXsize;
+
+    // labeling
+    int truthflav;
+    int LabDr_HadF;
+
+  };
+  template<> H5::DataType get_type<HighLevelBTag>();
 
 }
 

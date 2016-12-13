@@ -14,6 +14,8 @@ namespace {
   h5::Track get_empty_track();
 
   H5::EnumType get_bool_type();
+
+  H5::CompType get_high_level_btag_type();
 }
 
 namespace h5 {
@@ -26,6 +28,10 @@ namespace h5 {
   template<>
   H5::DataType get_type<double>() {
     return H5::PredType::NATIVE_DOUBLE;
+  }
+  template<>
+  H5::DataType get_type<int>() {
+    return H5::PredType::NATIVE_INT;
   }
   template<>
   H5::DataType get_type<bool>() {
@@ -52,6 +58,11 @@ namespace h5 {
   template<>
   Track get_empty<Track>() {
     return get_empty_track();
+  }
+
+  template<>
+  H5::DataType get_type<HighLevelBTag>() {
+    return get_high_level_btag_type();
   }
 
   // packing utility
@@ -127,6 +138,54 @@ namespace {
     btype.insert("TRUE", &TRUE);
     btype.insert("FALSE", &FALSE);
     return btype;
+  }
+
+  H5::CompType get_high_level_btag_type() {
+    H5::CompType type(sizeof(h5::HighLevelBTag));
+#define INSERT(name) H5_INSERT(type, h5::HighLevelBTag, name)
+    INSERT(pt);
+    INSERT(eta);
+
+    // IP3D
+    INSERT(ip3d_pu);
+    INSERT(ip3d_pc);
+    INSERT(ip3d_pb);
+
+    INSERT(ipmp_pu);
+    INSERT(ipmp_pc);
+    INSERT(ipmp_pb);
+    INSERT(ipmp_ptau);
+
+    // sv1
+    INSERT(sv1_Nvtx);
+    INSERT(sv1_ntrkv);
+    INSERT(sv1_n2t);
+    INSERT(sv1_m);
+    INSERT(sv1_efc);
+    INSERT(sv1_normdist);
+    INSERT(sv1_dR);
+    INSERT(sv1_Lxy);
+    INSERT(sv1_Lxyz);
+
+    // Jetfitter
+    INSERT(jf_m);
+    INSERT(jf_efc);
+    INSERT(jf_deta);
+    INSERT(jf_dphi);
+    INSERT(jf_dr);
+    INSERT(jf_sig3d);
+    INSERT(jf_nvtx);
+    INSERT(jf_ntrkAtVx);
+    INSERT(jf_nvtx1t);
+    INSERT(jf_n2t);
+    INSERT(jf_VTXsize);
+
+    // labeling
+    INSERT(truthflav);
+    INSERT(LabDr_HadF);
+
+#undef INSERT
+    return type;
   }
 
 }

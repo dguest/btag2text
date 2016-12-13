@@ -13,6 +13,8 @@ DICT         := dict
 OUTPUT       := bin
 LIB          := lib
 
+SHELL        := bash
+
 #  set search path
 vpath %.cxx  $(SRC)
 vpath %.hh   $(INC)
@@ -68,8 +70,13 @@ GEN_OBJ_PATHS  += $(TDICT_PATHS)
 
 # --- load in root config
 ROOTCFLAGS    := $(shell root-config --cflags)
+
 ROOTLIBS      := $(shell root-config --libs)
-# ROOTLIBS      += -lCore -lTree -lRIO
+ROOTLIBS      += -Wl,-rpath,$(shell root-config --libdir)
+GCC_PATH      := $(shell which $(CXX))
+GCC_LIB_PATH  := $(dir $(GCC_PATH))../lib64
+ROOTLIBS      += -Wl,-rpath,$(GCC_LIB_PATH)
+
 ROOTLDFLAGS   := $(shell root-config --ldflags)
 
 CXXFLAGS     += $(ROOTCFLAGS)
@@ -78,7 +85,7 @@ LIBS         += $(ROOTLIBS)
 
 # --- add HDF5
 HDF_INFO := $(shell h5c++ -showconfig | grep 'Installation point:')
-HDF_PATH := $(strip $(shell echo $(HDF_INFO) | cut -d ':' -f 2 ))
+HDF_PATH ?= $(strip $(shell echo $(HDF_INFO) | cut -d ':' -f 2 ))
 ifndef HDF_PATH
 $(error "couldn't find HDF, quitting")
 endif

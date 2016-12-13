@@ -11,6 +11,8 @@ struct Options
   std::string output_file;
   double weight;
   bool verbose;
+  size_t chunk_size;
+  size_t track_size;
 };
 std::ostream& operator<<(std::ostream&, const Options&);
 struct StreamOptions
