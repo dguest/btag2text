@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
   H5::Exception::dontPrint();
 
   // load info
-  const auto opts = get_opts(argc, argv, DESCRIPTION);
+  const auto opts = get_writer_opts(argc, argv, DESCRIPTION);
   SmartChain chain(get_tree(opts.input_files.at(0)));
   for (const auto& in: opts.input_files) {
     chain.add(in);
@@ -36,10 +36,13 @@ int main(int argc, char* argv[]) {
   int n_entries = chain.GetEntries();
   if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
 
+  size_t n_chunk = opts.chunk_size;
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
-  h5::Writer<h5::Cluster> cluster_ds(out_file, "clusters", 20, 256);
-  h5::Writer<h5::Track> track_ds(out_file, "tracks", 20, 256);
-  h5::Writer1d<h5::Jet> jet_ds(out_file, "jets", 256);
+  h5::Writer<h5::Cluster> cluster_ds(
+    out_file, "clusters", opts.cluster_size, n_chunk);
+  h5::Writer<h5::Track> track_ds(
+    out_file, "tracks", opts.track_size, n_chunk);
+  h5::Writer1d<h5::Jet> jet_ds(out_file, "jets", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
