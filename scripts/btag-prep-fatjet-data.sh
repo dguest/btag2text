@@ -16,7 +16,7 @@ Options:
  -i <base>: base dir where files are
  -o <output>: output directory
  -v: verbose
- -f: overwrite old output if it exists
+ -f: overwrite old output if it exists, ignore missing files
 
 EOF
 }
@@ -58,6 +58,9 @@ function cleanup() {
 trap cleanup EXIT
 
 function require() {
+    if [[ $FORCE ]]; then
+        return 0
+    fi
     local FILE
     for FILE in $@; do
         if [[ ! -f $FILE ]] ; then
@@ -67,14 +70,28 @@ function require() {
     done
 }
 
+function only-existing() {
+    local INPUT
+    for INPUT in $@; do
+        if [[ -f $INPUT ]] ; then
+            echo -n $INPUT" "
+        else
+            echo "WARNING: $INPUT is missing" >&2
+        fi
+    done
+}
+
 # other h->bb don't use 20 through 22 for some reason
 # but 22 (JZ2W) seems to be ok
 msg "getting background files..."
-QCD_FILES=$(echo ${INPUT%/}/d3610{22..32}_*.txt.gz)
-require $QCD_FILES
+REQUIRED_QCD_FILES=$(echo ${INPUT%/}/d3610{22..32}_*.txt.gz)
+require $REQUIRED_QCD_FILES
 msg "getting signal files..."
-SIG_FILES=$(echo ${INPUT%/}/d301{488..507}_*.txt.gz)
-require $SIG_FILES
+REQUIRED_SIG_FILES=$(echo ${INPUT%/}/d301{488..507}_*.txt.gz)
+require $REQUIRED_SIG_FILES
+
+QCD_FILES=$(only-existing $REQUIRED_QCD_FILES)
+SIG_FILES=$(only-existing $REQUIRED_SIG_FILES)
 
 btag-dump-jet-labels-fatjets > $TMP/labels.txt
 btag-dump-jet-labels-fatjets-terse > $TMP/labels.json
