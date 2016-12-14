@@ -4,7 +4,8 @@ Make b-tagging reweighting histograms
 """
 from ndhist.hist import Hist
 from ndhist.hist import HistError
-from ndhist.mpl import Canvas, draw2d
+from ndhist.mpl import Canvas
+from ndhist.colorplot import draw_rgb
 from h5py import File
 from argparse import ArgumentParser
 import numpy as np
@@ -32,21 +33,20 @@ def _get_hists(ds):
             hists[name] = _get_hists(ds)
     return hists
 
-def _draw_hists(hist, hist_name, output_dir, ext='.pdf'):
-    name = '{}/{}{}'.format(output_dir, hist_name, ext)
-    print("drawing {}".format(name))
-    with Canvas(name) as can:
-        draw2d(can, hist, log=True)
-
 def run():
     args = _get_args()
     subdirs = {}
     with File(args.input, 'r') as h5in:
         hists = _get_hists(h5in['image'])
         for process, var_group in hists.items():
-            for var, hist in var_group.items():
-                hist_name = '{}_{}'.format(process, var)
-                _draw_hists(hist, hist_name, args.output_dir, ext=args.ext)
+            green = var_group['em_energy']
+            red = var_group['had_energy']
+            blue = var_group['tracks']
+            leg = {'red': 'had', 'green': 'em', 'blue': 'tracks'}
+            hist_name = '{}_color{}'.format(process, args.ext)
+            out_path = os.path.join(args.output_dir, hist_name)
+            draw_rgb(red.hist, green.hist, blue.hist, red.axes,
+                     out_path, leg)
 
 if __name__ == '__main__':
     run()
