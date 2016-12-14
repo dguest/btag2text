@@ -1,6 +1,7 @@
 #include "math.hh"
 
 #include <cmath>
+#include <stdexcept>
 #include <cassert>
 
 namespace {
@@ -12,7 +13,12 @@ double phi_mpi_pi(double phi1, double phi2) {
   if (std::abs(diff) > pi) {
     diff -= std::copysign(2*pi, diff);
   }
-  assert(std::abs(diff) <= pi);
+  if (! (std::abs(diff) <= pi)) {
+    const auto sp1 = std::to_string(phi1);
+    const auto sp2 = std::to_string(phi2);
+    const auto sdiff = std::to_string(diff);
+    throw std::logic_error("dphi: " + sp1 + " - " +  sp2 + " = " + sdiff);
+  };
   return diff;
 }
 
