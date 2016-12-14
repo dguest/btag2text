@@ -92,6 +92,13 @@ function get-output-name() {
     echo d${DS}_i${IDX}_j${SLURM_ARRAY_TASK_ID}
 }
 
+# version when we just have input directories
+function get-output-name-from-dir() {
+    local INPUT_DIR=$1
+    local DS=$(echo $INPUT_DIR | sed -r $DS_RE)
+    echo d${DS}_j${SLURM_ARRAY_TASK_ID}
+}
+
 # Get the cross section for a dataset
 # arg 1: output file name
 # arg 2: path to data file
