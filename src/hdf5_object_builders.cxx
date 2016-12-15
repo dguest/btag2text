@@ -47,6 +47,8 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
 #define COPY(var) btag.var = jet.jet_ ## var
   COPY(pt);
   COPY(eta);
+  btag.dphi_fatjet = jet.dphi_fatjet;
+  btag.deta_fatjet = jet.deta_fatjet;
 
   COPY(ip3d_pb);
   COPY(ip3d_pc);

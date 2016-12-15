@@ -187,6 +187,7 @@ struct Jet
 
   // only defined for subjets
   float dphi_fatjet;
+  float deta_fatjet;
 };
 
 struct JfVertex

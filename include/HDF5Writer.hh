@@ -119,6 +119,8 @@ namespace h5 {
     // kinematic
     outfloat_t pt;
     outfloat_t eta;
+    outfloat_t dphi_fatjet;
+    outfloat_t deta_fatjet;
 
     // ip3d
     outfloat_t ip3d_pu;

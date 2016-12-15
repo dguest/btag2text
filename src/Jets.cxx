@@ -606,6 +606,7 @@ Jet Jets::getJet(int pos) const {
     for (size_t sub_pos = 0; sub_pos < m_trkjet.size(pos); sub_pos++) {
       auto jet = m_trkjet.getJet(pos, sub_pos);
       jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
+      jet.deta_fatjet = jet.jet_eta - o.jet_eta;
       o.trkjets.push_back(jet);
     }
     std::sort(o.trkjets.begin(), o.trkjets.end(),
@@ -616,6 +617,7 @@ Jet Jets::getJet(int pos) const {
     for (size_t sub_pos = 0; sub_pos < m_vrtrkjet.size(pos); sub_pos++) {
       auto jet = m_vrtrkjet.getJet(pos, sub_pos);
       jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
+      jet.deta_fatjet = jet.jet_eta - o.jet_eta;
       o.vrtrkjets.push_back(jet);
     }
     std::sort(o.vrtrkjets.begin(), o.vrtrkjets.end(),

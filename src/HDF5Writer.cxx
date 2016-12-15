@@ -164,6 +164,8 @@ namespace {
 #define INSERT(name) H5_INSERT(type, h5::HighLevelBTag, name)
     INSERT(pt);
     INSERT(eta);
+    INSERT(dphi_fatjet);
+    INSERT(deta_fatjet);
 
     // IP3D
     INSERT(ip3d_pu);
