@@ -31,7 +31,7 @@ void ClusterImages::fill(const std::vector<Cluster>& clusters,
     double dphi = phi_mpi_pi(cluster.phi, jet.jet_phi);
     double deta = cluster.eta - jet.jet_eta;
     double jet_r = 2 * m_mass / jet.jet_pt;
-    cluster_points.push_back({deta / jet_r, dphi / jet_r, cluster.e});
+    cluster_points.push_back({deta / jet_r, dphi / jet_r, cluster.pt});
   }
 
   Point principal = get_principal(cluster_points);
@@ -44,13 +44,13 @@ void ClusterImages::fill(const std::vector<Cluster>& clusters,
     const auto& cluster = clusters.at(iii);
     std::map<std::string, double> eta_phi {
       {"x", point.x}, {"y", point.y} };
-    m_image->fill(eta_phi, cluster.e * weight);
+    m_image->fill(eta_phi, cluster.pt * weight);
 
     double emfc = cluster.em_probability;
 
     assert(0 <= emfc && emfc <= 1);
-    m_em_energy->fill(eta_phi, emfc * cluster.e * weight);
-    m_had_energy->fill(eta_phi, (1-emfc) * cluster.e * weight);
+    m_em_energy->fill(eta_phi, emfc * cluster.pt * weight);
+    m_had_energy->fill(eta_phi, (1-emfc) * cluster.pt * weight);
   }
 
   const auto tracks = build_tracks(jet);
