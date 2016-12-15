@@ -15,6 +15,19 @@
 #include <iostream>
 #include <limits>
 
+#include <csignal>
+
+namespace
+{
+  volatile std::sig_atomic_t g_kill_signal;
+}
+
+void signal_handler(int signal)
+{
+  std::cerr << "caught signal, dying slowly..." << std::endl;
+  g_kill_signal = signal;
+}
+
 const std::string DESCRIPTION = (
   "Dump information for jets to HDF5"
   );
@@ -26,6 +39,7 @@ int main(int argc, char* argv[]) {
   unshittify();
   // required library calls
   H5::Exception::dontPrint();
+  std::signal(SIGINT, signal_handler);
 
   // load info
   const auto opts = get_writer_opts(argc, argv, DESCRIPTION);
@@ -54,6 +68,7 @@ int main(int argc, char* argv[]) {
   h5::Writer1d<h5::HighLevelBTag> subjet2(out_file, "subjet2", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
+    if (g_kill_signal == SIGINT) break;
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
