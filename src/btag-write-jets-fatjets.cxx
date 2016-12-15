@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
       const auto& subs = jet.vrtrkjets;
       subjet1.add_jet(
         subs.size() > 0 ? get_btagging(subs.at(0)): h5::HighLevelBTag());
-      subjet1.add_jet(
+      subjet2.add_jet(
         subs.size() > 1 ? get_btagging(subs.at(1)): h5::HighLevelBTag());
     }
   }
