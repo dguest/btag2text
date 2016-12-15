@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <cassert>
+#include <string>
 
 namespace {
   const double pi = std::atan2(0, -1);
