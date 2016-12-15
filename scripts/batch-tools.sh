@@ -62,7 +62,8 @@ function get-slurm-opts() {
     local ERROR_PAT=$OUTPUT_DIR/stderr-%a.txt
     local LOGS="-o $OUTPUT_PAT -e $ERROR_PAT"
     local MEM="--mem 3000"
-    echo "-t $RUN_TIME -p atlas_all -c 2 $LOGS $MEM"
+    local SIG="--signal=2@100"
+    echo "-t $RUN_TIME -p atlas_all -c 2 $LOGS $MEM $SIG"
 }
 # _______________________________________________________________________
 # functions for run scripts
