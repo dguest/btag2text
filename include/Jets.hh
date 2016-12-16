@@ -156,9 +156,11 @@ struct Jet
   std::vector<int> jet_trk_nsharedBLHits;
   std::vector<int> jet_trk_nsplitBLHits;
   std::vector<int> jet_trk_nPixHits;
+  std::vector<int> jet_trk_nPixHoles;
   std::vector<int> jet_trk_nsharedPixHits;
   std::vector<int> jet_trk_nsplitPixHits;
   std::vector<int> jet_trk_nSCTHits;
+  std::vector<int> jet_trk_nSCTHoles;
   std::vector<int> jet_trk_nsharedSCTHits;
   std::vector<int> jet_trk_expectBLayerHit;
 
@@ -218,7 +220,7 @@ struct Track
   // int algo;
   int orig;
 
-  // use the IP3D d0/z0 here
+  // NOTE: these are no longer lifetime-signed!
   float d0;
   float z0;
   float d0sig;
@@ -234,9 +236,11 @@ struct Track
   int nsharedBLHits; // number of shared b-layer hits
   int nsplitBLHits; // number of split b-layer hits
   int nPixHits; // number of pixel hits
+  int nPixHoles; // number of pixel hits
   int nsharedPixHits; // number of shared pixel hits
   int nsplitPixHits; // number of split pixel hits
   int nSCTHits; // number of sct hits
+  int nSCTHoles; // number of sct hits
   int nsharedSCTHits; // number of shared sct hits
   int expectBLayerHit; // is a b-layer hit expected?
 
@@ -469,9 +473,11 @@ private:
   std::vector<std::vector<int> >* jet_trk_nsharedBLHits;
   std::vector<std::vector<int> >* jet_trk_nsplitBLHits;
   std::vector<std::vector<int> >* jet_trk_nPixHits;
+  std::vector<std::vector<int> >* jet_trk_nPixHoles;
   std::vector<std::vector<int> >* jet_trk_nsharedPixHits;
   std::vector<std::vector<int> >* jet_trk_nsplitPixHits;
   std::vector<std::vector<int> >* jet_trk_nSCTHits;
+  std::vector<std::vector<int> >* jet_trk_nSCTHoles;
   std::vector<std::vector<int> >* jet_trk_nsharedSCTHits;
   std::vector<std::vector<int> >* jet_trk_expectBLayerHit;
 

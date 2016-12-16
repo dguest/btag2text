@@ -37,6 +37,32 @@ std::vector<h5::Track> get_tracks(const Jet& jet) {
     tk.pt = track.pt;
     tk.deta = track.eta - jet.jet_eta;
     tk.dphi = phi_mpi_pi(track.phi, jet.jet_phi);
+
+#define COPY(var) tk.var = track.var
+    COPY(d0);
+    COPY(z0);
+    COPY(d0sig);
+    COPY(z0sig);
+    COPY(chi2);
+    COPY(ndf);
+#undef COPY
+
+#define COPY(from, too) tk.too = track.from
+    COPY(nInnHits, numberOfInnermostPixelLayerHits);
+    COPY(nNextToInnHits, numberOfNextToInnermostPixelLayerHits);
+    COPY(nBLHits, numberOfBLayerHits);
+    COPY(nsharedBLHits, numberOfBLayerSharedHits);
+    COPY(nsplitBLHits, numberOfBLayerSplitHits);
+    COPY(nPixHits, numberOfPixelHits);
+    COPY(nPixHoles, numberOfPixelHoles);
+    COPY(nsharedPixHits, numberOfPixelSharedHits);
+    COPY(nsplitPixHits, numberOfPixelSplitHits);
+    COPY(nSCTHits, numberOfSCTHits);
+    COPY(nSCTHoles, numberOfSCTHoles);
+    COPY(nsharedSCTHits, numberOfSCTSharedHits);
+    COPY(expectBLayerHit, expectBLayerHit);
+#undef COPY
+
     tk.mask = false;
     tracks.push_back(tk);
   }

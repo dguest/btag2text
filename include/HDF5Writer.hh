@@ -109,6 +109,28 @@ namespace h5 {
     outfloat_t pt;
     outfloat_t deta;
     outfloat_t dphi;
+
+    outfloat_t d0;
+    outfloat_t z0;
+    outfloat_t d0sig;
+    outfloat_t z0sig;
+    outfloat_t chi2;
+    outfloat_t ndf;
+
+    int numberOfInnermostPixelLayerHits;
+    int numberOfNextToInnermostPixelLayerHits;
+    int numberOfBLayerHits;
+    int numberOfBLayerSharedHits;
+    int numberOfBLayerSplitHits;
+    int numberOfPixelHits;
+    int numberOfPixelHoles;
+    int numberOfPixelSharedHits;
+    int numberOfPixelSplitHits;
+    int numberOfSCTHits;
+    int numberOfSCTHoles;
+    int numberOfSCTSharedHits;
+    int expectBLayerHit;
+
     bool mask;
   };
   template<> H5::DataType get_type<Track>();

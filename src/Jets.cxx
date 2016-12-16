@@ -429,9 +429,11 @@ Jets::Jets(SmartChain& chain):
   SET_TRACK_BRANCH(nsharedBLHits);
   SET_TRACK_BRANCH(nsplitBLHits);
   SET_TRACK_BRANCH(nPixHits);
+  SET_TRACK_BRANCH(nPixHoles);
   SET_TRACK_BRANCH(nsharedPixHits);
   SET_TRACK_BRANCH(nsplitPixHits);
   SET_TRACK_BRANCH(nSCTHits);
+  SET_TRACK_BRANCH(nSCTHoles);
   SET_TRACK_BRANCH(nsharedSCTHits);
   SET_TRACK_BRANCH(expectBLayerHit);
   // SET_TRACK_BRANCH(jf_Vertex);
@@ -585,9 +587,11 @@ Jet Jets::getJet(int pos) const {
     COPY(jet_trk_nsharedBLHits);
     COPY(jet_trk_nsplitBLHits);
     COPY(jet_trk_nPixHits);
+    COPY(jet_trk_nPixHoles);
     COPY(jet_trk_nsharedPixHits);
     COPY(jet_trk_nsplitPixHits);
     COPY(jet_trk_nSCTHits);
+    COPY(jet_trk_nSCTHoles);
     COPY(jet_trk_nsharedSCTHits);
     COPY(jet_trk_expectBLayerHit);
   }
@@ -683,9 +687,11 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(nsharedBLHits);
     COPY(nsplitBLHits);
     COPY(nPixHits);
+    COPY(nPixHoles);
     COPY(nsharedPixHits);
     COPY(nsplitPixHits);
     COPY(nSCTHits);
+    COPY(nSCTHoles);
     COPY(nsharedSCTHits);
     COPY(expectBLayerHit);
 

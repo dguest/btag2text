@@ -138,6 +138,28 @@ namespace {
     INSERT(pt);
     INSERT(deta);
     INSERT(dphi);
+
+    INSERT(d0);
+    INSERT(z0);
+    INSERT(d0sig);
+    INSERT(z0sig);
+    INSERT(chi2);
+    INSERT(ndf);
+
+    INSERT(numberOfInnermostPixelLayerHits);
+    INSERT(numberOfNextToInnermostPixelLayerHits);
+    INSERT(numberOfBLayerHits);
+    INSERT(numberOfBLayerSharedHits);
+    INSERT(numberOfBLayerSplitHits);
+    INSERT(numberOfPixelHits);
+    INSERT(numberOfPixelHoles);
+    INSERT(numberOfPixelSharedHits);
+    INSERT(numberOfPixelSplitHits);
+    INSERT(numberOfSCTHits);
+    INSERT(numberOfSCTHoles);
+    INSERT(numberOfSCTSharedHits);
+    INSERT(expectBLayerHit);
+
     INSERT(mask);
 #undef INSERT
     return type;
