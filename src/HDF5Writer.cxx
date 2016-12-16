@@ -88,6 +88,7 @@ namespace {
     H5_INSERT(type, jet_t, weight);
     H5_INSERT(type, jet_t, pt);
     H5_INSERT(type, jet_t, eta);
+    H5_INSERT(type, jet_t, mass);
 #define H5_INSERT_SUB(MEMBER)                                         \
     h5::insert(type, #MEMBER,                                         \
                offsetof(jet_t, moments) +                             \
@@ -166,6 +167,7 @@ namespace {
     INSERT(eta);
     INSERT(dphi_fatjet);
     INSERT(deta_fatjet);
+    INSERT(dr_fatjet);
 
     // IP3D
     INSERT(ip3d_pu);

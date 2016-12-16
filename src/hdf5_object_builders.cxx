@@ -10,6 +10,7 @@ h5::FatJet get_fat_jet(const Jet& jet, double weight) {
   h5::FatJet hjet{jet.jet_pt, jet.jet_eta};
   hjet.weight = weight;
   hjet.moments = jet.moments;
+  hjet.mass = jet.jet_m;
   return hjet;
 
 }
@@ -49,6 +50,7 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   COPY(eta);
   btag.dphi_fatjet = jet.dphi_fatjet;
   btag.deta_fatjet = jet.deta_fatjet;
+  btag.dr_fatjet = std::hypot(jet.dphi_fatjet, jet.deta_fatjet);
 
   COPY(ip3d_pb);
   COPY(ip3d_pc);
