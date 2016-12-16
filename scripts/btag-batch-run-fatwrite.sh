@@ -45,5 +45,6 @@ if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE); then
     exit 1
 fi
 echo "weighted by $WEIGHT"
-btag-write-jets-fatjets $INPUT_FILES -o $OUTPUT_PATH -w $WEIGHT
+OPTS="-t 50 -c 50"
+btag-write-jets-fatjets $INPUT_FILES -o $OUTPUT_PATH -w $WEIGHT $OPTS
 
