@@ -616,6 +616,8 @@ Jet Jets::getJet(int pos) const {
   if (m_vrtrkjet.valid()) {
     for (size_t sub_pos = 0; sub_pos < m_vrtrkjet.size(pos); sub_pos++) {
       auto jet = m_vrtrkjet.getJet(pos, sub_pos);
+      // this was throwing "dphi: -2.497447 - nan = nan", i.e. some
+      // jets had nan for phi, weird
       jet.dphi_fatjet = phi_mpi_pi(jet.jet_phi, o.jet_phi);
       jet.deta_fatjet = jet.jet_eta - o.jet_eta;
       o.vrtrkjets.push_back(jet);
