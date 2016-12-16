@@ -19,34 +19,8 @@ public:
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
   bool m_is_subjet;
-  Histogram mv2c10;
-  Histogram mv2c20;
-
-  Histogram ip3d_pu;
-  Histogram ip3d_pc;
-  Histogram ip3d_pb;
-  Histogram ip3d_ntrk;
   Histogram ntrk;
-
-  Histogram ga_ntrk;
-
-  Histogram sv1_ntrkv;
-  Histogram sv1_n2t;
-  Histogram sv1_m;
-  Histogram sv1_efc;
-  Histogram sv1_normdist;
-  Histogram sv1_Nvtx;
-
-  Histogram jf_m;
-  Histogram jf_efc;
-  Histogram jf_deta;
-  Histogram jf_dphi;
-  Histogram jf_ntrkAtVx;
-  Histogram jf_nvtx;
-  Histogram jf_sig3d;
-  Histogram jf_nvtx1t;
-  Histogram jf_n2t;
-  Histogram jf_VTXsize;
+  Histogram ncluster;
 
   Histogram pt;
   Histogram eta;

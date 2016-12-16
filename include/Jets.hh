@@ -71,6 +71,9 @@ struct Jet
   // track counts
   int jet_ntrk;
 
+  // cluster counts
+  int jet_ncluster;
+
   // high level
   // ip2d, ip3d
   float jet_ip2d_pb;

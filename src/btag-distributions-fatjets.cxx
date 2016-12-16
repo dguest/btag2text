@@ -4,6 +4,7 @@
 #include "constants.hh"
 #include "ClusterImages.hh"
 #include "JetHists.hh"
+#include "BTagHists.hh"
 #include "SubstructureHists.hh"
 #include "hist_tools.hh"
 #include "select_jet.hh"
@@ -29,6 +30,7 @@ public:
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
   std::vector<JetHists> m_subjets;
+  std::vector<BTagHists> m_subjets_btag;
   JetHists m_fatjet;
   SubstructureHists m_substruct;
   int m_n_one_cluster;
@@ -80,6 +82,7 @@ int main(int argc, char* argv[]) {
 
 FatJetHists::FatJetHists(int n_subjets):
   m_subjets(n_subjets, true),
+  m_subjets_btag(n_subjets),
   m_fatjet(),
   m_n_one_cluster(0)
 {
@@ -89,6 +92,7 @@ void FatJetHists::fill(const Jet& jet, double weight) {
   const size_t max_idx = std::min(subjets.size(), m_subjets.size());
   for (size_t jet_idx = 0; jet_idx < max_idx; jet_idx++) {
     m_subjets.at(jet_idx).fill(subjets.at(jet_idx), weight);
+    m_subjets_btag.at(jet_idx).fill(subjets.at(jet_idx), weight);
   }
   m_fatjet.fill(jet, weight);
   if (jet.jet_cluster_pt.size() > 1) {
@@ -104,7 +108,9 @@ void FatJetHists::save(H5::CommonFG& out) const {
   m_substruct.save(fatjet);
   write_attr(fatjet, "n_one_cluster", m_n_one_cluster);
   for (size_t jet_idx = 0; jet_idx < m_subjets.size(); jet_idx++) {
-    m_subjets.at(jet_idx).save(out, "subjet_" + std::to_string(jet_idx));
+    H5::Group subjet(out.createGroup("subjet_" + std::to_string(jet_idx)));
+    m_subjets.at(jet_idx).save(subjet);
+    m_subjets_btag.at(jet_idx).save(subjet);
   }
 }
 void FatJetHists::save(H5::CommonFG& out, std::string subdir) const {

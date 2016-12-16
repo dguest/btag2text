@@ -479,6 +479,7 @@ Jet Jets::getJet(int pos) const {
 
   // cluster
   if (m_clusters_valid) {
+    o.jet_ncluster = jet_cluster_pt->at(pos).size();
     o.jet_cluster_pt = multiply<float>(jet_cluster_pt->at(pos),MeV);
     COPY(jet_cluster_eta);
     COPY(jet_cluster_phi);
