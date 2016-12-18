@@ -20,7 +20,18 @@ namespace {
 
 namespace h5 {
 
-  HighLevelBTag::HighLevelBTag(): mask(true)
+  HighLevelBTag::HighLevelBTag():
+    pt(0), eta(0), dphi_fatjet(0), deta_fatjet(0), dr_fatjet(0),
+    ip3d_pu(0), ip3d_pc(0), ip3d_pb(0),
+    ipmp_pu(0), ipmp_pc(0), ipmp_pb(0), ipmp_ptau(0),
+    sv1_Nvtx(0), sv1_ntrkv(0), sv1_n2t(0), sv1_m(0), sv1_efc(0),
+    sv1_normdist(0), sv1_dR(0), sv1_Lxy(0), sv1_Lxyz(0),
+    jf_m(0), jf_efc(0), jf_deta(0), jf_dphi(0), jf_dr(0),
+    jf_sig3d(0), jf_nvtx(0), jf_ntrkAtVx(0), jf_nvtx1t(0),
+    jf_n2t(0), jf_VTXsize(0),
+    mv2c10(0),
+    truthflav(0), LabDr_HadF(0),
+    mask(true)
   {
   }
 
