@@ -46,5 +46,9 @@ if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE); then
 fi
 echo "weighted by $WEIGHT"
 OPTS="-t 50 -c 50"
-btag-write-jets-fatjets $INPUT_FILES -o $OUTPUT_PATH -w $WEIGHT $OPTS
+btag-write-jets-fatjets $INPUT_FILES -o $OUTPUT_PATH -w $WEIGHT $OPTS &
+PID=$!
+trap "kill -TERM $PID; wait $PID; echo killed! >&2" TERM
+wait $PID
+echo "done"
 
