@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
   // required library calls
   H5::Exception::dontPrint();
   std::signal(SIGINT, signal_handler);
+  std::signal(SIGTERM, signal_handler);
 
   // load info
   const auto opts = get_writer_opts(argc, argv, DESCRIPTION);
@@ -68,7 +69,7 @@ int main(int argc, char* argv[]) {
   h5::Writer1d<h5::HighLevelBTag> subjet2(out_file, "subjet2", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
-    if (g_kill_signal == SIGINT) break;
+    if (g_kill_signal == SIGINT || g_kill_signal == SIGTERM) break;
     chain.GetEntry(iii);
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
