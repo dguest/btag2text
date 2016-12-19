@@ -62,8 +62,10 @@ function get-slurm-opts() {
     local ERROR_PAT=$OUTPUT_DIR/stderr-%a.txt
     local LOGS="-o $OUTPUT_PAT -e $ERROR_PAT"
     local MEM="--mem 3000"
-    local SIG="--signal=B:TERM@10"
-    echo "-t $RUN_TIME -p atlas_all -c 2 $LOGS $MEM $SIG"
+    ## sending a signal doesn't seem to do anything: either way we
+    ## have to trap the TERM signal in the job
+    # local SIG="--signal=B:TERM@10"
+    echo "-t $RUN_TIME -p atlas_all -c 2 $LOGS $MEM"
 }
 # _______________________________________________________________________
 # functions for run scripts
