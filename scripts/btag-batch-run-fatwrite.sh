@@ -2,6 +2,10 @@
 
 set -eu
 
+# set the number of clusters and tracks to truncate at
+N_CLUSTERS=60
+N_TRACKS=60
+
 OUTPUT_DIR=$3
 
 echo "submit from $SLURM_SUBMIT_DIR, array index $SLURM_ARRAY_TASK_ID"
@@ -45,7 +49,7 @@ if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE); then
     exit 1
 fi
 echo "weighted by $WEIGHT"
-OPTS="-t 50 -c 50"
+OPTS="--track-size $N_TRACKS --cluster-size $N_CLUSTERS"
 btag-write-jets-fatjets $INPUT_FILES -o $OUTPUT_PATH -w $WEIGHT $OPTS &
 PID=$!
 trap "kill -TERM $PID; wait $PID; echo killed! >&2" TERM
