@@ -80,7 +80,10 @@ WRITE_OBJ_PATHS += $(TDICT_PATHS)
 
 # --- load in root config
 ROOTCFLAGS    := $(shell root-config --cflags)
-USELESS       := Graf Graf3d Hist Gpad Postscript Matrix
+
+USELESS       := Net Hist Graf Graf3d Gpad Rint Postscript Matrix
+USELESS       += MathCore Thread MultiProc
+
 ROOTLIBS      := $(filter-out $(USELESS:%=-l%),$(shell root-config --libs))
 ROOTLIBS      += -Wl,-rpath,$(shell root-config --libdir)
 GCC_PATH      := $(shell which $(CXX))
