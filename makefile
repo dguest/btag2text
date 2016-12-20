@@ -80,11 +80,8 @@ WRITE_OBJ_PATHS += $(TDICT_PATHS)
 
 # --- load in root config
 ROOTCFLAGS    := $(shell root-config --cflags)
-
-USELESS       := Net Hist Graf Graf3d Gpad Rint Postscript Matrix
-USELESS       += MathCore Thread MultiProc
-
-ROOTLIBS      := $(filter-out $(USELESS:%=-l%),$(shell root-config --libs))
+USED_ROOT     := Core RIO Tree Physics
+ROOTLIBS      := -L$(shell root-config --libdir) $(USED_ROOT:%=-l%)
 ROOTLIBS      += -Wl,-rpath,$(shell root-config --libdir)
 GCC_PATH      := $(shell which $(CXX))
 GCC_LIB_PATH  := $(dir $(GCC_PATH))../lib64
