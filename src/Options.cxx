@@ -18,7 +18,7 @@ Options get_opts(int argc, char* argv[],
   opt.add_options()
     ("files", po::value(&opts.input_files)->required(),
      "list of input files")
-    ("out_file,o", po::value(&opts.output_file)->required(),
+    ("out-file,o", po::value(&opts.output_file)->required(),
      "output file")
     ("help,h", "Print help messages")
     ("weight,w", po::value(&opts.weight)->default_value(1.0),
@@ -54,17 +54,17 @@ WriterOptions get_writer_opts(int argc, char* argv[],
   opt.add_options()
     ("files", po::value(&opts.input_files)->required(),
      "list of input files")
-    ("out_file,o", po::value(&opts.output_file)->required(),
+    ("out-file,o", po::value(&opts.output_file)->required(),
      "output file")
     ("help,h", "Print help messages")
     ("weight,w", po::value(&opts.weight)->default_value(1.0),
      "weights for this file")
     ("verbose,v", po::bool_switch(&opts.verbose), "extra output")
-    ("chunk_size,s", po::value(&opts.chunk_size)->default_value(256),
+    ("chunk-size,s", po::value(&opts.chunk_size)->default_value(256),
       "size of chunks to write to HDF5")
-    ("track_size,t", po::value(&opts.track_size)->default_value(0),
+    ("track-size,t", po::value(&opts.track_size)->default_value(0),
      "Number of tracks to write out (no container if zero)")
-    ("cluster_size,c", po::value(&opts.cluster_size)->default_value(0),
+    ("cluster-size,c", po::value(&opts.cluster_size)->default_value(0),
      "Number of clusters to write out (no container if zero)");
 
 
