@@ -66,12 +66,22 @@ GEN_OBJ_PATHS  += $(TDICT_PATHS)
 .SECONDARY: $(TDICT_PATHS)
 
 # _______________________________________________________________
+# minimalist version
+WRITE_PREFIX := btag-write-
+ALL_WRITERS  := $(filter $(OUTPUT)/$(WRITE_PREFIX)%,$(ALL_EXE_PATHS))
+WRITE_OBJ    := Options Jets SmartChain
+WRITE_OBJ    += select_jet math get_tree unshittify
+WRITE_OBJ    += HDF5Writer hdf5_object_builders
+WRITE_OBJ_PATHS := $(filter $(WRITE_OBJ:%=$(BUILD)/%.o),$(GEN_OBJ_PATHS))
+WRITE_OBJ_PATHS += $(TDICT_PATHS)
+
+# _______________________________________________________________
 # Add Libraries
 
 # --- load in root config
 ROOTCFLAGS    := $(shell root-config --cflags)
-
-ROOTLIBS      := $(shell root-config --libs)
+USELESS       := Graf Graf3d Hist Gpad Postscript Matrix
+ROOTLIBS      := $(filter-out $(USELESS:%=-l%),$(shell root-config --libs))
 ROOTLIBS      += -Wl,-rpath,$(shell root-config --libdir)
 GCC_PATH      := $(shell which $(CXX))
 GCC_LIB_PATH  := $(dir $(GCC_PATH))../lib64
@@ -94,6 +104,15 @@ CXXFLAGS     += -I$(HDF_PATH)/include
 LIBS         += -L$(HDF_PATH)/lib -Wl,-rpath,$(HDF_PATH)/lib
 LIBS         += -lhdf5_cpp -lhdf5
 
+# --- add boost
+ifdef BOOST_PATH
+LIBS         += -L$(BOOST_PATH)/lib -Wl,-rpath,$(BOOST_PATH)/lib
+endif
+LIBS         += -lboost_program_options
+
+# --- writer-only LIBS version with fewer dependencies
+WRITER_LIBS  := $(LIBS)
+
 # --- add ndhist
 NDHIST       := ndhist/lib/libndhist.so
 LIBS         += $(shell $(CURDIR)/ndhist/bin/ndhist-config --libs)
@@ -102,15 +121,11 @@ CXXFLAGS     += $(shell $(CURDIR)/ndhist/bin/ndhist-config --cflags)
 # --- add eigen
 CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
 
-# boost
-ifdef BOOST_PATH
-LIBS         += -L$(BOOST_PATH)/lib -Wl,-rpath,$(BOOST_PATH)/lib
-endif
-LIBS         += -lboost_program_options
 
 # --- first call here
 cpp: $(ALL_TOP_LEVEL)
 all: $(ALL_TOP_LEVEL) plotting
+writer: $(ALL_WRITERS)
 
 all-top-level: $(ALL_TOP_LEVEL)
 
@@ -123,12 +138,20 @@ plotting:
 	@echo "installing plotting scripts"
 	@./ndhist-python/ndhist-install-python install
 
-.PHONY: plotting all cpp
+.PHONY: plotting all cpp writer
 
 # _______________________________________________________________
 # Add Build Rules
 
-# build exe
+# build writer executables (fewer things to include)
+WRITE_OBJ_PFX := $(BUILD)/$(WRITE_PREFIX)
+$(OUTPUT)/$(WRITE_PREFIX)%: $(WRITE_OBJ_PATHS) $(WRITE_OBJ_PFX)%.o
+	@mkdir -p $(OUTPUT)
+	@echo "linking writer $^ --> $@"
+	@$(CXX) -o $@ $^ $(WRITER_LIBS) $(LDFLAGS)
+	@cp -f $(DICT)/*.pcm $(OUTPUT)
+
+# build general executables
 EXEC_OBJ_PFX := $(BUILD)/$(EXE_PREFIX)
 $(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(EXEC_OBJ_PFX)%.o $(NDHIST)
 	@mkdir -p $(OUTPUT)
