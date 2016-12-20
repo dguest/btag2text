@@ -5,6 +5,7 @@
 *.txt
 *.pdf
 *.png
+*.tgz
 
 # mac shit
 .DS_Store
