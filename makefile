@@ -106,6 +106,7 @@ LIBS         += -lhdf5_cpp -lhdf5
 
 # --- add boost
 ifdef BOOST_PATH
+CXXFLAGS     += -I$(BOOST_PATH)/include
 LIBS         += -L$(BOOST_PATH)/lib -Wl,-rpath,$(BOOST_PATH)/lib
 endif
 LIBS         += -lboost_program_options
