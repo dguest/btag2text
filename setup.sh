@@ -22,3 +22,8 @@ lsetup hdf5 -q
 export HDF_PATH=$ALRB_HDF5_PATH
 echo " done"
 
+# -- get Eigen3
+echo -n "setting up Eigen3..."
+localSetupSFT -q releases/LCG_84/eigen/3.2.7
+EIGEN_INCLUDE_PATH=$SFT_HOME_eigen/include/eigen3
+echo " done"

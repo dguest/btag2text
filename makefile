@@ -120,8 +120,11 @@ LIBS         += $(shell $(CURDIR)/ndhist/bin/ndhist-config --libs)
 CXXFLAGS     += $(shell $(CURDIR)/ndhist/bin/ndhist-config --cflags)
 
 # --- add eigen
+ifdef EIGEN_INCLUDE_PATH
+CXXFLAGS     += -I$(EIGEN_INCLUDE_PATH)
+else
 CXXFLAGS     += $(shell pkg-config eigen3 --cflags)
-
+endif
 
 # --- first call here
 cpp: $(ALL_TOP_LEVEL)
