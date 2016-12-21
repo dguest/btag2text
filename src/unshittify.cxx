@@ -3,6 +3,7 @@
 // root crap
 #include "TROOT.h"
 #include "TSystem.h"
+#include "TError.h"
 
 // all the things needed to unshittify root
 void unshittify() {
@@ -12,5 +13,8 @@ void unshittify() {
   }
   // make vectors work
   gROOT->ProcessLine("#include <vector>");
+
+  // ignore all non-fatal errors
+  gErrorIgnoreLevel = kFatal;
 }
 
