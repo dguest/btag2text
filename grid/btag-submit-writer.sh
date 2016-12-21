@@ -11,7 +11,7 @@ fi
 DS=''
 
 _usage() {
-    echo "usage: ${0##*/} [-h] [options]"
+    echo "usage: ${0##*/} [-h] [options] -d <dataset>"
 }
 _help() {
     _usage
@@ -31,7 +31,7 @@ Requires that:
 Options:
  -h: get help
  -n <number>: n files to use (default all)
- -d <dataset>: input dataset to use (default ${DS})
+ -d <dataset>: input dataset to use (required)
  -t <tag>: tag for output dataset
  -z <file>: create / submit a gziped tarball
  -e: test run, just echo command
@@ -61,6 +61,11 @@ while getopts ":hn:d:t:z:uef" opt $@; do
     esac
 done
 
+if [[ ! $DS ]]; then
+    echo "ERROR: a dataset is required" >&2
+    exit 1
+fi
+
 if ! git diff-index --quiet HEAD && [[ ! $FORCE ]]; then
     echo "ERROR: uncommitted changes in local area, please commit them" >&2
     exit 1
@@ -71,7 +76,7 @@ OUT_OPTS=$(${SCRIPT_DIR}/btag-grid-name.sh $DS $TAG)
 WORK_DIR=${SCRIPT_DIR}/..
 
 # setup options
-OPTS=${OUT_OPTS}
+OPTS+=" "${OUT_OPTS}
 # OPTS+=" --nFilesPerJob 5"
 OPTS+=" --inDS $DS"
 OPTS+=" --workDir $WORK_DIR"
