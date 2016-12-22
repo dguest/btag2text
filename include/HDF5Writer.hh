@@ -142,9 +142,6 @@ namespace h5 {
     // kinematic
     outfloat_t pt;
     outfloat_t eta;
-    outfloat_t dphi_fatjet;
-    outfloat_t deta_fatjet;
-    outfloat_t dr_fatjet;
 
     // ip3d
     outfloat_t ip3d_pu;
@@ -192,6 +189,17 @@ namespace h5 {
 
   };
   template<> H5::DataType get_type<HighLevelBTag>();
+
+  // struct for high level b-tagger variables
+  struct HighLevelSubjetBTag {
+    HighLevelSubjetBTag();
+    HighLevelBTag btag;
+    outfloat_t dphi_fatjet;
+    outfloat_t deta_fatjet;
+    outfloat_t dr_fatjet;
+
+  };
+  template<> H5::DataType get_type<HighLevelSubjetBTag>();
 
 }
 

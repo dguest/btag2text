@@ -37,6 +37,7 @@ const std::string DESCRIPTION = (
 
 int main(int argc, char* argv[]) {
   unshittify();
+  typedef h5::HighLevelSubjetBTag btag_t;
   // required library calls
   H5::Exception::dontPrint();
   std::signal(SIGINT, signal_handler);
@@ -65,8 +66,8 @@ int main(int argc, char* argv[]) {
       out_file, "tracks", opts.track_size, n_chunk);
   }
   h5::Writer1d<h5::FatJet> jet_ds(out_file, "jets", n_chunk);
-  h5::Writer1d<h5::HighLevelBTag> subjet1(out_file, "subjet1", n_chunk);
-  h5::Writer1d<h5::HighLevelBTag> subjet2(out_file, "subjet2", n_chunk);
+  h5::Writer1d<btag_t> subjet1(out_file, "subjet1", n_chunk);
+  h5::Writer1d<btag_t> subjet2(out_file, "subjet2", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
     if (g_kill_signal == SIGINT || g_kill_signal == SIGTERM) break;
@@ -83,10 +84,8 @@ int main(int argc, char* argv[]) {
       h5::FatJet hjet = get_fat_jet(jet, weight);
       jet_ds.add_jet(hjet);
       const auto& subs = jet.vrtrkjets;
-      subjet1.add_jet(
-        subs.size() > 0 ? get_btagging(subs.at(0)): h5::HighLevelBTag());
-      subjet2.add_jet(
-        subs.size() > 1 ? get_btagging(subs.at(1)): h5::HighLevelBTag());
+      subjet1.add_jet(subs.size() > 0 ? get_btagging(subs.at(0)): btag_t());
+      subjet2.add_jet(subs.size() > 1 ? get_btagging(subs.at(1)): btag_t());
     }
   }
   if (cluster_ds) {

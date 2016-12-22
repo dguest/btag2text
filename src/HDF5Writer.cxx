@@ -15,13 +15,15 @@ namespace {
 
   H5::EnumType get_bool_type();
 
-  H5::CompType get_high_level_btag_type();
+  H5::CompType get_high_level_subjet_btag_type();
+  void add_high_level_subjet_info(H5::CompType&);
+  void add_high_level_btag_info(H5::CompType&, size_t offset);
 }
 
 namespace h5 {
 
   HighLevelBTag::HighLevelBTag():
-    pt(0), eta(0), dphi_fatjet(0), deta_fatjet(0), dr_fatjet(0),
+    pt(0), eta(0),
     ip3d_pu(0), ip3d_pc(0), ip3d_pb(0),
     ipmp_pu(0), ipmp_pc(0), ipmp_pb(0), ipmp_ptau(0),
     sv1_Nvtx(0), sv1_ntrkv(0), sv1_n2t(0), sv1_m(0), sv1_efc(0),
@@ -32,6 +34,11 @@ namespace h5 {
     mv2c10(0),
     truthflav(0), LabDr_HadF(0),
     mask(true)
+  {
+  }
+  HighLevelSubjetBTag::HighLevelSubjetBTag():
+    btag(),
+    dphi_fatjet(0), deta_fatjet(0), dr_fatjet(0)
   {
   }
 
@@ -76,8 +83,8 @@ namespace h5 {
   }
 
   template<>
-  H5::DataType get_type<HighLevelBTag>() {
-    return get_high_level_btag_type();
+  H5::DataType get_type<HighLevelSubjetBTag>() {
+    return get_high_level_subjet_btag_type();
   }
 
   // packing utility
@@ -193,60 +200,73 @@ namespace {
     return btype;
   }
 
-  H5::CompType get_high_level_btag_type() {
-    H5::CompType type(sizeof(h5::HighLevelBTag));
-#define INSERT(name) H5_INSERT(type, h5::HighLevelBTag, name)
-    INSERT(pt);
-    INSERT(eta);
+
+
+  H5::CompType get_high_level_subjet_btag_type() {
+    H5::CompType type(sizeof(h5::HighLevelSubjetBTag));
+    add_high_level_btag_info(type, offsetof(h5::HighLevelSubjetBTag, btag));
+    add_high_level_subjet_info(type);
+    return type;
+  }
+  void add_high_level_subjet_info(H5::CompType& type) {
+#define INSERT(name) H5_INSERT(type, h5::HighLevelSubjetBTag, name)
     INSERT(dphi_fatjet);
     INSERT(deta_fatjet);
     INSERT(dr_fatjet);
+#undef INSERT
+  }
+  void add_high_level_btag_info(H5::CompType& type, size_t offset) {
+#define H5_INSERT_SUB(MEMBER)                                         \
+    h5::insert(type, #MEMBER,                                         \
+               offset + offsetof(h5::HighLevelBTag, MEMBER),          \
+               &h5::HighLevelBTag::MEMBER)
+
+    H5_INSERT_SUB(pt);
+    H5_INSERT_SUB(eta);
 
     // IP3D
-    INSERT(ip3d_pu);
-    INSERT(ip3d_pc);
-    INSERT(ip3d_pb);
+    H5_INSERT_SUB(ip3d_pu);
+    H5_INSERT_SUB(ip3d_pc);
+    H5_INSERT_SUB(ip3d_pb);
 
-    // INSERT(ipmp_pu);
-    // INSERT(ipmp_pc);
-    // INSERT(ipmp_pb);
-    // INSERT(ipmp_ptau);
+    // H5_INSERT_SUB(ipmp_pu);
+    // H5_INSERT_SUB(ipmp_pc);
+    // H5_INSERT_SUB(ipmp_pb);
+    // H5_INSERT_SUB(ipmp_ptau);
 
     // sv1
-    INSERT(sv1_Nvtx);
-    INSERT(sv1_ntrkv);
-    INSERT(sv1_n2t);
-    INSERT(sv1_m);
-    INSERT(sv1_efc);
-    INSERT(sv1_normdist);
-    INSERT(sv1_dR);
-    INSERT(sv1_Lxy);
-    INSERT(sv1_Lxyz);
+    H5_INSERT_SUB(sv1_Nvtx);
+    H5_INSERT_SUB(sv1_ntrkv);
+    H5_INSERT_SUB(sv1_n2t);
+    H5_INSERT_SUB(sv1_m);
+    H5_INSERT_SUB(sv1_efc);
+    H5_INSERT_SUB(sv1_normdist);
+    H5_INSERT_SUB(sv1_dR);
+    H5_INSERT_SUB(sv1_Lxy);
+    H5_INSERT_SUB(sv1_Lxyz);
 
     // Jetfitter
-    INSERT(jf_m);
-    INSERT(jf_efc);
-    INSERT(jf_deta);
-    INSERT(jf_dphi);
-    INSERT(jf_dr);
-    INSERT(jf_sig3d);
-    INSERT(jf_nvtx);
-    INSERT(jf_ntrkAtVx);
-    INSERT(jf_nvtx1t);
-    INSERT(jf_n2t);
-    INSERT(jf_VTXsize);
+    H5_INSERT_SUB(jf_m);
+    H5_INSERT_SUB(jf_efc);
+    H5_INSERT_SUB(jf_deta);
+    H5_INSERT_SUB(jf_dphi);
+    H5_INSERT_SUB(jf_dr);
+    H5_INSERT_SUB(jf_sig3d);
+    H5_INSERT_SUB(jf_nvtx);
+    H5_INSERT_SUB(jf_ntrkAtVx);
+    H5_INSERT_SUB(jf_nvtx1t);
+    H5_INSERT_SUB(jf_n2t);
+    H5_INSERT_SUB(jf_VTXsize);
 
     // MV2
-    INSERT(mv2c10);
+    H5_INSERT_SUB(mv2c10);
 
     // labeling
-    INSERT(truthflav);
-    INSERT(LabDr_HadF);
+    H5_INSERT_SUB(truthflav);
+    H5_INSERT_SUB(LabDr_HadF);
 
-    INSERT(mask);
-
-#undef INSERT
-    return type;
+    H5_INSERT_SUB(mask);
+#undef H5_INSERT_SUB
   }
 
 }

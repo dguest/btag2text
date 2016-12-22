@@ -69,9 +69,9 @@ std::vector<h5::Track> get_tracks(const Jet& jet) {
   return tracks;
 }
 
-h5::HighLevelBTag get_btagging(const Jet& jet) {
-  h5::HighLevelBTag btag;
-#define COPY(var) btag.var = jet.jet_ ## var
+h5::HighLevelSubjetBTag get_btagging(const Jet& jet) {
+  h5::HighLevelSubjetBTag btag;
+#define COPY(var) btag.btag.var = jet.jet_ ## var
   COPY(pt);
   COPY(eta);
   btag.dphi_fatjet = jet.dphi_fatjet;
@@ -102,7 +102,7 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   COPY(jf_efc);
   COPY(jf_deta);
   COPY(jf_dphi);
-  btag.jf_dr = std::hypot(jet.jet_jf_deta, jet.jet_jf_dphi);
+  btag.btag.jf_dr = std::hypot(jet.jet_jf_deta, jet.jet_jf_dphi);
   COPY(jf_sig3d);
   COPY(jf_nvtx);
   COPY(jf_ntrkAtVx);
@@ -116,7 +116,7 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   COPY(truthflav);
   COPY(LabDr_HadF);
 
-  btag.mask = false;
+  btag.btag.mask = false;
 
 #undef COPY
 
