@@ -192,6 +192,28 @@ namespace {
     cl.pt = 0;
     cl.deta = 0;
     cl.dphi = 0;
+
+    cl.d0 = 0;
+    cl.z0 = 0;
+    cl.d0sig = 0;
+    cl.z0sig = 0;
+    cl.chi2 = 0;
+    cl.ndf = 0;
+
+    cl.numberOfInnermostPixelLayerHits = 0;
+    cl.numberOfNextToInnermostPixelLayerHits = 0;
+    cl.numberOfBLayerHits = 0;
+    cl.numberOfBLayerSharedHits = 0;
+    cl.numberOfBLayerSplitHits = 0;
+    cl.numberOfPixelHits = 0;
+    cl.numberOfPixelHoles = 0;
+    cl.numberOfPixelSharedHits = 0;
+    cl.numberOfPixelSplitHits = 0;
+    cl.numberOfSCTHits = 0;
+    cl.numberOfSCTHoles = 0;
+    cl.numberOfSCTSharedHits = 0;
+    cl.expectBLayerHit = 0;
+
     cl.mask = true;
     return cl;
   }

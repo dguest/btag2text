@@ -48,18 +48,18 @@ std::vector<h5::Track> get_tracks(const Jet& jet) {
 #undef COPY
 
 #define COPY(from, too) tk.too = track.from
-    COPY(nInnHits, numberOfInnermostPixelLayerHits);
-    COPY(nNextToInnHits, numberOfNextToInnermostPixelLayerHits);
-    COPY(nBLHits, numberOfBLayerHits);
-    COPY(nsharedBLHits, numberOfBLayerSharedHits);
-    COPY(nsplitBLHits, numberOfBLayerSplitHits);
-    COPY(nPixHits, numberOfPixelHits);
-    COPY(nPixHoles, numberOfPixelHoles);
-    COPY(nsharedPixHits, numberOfPixelSharedHits);
-    COPY(nsplitPixHits, numberOfPixelSplitHits);
-    COPY(nSCTHits, numberOfSCTHits);
-    COPY(nSCTHoles, numberOfSCTHoles);
-    COPY(nsharedSCTHits, numberOfSCTSharedHits);
+    COPY(nInnHits,        numberOfInnermostPixelLayerHits);
+    COPY(nNextToInnHits,  numberOfNextToInnermostPixelLayerHits);
+    COPY(nBLHits,         numberOfBLayerHits);
+    COPY(nsharedBLHits,   numberOfBLayerSharedHits);
+    COPY(nsplitBLHits,    numberOfBLayerSplitHits);
+    COPY(nPixHits,        numberOfPixelHits);
+    COPY(nPixHoles,       numberOfPixelHoles);
+    COPY(nsharedPixHits,  numberOfPixelSharedHits);
+    COPY(nsplitPixHits,   numberOfPixelSplitHits);
+    COPY(nSCTHits,        numberOfSCTHits);
+    COPY(nSCTHoles,       numberOfSCTHoles);
+    COPY(nsharedSCTHits,  numberOfSCTSharedHits);
     COPY(expectBLayerHit, expectBLayerHit);
 #undef COPY
 
