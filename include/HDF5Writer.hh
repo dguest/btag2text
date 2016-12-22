@@ -185,7 +185,6 @@ namespace h5 {
     int truthflav;
     int LabDr_HadF;
 
-    bool mask;
 
   };
   template<> H5::DataType get_type<HighLevelBTag>();
@@ -197,7 +196,7 @@ namespace h5 {
     outfloat_t dphi_fatjet;
     outfloat_t deta_fatjet;
     outfloat_t dr_fatjet;
-
+    bool mask;
   };
   template<> H5::DataType get_type<HighLevelSubjetBTag>();
 

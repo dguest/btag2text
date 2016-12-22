@@ -16,6 +16,7 @@ namespace {
   H5::EnumType get_bool_type();
 
   H5::CompType get_high_level_subjet_btag_type();
+  H5::CompType get_high_level_btag_type();
   void add_high_level_subjet_info(H5::CompType&);
   void add_high_level_btag_info(H5::CompType&, size_t offset);
 }
@@ -32,13 +33,13 @@ namespace h5 {
     jf_sig3d(0), jf_nvtx(0), jf_ntrkAtVx(0), jf_nvtx1t(0),
     jf_n2t(0), jf_VTXsize(0),
     mv2c10(0),
-    truthflav(0), LabDr_HadF(0),
-    mask(true)
+    truthflav(0), LabDr_HadF(0)
   {
   }
   HighLevelSubjetBTag::HighLevelSubjetBTag():
     btag(),
-    dphi_fatjet(0), deta_fatjet(0), dr_fatjet(0)
+    dphi_fatjet(0), deta_fatjet(0), dr_fatjet(0),
+    mask(true)
   {
   }
 
@@ -82,6 +83,10 @@ namespace h5 {
     return get_empty_track();
   }
 
+  template<>
+  H5::DataType get_type<HighLevelBTag>() {
+    return get_high_level_btag_type();
+  }
   template<>
   H5::DataType get_type<HighLevelSubjetBTag>() {
     return get_high_level_subjet_btag_type();
@@ -201,7 +206,11 @@ namespace {
   }
 
 
-
+  H5::CompType get_high_level_btag_type() {
+    H5::CompType type(sizeof(h5::HighLevelBTag));
+    add_high_level_btag_info(type, 0);
+    return type;
+  }
   H5::CompType get_high_level_subjet_btag_type() {
     H5::CompType type(sizeof(h5::HighLevelSubjetBTag));
     add_high_level_btag_info(type, offsetof(h5::HighLevelSubjetBTag, btag));
@@ -213,6 +222,7 @@ namespace {
     INSERT(dphi_fatjet);
     INSERT(deta_fatjet);
     INSERT(dr_fatjet);
+    INSERT(mask);
 #undef INSERT
   }
   void add_high_level_btag_info(H5::CompType& type, size_t offset) {
@@ -265,7 +275,6 @@ namespace {
     H5_INSERT_SUB(truthflav);
     H5_INSERT_SUB(LabDr_HadF);
 
-    H5_INSERT_SUB(mask);
 #undef H5_INSERT_SUB
   }
 

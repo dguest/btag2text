@@ -37,7 +37,7 @@ const std::string DESCRIPTION = (
 
 int main(int argc, char* argv[]) {
   unshittify();
-  typedef h5::HighLevelSubjetBTag btag_t;
+  typedef h5::HighLevelBTag btag_t;
   // required library calls
   H5::Exception::dontPrint();
   std::signal(SIGINT, signal_handler);
@@ -65,9 +65,7 @@ int main(int argc, char* argv[]) {
     track_ds = new h5::Writer<h5::Track>(
       out_file, "tracks", opts.track_size, n_chunk);
   }
-  h5::Writer1d<h5::FatJet> jet_ds(out_file, "jets", n_chunk);
-  h5::Writer1d<btag_t> subjet1(out_file, "subjet1", n_chunk);
-  h5::Writer1d<btag_t> subjet2(out_file, "subjet2", n_chunk);
+  h5::Writer1d<btag_t> jet_ds(out_file, "jets", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
     if (g_kill_signal == SIGINT || g_kill_signal == SIGTERM) break;
@@ -75,19 +73,13 @@ int main(int argc, char* argv[]) {
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      if (! select_fat_jet(jet) ) continue;
+      if (! select_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       std::vector<h5::Cluster> clusters = get_clusters(jet);
       std::vector<h5::Track> tracks = get_tracks(jet);
       if (cluster_ds) cluster_ds->add_jet(clusters);
       if (track_ds) track_ds->add_jet(tracks);
-      h5::FatJet hjet = get_fat_jet(jet, weight);
-      jet_ds.add_jet(hjet);
-      const auto& subs = jet.vrtrkjets;
-      subjet1.add_jet(subs.size() > 0 ?
-                      get_subjet_btagging(subs.at(0)): btag_t());
-      subjet2.add_jet(subs.size() > 1 ?
-                      get_subjet_btagging(subs.at(1)): btag_t());
+      jet_ds.add_jet(get_btagging(jet));
     }
   }
   if (cluster_ds) {
@@ -100,9 +92,4 @@ int main(int argc, char* argv[]) {
   }
   jet_ds.flush();
   jet_ds.close();
-
-  subjet1.flush();
-  subjet1.close();
-  subjet2.flush();
-  subjet2.close();
 }
