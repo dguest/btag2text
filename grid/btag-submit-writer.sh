@@ -90,7 +90,7 @@ OPTS+=" "${OUT_OPTS}
 OPTS+=" --inDS $DS"
 OPTS+=" --workDir $WORK_DIR"
 OPTS+=" --bexec ./grid/btag-build-writer.sh"
-OPTS+=" --outputs out.h5"
+OPTS+=" --outputs jets.h5"
 EXCLUDE=./bin/,build/,ndhist/build/,ndhist/lib/,ndhist-python/\*,
 EXCLUDE+=ndhist/test
 OPTS+=" --excludeFile=$EXCLUDE"
