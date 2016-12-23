@@ -9,6 +9,7 @@ fi
 
 # defaults
 DS=''
+MODE=standard
 
 _usage() {
     echo "usage: ${0##*/} [-h] [options] -d <dataset>"
@@ -30,6 +31,7 @@ Requires that:
 
 Options:
  -h: get help
+ -m (standard|fatjets): run mode (default standard)
  -n <number>: n files to use (default all)
  -d <dataset>: input dataset to use (required)
  -t <tag>: tag for output dataset
@@ -66,14 +68,21 @@ if [[ ! $DS ]]; then
     exit 1
 fi
 
+SCRIPT_DIR=$(dirname $BASH_SOURCE)
+WORK_DIR=${SCRIPT_DIR}/..
+
+EXE=$WORK_DIR/grid/btag-grid-run-$MODE
+if [[ ! -f $EXE ]] ; then
+    echo "ERROR: can't run in mode $MODE" >&2
+    exit 1
+fi
+
 if ! git diff-index --quiet HEAD && [[ ! $FORCE ]]; then
     echo "ERROR: uncommitted changes in local area, please commit them" >&2
     exit 1
 fi
 
-SCRIPT_DIR=$(dirname $BASH_SOURCE)
 OUT_OPTS=$(${SCRIPT_DIR}/btag-grid-name.sh $DS $TAG)
-WORK_DIR=${SCRIPT_DIR}/..
 
 # setup options
 OPTS+=" "${OUT_OPTS}
@@ -86,7 +95,7 @@ EXCLUDE=./bin/,build/,ndhist/build/,ndhist/lib/,ndhist-python/\*,
 EXCLUDE+=ndhist/test
 OPTS+=" --excludeFile=$EXCLUDE"
 
-EXEC_STR="./grid/btag-run-writer.sh %IN"
+EXEC_STR="$EXE %IN"
 
 # pack stuff into a tarball before submitting
 if [[ -n $ZIP ]] ; then
