@@ -31,26 +31,14 @@ if FQAN=$(voms-proxy-info --fqan 2> /dev/null | grep $PR) ; then
 fi
 
 # -- figure out new DS name --
-# first try to match the somthing_XXTeV
-HEAD=$(echo $DS | egrep -o '[^.:]*_[0-9]+TeV\.' | head -n1 )
-# take the part after the DSID
-SDS=$(echo $DS | sed -r 's/.*\.([0-9]{6,}.*)/\1/')
-DSID=$(echo $SDS | cut -d . -f 1)
-LONGPROC=$(echo $SDS | cut -d . -f 2)
-PROC=$(echo $SDS | cut -d . -f 2 | sed -r 's/([^_]*).*/\1/')
-# try to figure out the type of dataset
-FLAV_RE='s/.*\.([A-Z_0-9]{3,})\..*/\1/' # get AOD_* string
-AOD_STRIP_RE='s/.*AOD_(.*)/\1/'         # remove AOD part
-FLAV=$(echo $SDS | sed -r -e $FLAV_RE -e $AOD_STRIP_RE)
-# magic tag finder regex
-TAGS_RE='\.([a-z][0-9]+_?)+[\./]'
-TAGS=$(echo $SDS | egrep -o $TAGS_RE | head -n1 | sed -r 's/\.(.*)[\./]/\1/')
+# take the DSID
+DSID=$(echo $DS | sed -r 's/.*\.([0-9]{6,})\..*/\1/')
 GITT=$(git describe)
 APP=""
 if [[ -n $TAG ]] ; then
     APP=.${TAG}
 fi
-OUT=${SCOPE}.${HEAD}${DSID}.${LONGPROC}.${FLAV}.${TAGS}.${GITT}${APP}
+OUT=${SCOPE}.${DSID}.${GITT}${APP}
 
 # possibly cut down the size further
 function too_long() {
@@ -59,12 +47,6 @@ function too_long() {
     fi
     return 1
 }
-if too_long ; then
-    OUT=${SCOPE}.${DSID}.${PROC}.${FLAV}.${TAGS}.${GITT}${APP}
-fi
-if too_long ; then
-    OUT=${SCOPE}.${DSID}.${FLAV}.${TAGS}.${GITT}${APP}
-fi
 if too_long ; then
     echo "ERROR: ds name $OUT is too long" >&2
     exit 1
