@@ -127,7 +127,6 @@ struct Jet
 
   // track level
   int jet_ip3d_ntrk;
-  int jet_ga_ntrk;
   std::vector<float> jet_trk_pt;
   std::vector<float> jet_trk_eta;
   std::vector<float> jet_trk_theta;
@@ -483,13 +482,13 @@ private:
 
   // std::vector<std::vector<int> >* jet_trk_jf_Vertex;
 
-  std::vector<std::vector<float> >* jet_ga_trk_pt;
+  // std::vector<std::vector<float> >* jet_ga_trk_pt;
 
   // turn some branches off if they aren't valid
   bool m_clusters_valid;
   bool m_ipmp_valid;
   bool m_tracks_valid;
-  bool m_ga_valid;
+  bool m_lifetime_signed_ip;
 };
 
 // ______________________________________________________________________

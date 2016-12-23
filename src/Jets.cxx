@@ -24,6 +24,16 @@ namespace {
     return in;
   }
 
+  template <typename T, typename U>
+  void vec_copysign(T& target, const U& reference) {
+    for (size_t iii = 0; iii < reference.size(); iii++) {
+      const auto& ref = reference.at(iii);
+      auto& targ = target.at(iii);
+      targ = std::copysign(targ, ref);
+    }
+  }
+
+
   void fill_sv1_vertex(Jet& j) {
     size_t nvtx = j.jet_sv1_vtx_x.size();
     if (nvtx == 0) {
@@ -300,7 +310,7 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   m_clusters_valid(true),
   m_ipmp_valid(true),
   m_tracks_valid(true),
-  m_ga_valid(true)
+  m_lifetime_signed_ip(false)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
@@ -419,9 +429,15 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_TRACK_BRANCH(ip_d0);
   // SET_BRANCH(jet_trk_ip3d_d02D);
   SET_TRACK_BRANCH(ip_z0);
-  SET_TRACK_BRANCH(ip_d0sig);
-  SET_TRACK_BRANCH(ip_z0sig);
-  // SET_TRACK_BRANCH(ip3d_grade);
+  try {
+    SET_TRACK_BRANCH(ip_d0sig);
+    SET_TRACK_BRANCH(ip_z0sig);
+    // SET_TRACK_BRANCH(ip3d_grade);
+  } catch (MissingBranchError& err) {
+    m_chain->SetBranch(track_prefix + "ip3d_d0sig", &jet_trk_ip_d0sig);
+    m_chain->SetBranch(track_prefix + "ip3d_z0sig", &jet_trk_ip_z0sig);
+    m_lifetime_signed_ip = true;
+  }
 
   SET_TRACK_BRANCH(nInnHits);
   SET_TRACK_BRANCH(nNextToInnHits);
@@ -442,11 +458,6 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   // } catch (MissingBranchError& err) {
   //   m_tracks_valid = false;
   // }
-  try {
-    m_chain->SetBranch("jet_trk_pt", &jet_ga_trk_pt);
-  } catch (MissingBranchError& err) {
-    m_ga_valid = false;
-  }
 
 #undef SET_BRANCH
 }
@@ -578,6 +589,10 @@ Jet Jets::getJet(int pos) const {
     COPY_MULTV(jet_trk_ip_z0, mm); // Units?
     COPY(jet_trk_ip_d0sig);
     COPY(jet_trk_ip_z0sig);
+    if (m_lifetime_signed_ip) {
+      vec_copysign(o.jet_trk_ip_d0sig, o.jet_trk_ip_d0);
+      vec_copysign(o.jet_trk_ip_z0sig, o.jet_trk_ip_z0);
+    }
     // COPY(jet_trk_ip3d_grade);
     // COPY(jet_trk_jf_Vertex);
 
@@ -595,8 +610,6 @@ Jet Jets::getJet(int pos) const {
     COPY(jet_trk_nsharedSCTHits);
     COPY(jet_trk_expectBLayerHit);
   }
-  if (m_ga_valid) o.jet_ga_ntrk = jet_ga_trk_pt->at(pos).size();
-  else o.jet_ga_ntrk = -1;
 
 #undef COPY
 #undef COPY_MULT
