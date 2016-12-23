@@ -292,7 +292,7 @@ bool SubstructureMomentArray::valid() const {
 }
 
 
-Jets::Jets(SmartChain& chain):
+Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   m_chain(&chain),
   m_trkjet(chain, "trkjet"),
   m_vrtrkjet(chain, "vrtrkjet"),
@@ -400,7 +400,7 @@ Jets::Jets(SmartChain& chain):
   // try {
   // jet_ntrk is defined from the size of a vector later
 #define SET_TRACK_BRANCH(variable) \
-    m_chain->SetBranch("jet_ga_trk_" #variable, &jet_trk_ ## variable)
+    m_chain->SetBranch(track_prefix + #variable, &jet_trk_ ## variable)
   // SET_BRANCH(jet_ip3d_ntrk);
 
   SET_TRACK_BRANCH(pt);

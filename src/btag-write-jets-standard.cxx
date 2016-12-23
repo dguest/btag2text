@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   for (const auto& in: opts.input_files) {
     chain.add(in);
   }
-  Jets jets(chain);
+  Jets jets(chain, "jet_trk_");
   int n_entries = chain.GetEntries();
   if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
 

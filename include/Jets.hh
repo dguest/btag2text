@@ -342,7 +342,7 @@ private:
 class Jets
 {
 public:
-  Jets(SmartChain& chain);
+  Jets(SmartChain& chain, const std::string& track_prefix = "jet_ga_trk_");
   Jet getJet(int) const;
   size_t size() const;
   double eventWeight() const;
