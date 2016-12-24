@@ -91,6 +91,7 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   COPY(ip3d_pb);
   COPY(ip3d_pc);
   COPY(ip3d_pu);
+  COPY(ip3d_ntrk);
 
   COPY(ipmp_pb);
   COPY(ipmp_pc);
@@ -127,6 +128,38 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   COPY(LabDr_HadF);
 
 #undef COPY
+  set_defaults_to_nan(btag);
   return btag;
 }
 
+
+void set_defaults_to_nan(h5::HighLevelBTag& btag) {
+  if (btag.sv1_Nvtx == 0) {
+#define NAN_VAL(name) btag.sv1_ ## name = NAN
+    NAN_VAL(m);
+    NAN_VAL(efc);
+    NAN_VAL(normdist);
+    NAN_VAL(dR);
+    NAN_VAL(Lxy);
+    NAN_VAL(Lxyz);
+#undef NAN_VAL
+  }
+  if (btag.jf_nvtx + btag.jf_nvtx1t <= 0) {
+#define NAN_VAL(name) btag.jf_ ## name = NAN
+    NAN_VAL(m);
+    NAN_VAL(efc);
+    NAN_VAL(deta);
+    NAN_VAL(dr);
+    NAN_VAL(dphi);
+    NAN_VAL(sig3d);
+#undef NAN_VAL
+  }
+  if (btag.ip3d_ntrk == 0) {
+#define NAN_VAL(name) btag.ip3d_ ## name = NAN
+    NAN_VAL(pu);
+    NAN_VAL(pc);
+    NAN_VAL(pb);
+#undef NAN_VAL
+  }
+
+}

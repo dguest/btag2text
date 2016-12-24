@@ -25,7 +25,7 @@ namespace h5 {
 
   HighLevelBTag::HighLevelBTag():
     pt(0), eta(0),
-    ip3d_pu(0), ip3d_pc(0), ip3d_pb(0),
+    ip3d_pu(0), ip3d_pc(0), ip3d_pb(0), ip3d_ntrk(0),
     ipmp_pu(0), ipmp_pc(0), ipmp_pb(0), ipmp_ptau(0),
     sv1_Nvtx(0), sv1_ntrkv(0), sv1_n2t(0), sv1_m(0), sv1_efc(0),
     sv1_normdist(0), sv1_dR(0), sv1_Lxy(0), sv1_Lxyz(0),
@@ -260,6 +260,7 @@ namespace {
     H5_INSERT_SUB(ip3d_pu);
     H5_INSERT_SUB(ip3d_pc);
     H5_INSERT_SUB(ip3d_pb);
+    H5_INSERT_SUB(ip3d_ntrk);
 
     // H5_INSERT_SUB(ipmp_pu);
     // H5_INSERT_SUB(ipmp_pc);

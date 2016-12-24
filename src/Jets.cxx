@@ -359,9 +359,11 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_BRANCH(jet_ip2d_pb);
   SET_BRANCH(jet_ip2d_pc);
   SET_BRANCH(jet_ip2d_pu);
+
   SET_BRANCH(jet_ip3d_pb);
   SET_BRANCH(jet_ip3d_pc);
   SET_BRANCH(jet_ip3d_pu);
+  SET_BRANCH(jet_ip3d_ntrk);
 
   try {
     SET_BRANCH(jet_ipmp_pb);
@@ -520,6 +522,7 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_ip3d_pb);
   COPY(jet_ip3d_pc);
   COPY(jet_ip3d_pu);
+  COPY(jet_ip3d_ntrk);
   // ipmp
   if (m_ipmp_valid) {
   COPY(jet_ipmp_pb);
@@ -568,7 +571,7 @@ Jet Jets::getJet(int pos) const {
   if (m_tracks_valid) {
     // track counts
     o.jet_ntrk = m_tracks_valid ? jet_trk_pt->at(pos).size() : -1;
-    // COPY(jet_ip3d_ntrk);
+    COPY(jet_ip3d_ntrk);
     // track level
     // multiply is used here to give the vector the right units
     o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);

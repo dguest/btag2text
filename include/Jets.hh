@@ -392,7 +392,7 @@ private:
   std::vector<std::vector<float> >* jet_cluster_first_eng_dens      ;
 
   // track counts
-  // std::vector<int>* jet_ip3d_ntrk;
+  std::vector<int>* jet_ip3d_ntrk;
 
   // high level
   // ip2d, ip3d

@@ -147,6 +147,7 @@ namespace h5 {
     outfloat_t ip3d_pu;
     outfloat_t ip3d_pc;
     outfloat_t ip3d_pb;
+    int ip3d_ntrk;
 
     // ipmp
     outfloat_t ipmp_pu;
