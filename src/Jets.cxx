@@ -13,8 +13,20 @@
 
 // ________________________________________________________________________
 // forward declare some utility functions
+#define CHECK_AT(var, number) checked(var, number, #var)
 
 namespace {
+  template<typename T>
+  T checked(const std::vector<T>& vec, int num, const std::string& err) {
+    try {
+      return vec.at(num);
+    } catch (std::out_of_range& e) {
+      std::string error = err + " index: " + std::to_string(num) +
+        " vector length: " + std::to_string(vec.size());
+      throw std::out_of_range(error);
+    }
+  }
+
   std::vector<float> sort_and_pad(std::vector<float> in, int number) {
     typedef decltype(in)::value_type vtype;
     std::sort(in.begin(), in.end(), std::greater<vtype>());
@@ -281,7 +293,7 @@ void SubstructureMomentArray::init_branches(SmartChain& chain) {
 
 SubstructureMoments SubstructureMomentArray::getMoments(int number) const {
   if (!m_valid) throw DisabledBranchError("no moments to access");
-#define COPY(var) o.var = m_ ## var->at(number)
+#define COPY(var) o.var = CHECK_AT(*m_ ## var, number)
   SubstructureMoments o;
   COPY(tau21);
   COPY(c1);
@@ -467,9 +479,9 @@ size_t Jets::size() const {
   return jet_pt->size();
 }
 Jet Jets::getJet(int pos) const {
-#define COPY(var) o.var = var->at(pos)
-#define COPY_MULT(var, mult) o.var = var->at(pos)*mult
-#define COPY_MULTV(var, mult) o.var = multiply<float>(var->at(pos),mult)
+#define COPY(var) o.var = CHECK_AT(*var,pos)
+#define COPY_MULT(var, mult) o.var = CHECK_AT(*var,pos)*mult
+#define COPY_MULTV(var, mult) o.var = multiply<float>(CHECK_AT(*var,pos),mult)
   Jet o;
   // event
   o.avgmu = avgmu;
@@ -664,18 +676,6 @@ double Jets::eventWeight() const {
 }
 
 
-template<typename T>
-T checked(const std::vector<T>& vec, int num, const std::string& err) {
-  try {
-    return vec.at(num);
-  } catch (std::out_of_range& e) {
-    std::string error = err + " index: " + std::to_string(num) +
-      " vector length: " + std::to_string(vec.size());
-    throw std::out_of_range(error);
-  }
-}
-
-#define CHECK_AT(var, number) checked(var, number, #var)
 
 // _____________________________________________________________________
 // arrange track vectors into track units
