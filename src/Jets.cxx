@@ -522,7 +522,15 @@ Jet Jets::getJet(int pos) const {
   COPY(jet_ip3d_pb);
   COPY(jet_ip3d_pc);
   COPY(jet_ip3d_pu);
-  COPY(jet_ip3d_ntrk);
+  // FIXME: the opt framework dumper doesn't save this variable unless
+  // we save the full track info. We should really just unify the GA
+  // tracks with the "normal" tracks in the ntuple writer so this
+  // isn't a problem.
+  if (jet_ip3d_ntrk->size() <= pos) {
+    o.jet_ip3d_ntrk = NAN;
+  } else {
+    COPY(jet_ip3d_ntrk);
+  }
   // ipmp
   if (m_ipmp_valid) {
   COPY(jet_ipmp_pb);
@@ -571,7 +579,6 @@ Jet Jets::getJet(int pos) const {
   if (m_tracks_valid) {
     // track counts
     o.jet_ntrk = m_tracks_valid ? jet_trk_pt->at(pos).size() : -1;
-    COPY(jet_ip3d_ntrk);
     // track level
     // multiply is used here to give the vector the right units
     o.jet_trk_pt = multiply<float>(jet_trk_pt->at(pos),MeV);
