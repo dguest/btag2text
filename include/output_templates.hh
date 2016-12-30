@@ -343,7 +343,8 @@ std::string str_from_subjets(const T& jets) {
     OPEN {
       OPEN {
         out << str_from_jet_kinematics(j); CS;
-        out << j.dphi_fatjet;
+        out << j.dphi_fatjet; CS;
+        out << j.deta_fatjet;
       } CLOSE; CS;
       OPEN {
         out << str_from_hl_jf_vertex(j);
@@ -382,7 +383,8 @@ std::string str_from_fat_jet(const T& j, const U& weight = "weight") {
       out << str_from_all_clusters(j);
     } CLOSE_LIST; CS;
     OPEN {
-      out << str_from_moments(j.moments);
+      out << str_from_moments(j.moments); CS;
+      out << j.jet_m;
     } CLOSE; CS;
     OPEN_LIST {
       out << str_from_subjets(j.vrtrkjets);
