@@ -87,8 +87,7 @@ namespace {
     for (int nnn = 0; nnn < n_tracks; nnn++) {
       // int vx_idx = jet.jet_trk_jf_Vertex.at(nnn);
 
-// #define PB(EXT, DEF) jet.jet_jf_trk_vtx_ ## EXT.push_back(  \
-//         vx_idx == -1 ? DEF : jet.jet_jf_vtx_ ## EXT.at(vx_idx) )
+// #define PB(EXT, DEF) jet.jet_jf_trk_vtx_ ## EXT.push_back(vx_idx == -1 ? DEF : jet.jet_jf_vtx_ ## EXT.at(vx_idx) )
 //       PB(chi2, 0);
 //       PB(ndf, 0);
 //       PB(ntrk, 0);
@@ -478,7 +477,7 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
 size_t Jets::size() const {
   return jet_pt->size();
 }
-Jet Jets::getJet(int pos) const {
+Jet Jets::getJet(size_t pos) const {
 #define COPY(var) o.var = CHECK_AT(*var,pos)
 #define COPY_MULT(var, mult) o.var = CHECK_AT(*var,pos)*mult
 #define COPY_MULTV(var, mult) o.var = multiply<float>(CHECK_AT(*var,pos),mult)
@@ -539,7 +538,7 @@ Jet Jets::getJet(int pos) const {
   // tracks with the "normal" tracks in the ntuple writer so this
   // isn't a problem.
   if (jet_ip3d_ntrk->size() <= pos) {
-    o.jet_ip3d_ntrk = NAN;
+    o.jet_ip3d_ntrk = -1;
   } else {
     COPY(jet_ip3d_ntrk);
   }
