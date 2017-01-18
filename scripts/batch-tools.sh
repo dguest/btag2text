@@ -24,12 +24,16 @@ function build-root-file-list() {
     local ROOT_DIR=$1
     local ROOT_FILE_LIST=$2
     if [[ ! -d $ROOT_DIR ]]; then
-        echo "$ROOT_DIR not found!" >&2
+        echo "ERROR: $ROOT_DIR not found!" >&2
         return 1
     fi
-    if [[ ! -f $ROOT_FILE_LIST ]]; then
-        find $ROOT_DIR -type f -name '*.root*' > $ROOT_FILE_LIST
+    find $ROOT_DIR -type f -name '*.root*' > $ROOT_FILE_LIST
+    local NFILES=$(wc -l $ROOT_FILE_LIST | awk '{print $1}')
+    if [[ $NFILES == 0 ]] ; then
+        echo "ERROR: no files found!" >&2
+        return 1
     fi
+
     return 0
 }
 
