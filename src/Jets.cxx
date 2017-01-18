@@ -806,6 +806,18 @@ std::map<std::string, double> get_map(const Jet& jet) {
 }
 
 
+std::ostream& operator<<(std::ostream& out, const Jet& jet) {
+#define PRINT(val) out << "jet " #val " " << jet.jet_ ## val << "\n"
+  PRINT(pt);
+  PRINT(eta);
+  PRINT(phi);
+  PRINT(m);
+  PRINT(JVT);
+#undef PRINT
+  return out;
+}
+
+
 std::ostream& operator<<(std::ostream& out, const SubstructureMoments& mom) {
   assert(false);
   return out;

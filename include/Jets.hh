@@ -506,6 +506,7 @@ public:
 
 std::vector<TrkUnit> build_tracks(const Jet& jet);
 std::ostream& operator<<(std::ostream&, Jets&);
+std::ostream& operator<<(std::ostream&, const Jet&);
 std::ostream& operator<<(std::ostream&, const SubstructureMoments&);
 
 std::vector<Cluster> build_clusters(const Jet& jet);

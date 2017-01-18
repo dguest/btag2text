@@ -19,6 +19,7 @@ namespace {
 }
 
 bool select_jet(const Jet& jet) {
+  if (std::isnan(jet.jet_pt)) return false;
   if (!jvt_check(jet)) return false;
   if ( jet.jet_pt < 20*GeV) return false;
   if ( std::abs(jet.jet_eta) > 2.5) return false;
@@ -26,6 +27,7 @@ bool select_jet(const Jet& jet) {
 }
 
 bool select_fat_jet(const Jet& jet) {
+  if (std::isnan(jet.jet_pt)) return false;
   if (jet.jet_pt < 200*GeV) return false;
   if (std::abs(jet.jet_eta) > 2.5) return false;
   return true;

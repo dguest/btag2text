@@ -13,11 +13,13 @@
 #include "h5_tools.hh"
 
 #include "ndhist/Histogram.hh"
+#include "ndhist/Exceptions.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
 
 #include <iostream>
+#include <sstream>
 
 const std::string DESCRIPTION = "build distributions for fat jets";
 
@@ -91,8 +93,14 @@ void FatJetHists::fill(const Jet& jet, double weight) {
   const auto& subjets = jet.vrtrkjets;
   const size_t max_idx = std::min(subjets.size(), m_subjets.size());
   for (size_t jet_idx = 0; jet_idx < max_idx; jet_idx++) {
-    m_subjets.at(jet_idx).fill(subjets.at(jet_idx), weight);
-    m_subjets_btag.at(jet_idx).fill(subjets.at(jet_idx), weight);
+    try {
+      m_subjets.at(jet_idx).fill(subjets.at(jet_idx), weight);
+      m_subjets_btag.at(jet_idx).fill(subjets.at(jet_idx), weight);
+    } catch (HistogramNanError& err) {
+      std::stringstream erstr;
+      erstr << err.what() << ", fatjet:\n" << jet;
+      throw HistogramNanError(erstr.str());
+    }
   }
   m_fatjet.fill(jet, weight);
   if (jet.jet_cluster_pt.size() > 1) {
