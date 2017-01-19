@@ -32,7 +32,7 @@ EOF
 
 RUN_SCRIPT=btag-batch-run-fatwrite.sh
 PREFIX=''
-WALLTIME=02:00:00
+WALLTIME=04:00:00
 
 while getopts ":hr:tf:" opt $@; do
     case $opt in
