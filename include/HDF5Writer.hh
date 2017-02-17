@@ -175,6 +175,7 @@ namespace h5 {
     outfloat_t ipmp_ptau;
 
     // SM tagger
+    outfloat_t sm_mu_pt;        // not used
     outfloat_t sm_dR;
     outfloat_t sm_mombalsignif;
     outfloat_t sm_mu_d0;
@@ -192,7 +193,7 @@ namespace h5 {
     int sv1_ntrkv;
     outfloat_t sv1_normdist;
 
-    // int sv1_Nvtx;
+    int sv1_Nvtx;
 
     // MV2
     outfloat_t mv2c10;

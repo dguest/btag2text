@@ -73,10 +73,10 @@ std::string str_from_hl_vars(const T& j) {
   CleanStream out;
   // MV2
   OPEN {
-    OUT_COMMA(jet_mv2c00);
-    OUT_COMMA(jet_mv2c10);
-    OUT_COMMA(jet_mv2c20);
-    OUT(jet_mv2c100);
+    // OUT_COMMA(jet_mv2c00);
+    OUT(jet_mv2c10);
+    // OUT_COMMA(jet_mv2c20);
+    // OUT(jet_mv2c100);
   } CLOSE;
   CS;
 
@@ -125,7 +125,6 @@ template<typename T>
 std::string str_from_sv_vertex(const T& j) {
   CleanStream out;
   // sv1
-  OUT_COMMA(jet_sv1_ntrkj);
   OUT_COMMA(jet_sv1_ntrkv);
   OUT_COMMA(jet_sv1_n2t);
   OUT_COMMA(jet_sv1_m);
@@ -356,8 +355,8 @@ std::string str_from_subjets(const T& jets) {
         out << str_from_ip3d(j);
       } CLOSE; CS;
       OPEN {
-        OUT_COMMA(jet_mv2c10);
-        OUT(jet_mv2c20);
+        OUT(jet_mv2c10);
+        // OUT(jet_mv2c20);
       } CLOSE;
     } CLOSE;
     // by default this next line does nothing, it can be overloaded

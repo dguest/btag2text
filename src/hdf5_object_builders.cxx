@@ -84,50 +84,40 @@ h5::HighLevelSubjetBTag get_subjet_btagging(const Jet& jet) {
 
 h5::HighLevelBTag get_btagging(const Jet& jet) {
   h5::HighLevelBTag btag;
-#define COPY(var) btag.var = jet.jet_ ## var
-  COPY(pt);
-  COPY(eta);
+#define ACTION(var) btag.var = jet.jet_ ## var
+  ACTION(pt);
+  ACTION(eta);
 
-  COPY(ip3d_pb);
-  COPY(ip3d_pc);
-  COPY(ip3d_pu);
-  COPY(ip3d_ntrk);
+  ACTION(ip3d_ntrk);
+#include "btag_direct_copy_vars.hh"
 
-  COPY(ipmp_pb);
-  COPY(ipmp_pc);
-  COPY(ipmp_pu);
-  COPY(ipmp_ptau);
-
-  COPY(sv1_Nvtx);
-  COPY(sv1_ntrkv);
-  COPY(sv1_n2t);
-  COPY(sv1_m);
-  COPY(sv1_efc);
-  COPY(sv1_normdist);
-  COPY(sv1_dR);
-  COPY(sv1_Lxy);
-  COPY(sv1_Lxyz);
+  ACTION(sv1_Nvtx);
+  ACTION(sv1_ntrkv);
+  ACTION(sv1_n2t);
+  ACTION(sv1_m);
+  ACTION(sv1_efc);
+  ACTION(sv1_normdist);
+  ACTION(sv1_dR);
+  ACTION(sv1_Lxy);
+  ACTION(sv1_Lxyz);
 
   // Jetfitter
-  COPY(jf_m);
-  COPY(jf_efc);
-  COPY(jf_deta);
-  COPY(jf_dphi);
+  ACTION(jf_m);
+  ACTION(jf_efc);
+  ACTION(jf_deta);
+  ACTION(jf_dphi);
   btag.jf_dr = std::hypot(jet.jet_jf_deta, jet.jet_jf_dphi);
-  COPY(jf_sig3d);
-  COPY(jf_nvtx);
-  COPY(jf_ntrkAtVx);
-  COPY(jf_nvtx1t);
-  COPY(jf_n2t);
-  COPY(jf_VTXsize);
-
-  COPY(mv2c10);
+  ACTION(jf_sig3d);
+  ACTION(jf_nvtx);
+  ACTION(jf_ntrkAtVx);
+  ACTION(jf_nvtx1t);
+  ACTION(jf_n2t);
 
   // labeling
-  COPY(truthflav);
-  COPY(LabDr_HadF);
+  ACTION(truthflav);
+  ACTION(LabDr_HadF);
 
-#undef COPY
+#undef ACTION
   set_defaults_to_nan(btag);
   return btag;
 }
@@ -159,6 +149,16 @@ void set_defaults_to_nan(h5::HighLevelBTag& btag) {
     NAN_VAL(pu);
     NAN_VAL(pc);
     NAN_VAL(pb);
+#undef NAN_VAL
+  }
+  if (btag.sm_mu_pt <= 0) {
+#define NAN_VAL(name) btag.name = NAN
+    NAN_VAL(sm_dR);
+    NAN_VAL(sm_mombalsignif);
+    NAN_VAL(sm_mu_d0);
+    NAN_VAL(sm_pTrel);
+    NAN_VAL(sm_qOverPratio);
+    NAN_VAL(sm_scatneighsignif);
 #undef NAN_VAL
   }
 

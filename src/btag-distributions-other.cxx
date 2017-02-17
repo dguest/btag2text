@@ -30,10 +30,10 @@ namespace {
     void save(H5::CommonFG& out) const;
     void save(H5::CommonFG& out, std::string subdir) const;
   private:
-    Histogram mv2c00;
+    // Histogram mv2c00;
     Histogram mv2c10;
-    Histogram mv2c20;
-    Histogram mv2c100;
+    // Histogram mv2c20;
+    // Histogram mv2c100;
 
     Histogram ip3d_pu;
     Histogram ip3d_pc;
@@ -126,10 +126,10 @@ int main(int argc, char* argv[]) {
 namespace {
   JetHists::JetHists():
     // MV2
-    RANGE(mv2c00, MV2_LOW, MV2_HIGH),
+    // RANGE(mv2c00, MV2_LOW, MV2_HIGH),
     RANGE(mv2c10, MV2_LOW, MV2_HIGH),
-    RANGE(mv2c20, MV2_LOW, MV2_HIGH),
-    RANGE(mv2c100,MV2_LOW, MV2_HIGH),
+    // RANGE(mv2c20, MV2_LOW, MV2_HIGH),
+    // RANGE(mv2c100,MV2_LOW, MV2_HIGH),
 
     // IP3D
     ZERO_ONE(ip3d_pu),
@@ -168,10 +168,10 @@ namespace {
 
   void JetHists::fill(const Jet& jet, double weight) {
 #define BYNAME(name) name.fill(jet.jet_ ## name, weight)
-    BYNAME(mv2c00);
+    // BYNAME(mv2c00);
     BYNAME(mv2c10);
-    BYNAME(mv2c20);
-    BYNAME(mv2c100);
+    // BYNAME(mv2c20);
+    // BYNAME(mv2c100);
 
     BYNAME(pt);
     BYNAME(eta);
@@ -209,10 +209,10 @@ namespace {
 
   void JetHists::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
-    BYNAME(mv2c00);
+    // BYNAME(mv2c00);
     BYNAME(mv2c10);
-    BYNAME(mv2c20);
-    BYNAME(mv2c100);
+    // BYNAME(mv2c20);
+    // BYNAME(mv2c100);
 
     BYNAME(pt);
     BYNAME(eta);

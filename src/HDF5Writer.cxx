@@ -25,16 +25,30 @@ namespace h5 {
 
   HighLevelBTag::HighLevelBTag():
     pt(0), eta(0),
-    ip3d_pu(0), ip3d_pc(0), ip3d_pb(0), ip3d_ntrk(0),
-    ipmp_pu(0), ipmp_pc(0), ipmp_pb(0), ipmp_ptau(0),
-    sv1_Nvtx(0), sv1_ntrkv(0), sv1_n2t(0), sv1_m(0), sv1_efc(0),
-    sv1_normdist(0), sv1_dR(0), sv1_Lxy(0), sv1_Lxyz(0),
-    jf_m(0), jf_efc(0), jf_deta(0), jf_dphi(0), jf_dr(0),
-    jf_sig3d(0), jf_nvtx(0), jf_ntrkAtVx(0), jf_nvtx1t(0),
-    jf_n2t(0), jf_VTXsize(0),
-    mv2c10(0),
-    truthflav(0), LabDr_HadF(0)
+    jf_dr(0),
+    jf_efc(0),
+    jf_m(0),
+    jf_n2t(0),
+    jf_ntrkAtVx(0),
+    jf_nvtx(0),
+    jf_nvtx1t(0),
+    jf_sig3d(0),
+    jf_deta(0),
+    jf_dphi(0),
+    sv1_dR(0),
+    sv1_efc(0),
+    sv1_Lxyz(0),
+    sv1_Lxy(0),
+    sv1_m(0),
+    sv1_n2t(0),
+    sv1_ntrkv(0),
+    sv1_normdist(0),
+    truthflav(0),
+    LabDr_HadF(0)
   {
+#define ACTION(var) var = 0
+#include "btag_direct_copy_vars.hh"
+#undef ACTION
   }
   HighLevelSubjetBTag::HighLevelSubjetBTag():
     btag(),
@@ -248,57 +262,47 @@ namespace {
 #undef INSERT
   }
   void add_high_level_btag_info(H5::CompType& type, size_t offset) {
-#define H5_INSERT_SUB(MEMBER)                                         \
+#define ACTION(MEMBER)                                         \
     h5::insert(type, #MEMBER,                                         \
                offset + offsetof(h5::HighLevelBTag, MEMBER),          \
                &h5::HighLevelBTag::MEMBER)
 
-    H5_INSERT_SUB(pt);
-    H5_INSERT_SUB(eta);
+    ACTION(pt);
+    ACTION(eta);
 
-    // IP3D
-    H5_INSERT_SUB(ip3d_pu);
-    H5_INSERT_SUB(ip3d_pc);
-    H5_INSERT_SUB(ip3d_pb);
-    H5_INSERT_SUB(ip3d_ntrk);
-
-    // H5_INSERT_SUB(ipmp_pu);
-    // H5_INSERT_SUB(ipmp_pc);
-    // H5_INSERT_SUB(ipmp_pb);
-    // H5_INSERT_SUB(ipmp_ptau);
+    ACTION(ip3d_ntrk);
+#include "btag_direct_copy_vars.hh"
 
     // sv1
-    H5_INSERT_SUB(sv1_Nvtx);
-    H5_INSERT_SUB(sv1_ntrkv);
-    H5_INSERT_SUB(sv1_n2t);
-    H5_INSERT_SUB(sv1_m);
-    H5_INSERT_SUB(sv1_efc);
-    H5_INSERT_SUB(sv1_normdist);
-    H5_INSERT_SUB(sv1_dR);
-    H5_INSERT_SUB(sv1_Lxy);
-    H5_INSERT_SUB(sv1_Lxyz);
+    // ACTION(sv1_Nvtx);
+    ACTION(sv1_ntrkv);
+    ACTION(sv1_n2t);
+    ACTION(sv1_m);
+    ACTION(sv1_efc);
+    ACTION(sv1_normdist);
+    ACTION(sv1_dR);
+    ACTION(sv1_Lxy);
+    ACTION(sv1_Lxyz);
 
     // Jetfitter
-    H5_INSERT_SUB(jf_m);
-    H5_INSERT_SUB(jf_efc);
-    H5_INSERT_SUB(jf_deta);
-    H5_INSERT_SUB(jf_dphi);
-    H5_INSERT_SUB(jf_dr);
-    H5_INSERT_SUB(jf_sig3d);
-    H5_INSERT_SUB(jf_nvtx);
-    H5_INSERT_SUB(jf_ntrkAtVx);
-    H5_INSERT_SUB(jf_nvtx1t);
-    H5_INSERT_SUB(jf_n2t);
-    H5_INSERT_SUB(jf_VTXsize);
+    ACTION(jf_m);
+    ACTION(jf_efc);
+    ACTION(jf_deta);
+    ACTION(jf_dphi);
+    ACTION(jf_dr);
+    ACTION(jf_sig3d);
+    ACTION(jf_nvtx);
+    ACTION(jf_ntrkAtVx);
+    ACTION(jf_nvtx1t);
+    ACTION(jf_n2t);
+    // ACTION(jf_VTXsize);
 
-    // MV2
-    H5_INSERT_SUB(mv2c10);
 
     // labeling
-    H5_INSERT_SUB(truthflav);
-    H5_INSERT_SUB(LabDr_HadF);
+    ACTION(truthflav);
+    ACTION(LabDr_HadF);
 
-#undef H5_INSERT_SUB
+#undef ACTION
   }
 
 }

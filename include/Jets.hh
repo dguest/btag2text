@@ -75,21 +75,12 @@ struct Jet
   int jet_ncluster;
 
   // high level
-  // ip2d, ip3d
-  float jet_ip2d_pb;
-  float jet_ip2d_pc;
-  float jet_ip2d_pu;
-  float jet_ip3d_pb;
-  float jet_ip3d_pc;
-  float jet_ip3d_pu;
-
-  double jet_ipmp_pb;
-  double jet_ipmp_pc;
-  double jet_ipmp_pu;
-  double jet_ipmp_ptau;
+#define ACTION(var) double jet_ ## var
+  ACTION(sm_mu_pt);
+#include "btag_direct_copy_vars.hh"
+#undef ACTION
 
   // sv1
-  int jet_sv1_ntrkj;
   int jet_sv1_ntrkv;
   int jet_sv1_n2t;
   float jet_sv1_m;
@@ -118,12 +109,6 @@ struct Jet
   std::vector<int> jet_jf_vtx_ntrk;
   std::vector<float> jet_jf_vtx_L3D;
   std::vector<float> jet_jf_vtx_sig3D;
-
-  // MV2
-  double jet_mv2c00;
-  double jet_mv2c10;
-  double jet_mv2c20;
-  double jet_mv2c100;
 
   // track level
   int jet_ip3d_ntrk;
@@ -286,7 +271,6 @@ private:
   std::vector<std::vector<float> >* ip3d_pc;
   std::vector<std::vector<float> >* ip3d_pu;
   // sv1
-  // std::vector<std::vector<int> >* sv1_ntrkj;
   std::vector<std::vector<int> >* sv1_ntrkv;
   std::vector<std::vector<int> >* sv1_n2t;
   std::vector<std::vector<float> >* sv1_m;
@@ -310,7 +294,6 @@ private:
   // MV2
   // std::vector<std::vector<double> >* mv2c00;
   std::vector<std::vector<float> >* mv2c10;
-  std::vector<std::vector<float> >* mv2c20;
   // std::vector<std::vector<double> >* mv2c100;
 
   // disable if any of the branches are missing
@@ -408,7 +391,6 @@ private:
   std::vector<double>* jet_ipmp_pu;
   std::vector<double>* jet_ipmp_ptau;
   // sv1
-  std::vector<int>* jet_sv1_ntrkj;
   std::vector<int>* jet_sv1_ntrkv;
   std::vector<int>* jet_sv1_n2t;
   std::vector<float>* jet_sv1_m;
@@ -420,6 +402,14 @@ private:
   std::vector<std::vector<float> >* jet_sv1_vtx_x;
   std::vector<std::vector<float> >* jet_sv1_vtx_y;
   std::vector<std::vector<float> >* jet_sv1_vtx_z;
+  // SMT
+  std::vector<float>* jet_sm_mu_pt;
+  std::vector<float>* jet_sm_dR;
+  std::vector<float>* jet_sm_mombalsignif;
+  std::vector<float>* jet_sm_mu_d0;
+  std::vector<float>* jet_sm_pTrel;
+  std::vector<float>* jet_sm_qOverPratio;
+  std::vector<float>* jet_sm_scatneighsignif;
   // jetfitter
   std::vector<float>* jet_jf_m;
   std::vector<float>* jet_jf_efc;
@@ -439,10 +429,7 @@ private:
   std::vector<std::vector<float> >* jet_jf_vtx_sig3D;
 
   // MV2
-  std::vector<double>* jet_mv2c00;
   std::vector<double>* jet_mv2c10;
-  std::vector<double>* jet_mv2c20;
-  std::vector<double>* jet_mv2c100;
 
   // track level
   std::vector<std::vector<float> >* jet_trk_pt;

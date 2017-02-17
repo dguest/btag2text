@@ -31,11 +31,8 @@ public:
   void save(H5::CommonFG& out) const;
   void save(H5::CommonFG& out, std::string subdir) const;
 private:
-  Histogram mv2c00;
-  Histogram mv2c100;
   Histogram mv2c10;
-  Histogram mv2c20;
-  Histogram mv2;
+  // Histogram mv2;
 };
 }
 class FlavoredHists
@@ -96,34 +93,34 @@ int main(int argc, char* argv[]) {
 namespace {
 JetHists::JetHists():
   // MV2
-  RANGE(mv2c00, MV2_LOW, MV2_HIGH),
-  RANGE(mv2c100, MV2_LOW, MV2_HIGH),
-  mv2c10(MV2_2D_BINS, MV2_LOW, MV2_HIGH),
-  mv2c20(MV2_2D_BINS, MV2_LOW, MV2_HIGH),
-  mv2({ {"mv2c100", MV2_2D_BINS, MV2_LOW, MV2_HIGH},
-      {"mv2c00", MV2_2D_BINS, MV2_LOW, MV2_HIGH} })
+  // RANGE(mv2c00, MV2_LOW, MV2_HIGH),
+  // RANGE(mv2c100, MV2_LOW, MV2_HIGH),
+  mv2c10(MV2_2D_BINS, MV2_LOW, MV2_HIGH)
+  // mv2c20(MV2_2D_BINS, MV2_LOW, MV2_HIGH),
+  // mv2({ {"mv2c100", MV2_2D_BINS, MV2_LOW, MV2_HIGH},
+  //     {"mv2c00", MV2_2D_BINS, MV2_LOW, MV2_HIGH} })
 {
 }
 
 void JetHists::fill(const Jet& jet, double weight) {
 #define BYNAME(name) name.fill(jet.jet_ ## name, weight)
-  BYNAME(mv2c00);
-  BYNAME(mv2c100);
+  // BYNAME(mv2c00);
+  // BYNAME(mv2c100);
   BYNAME(mv2c10);
-  BYNAME(mv2c20);
+  // BYNAME(mv2c20);
 #undef BYNAME
-  mv2.fill(
-    { {"mv2c00", jet.jet_mv2c00},
-      {"mv2c100", jet.jet_mv2c100} }, weight);
+  // mv2.fill(
+  //   { {"mv2c00", jet.jet_mv2c00},
+  //     {"mv2c100", jet.jet_mv2c100} }, weight);
 }
 
 void JetHists::save(H5::CommonFG& out) const {
 #define BYNAME(name) name.write_to(out, #name)
-  BYNAME(mv2);
-  BYNAME(mv2c00);
+  // BYNAME(mv2);
+  // BYNAME(mv2c00);
   BYNAME(mv2c10);
-  BYNAME(mv2c20);
-  BYNAME(mv2c100);
+  // BYNAME(mv2c20);
+  // BYNAME(mv2c100);
 #undef BYNAME
 }
 void JetHists::save(H5::CommonFG& out, std::string subdir) const {

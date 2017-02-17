@@ -204,7 +204,6 @@ void Subjets::init_branches(SmartChain& chain, const std::string& name) {
 
   // SET_BRANCH(mv2c00);
   SET_BRANCH(mv2c10);
-  SET_BRANCH(mv2c20);
   // SET_BRANCH(mv2c100);
 
 #undef SET_BRANCH
@@ -249,7 +248,6 @@ Jet Subjets::getJet(size_t jet, size_t subjet) const {
   COPY(jf_VTXsize);
 
   COPY(mv2c10);
-  COPY(mv2c20);
 
 #undef COPY
 
@@ -367,25 +365,10 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
     m_clusters_valid = false;
   }
 
-  SET_BRANCH(jet_ip2d_pb);
-  SET_BRANCH(jet_ip2d_pc);
-  SET_BRANCH(jet_ip2d_pu);
+#define ACTION(name) m_chain->SetBranch("jet_" #name, &jet_ ## name)
+#include "btag_direct_copy_vars.hh"
+#undef ACTION
 
-  SET_BRANCH(jet_ip3d_pb);
-  SET_BRANCH(jet_ip3d_pc);
-  SET_BRANCH(jet_ip3d_pu);
-  SET_BRANCH(jet_ip3d_ntrk);
-
-  try {
-    SET_BRANCH(jet_ipmp_pb);
-    SET_BRANCH(jet_ipmp_pc);
-    SET_BRANCH(jet_ipmp_pu);
-    SET_BRANCH(jet_ipmp_ptau);
-  } catch (MissingBranchError& err) {
-    m_ipmp_valid = false;
-  }
-
-  SET_BRANCH(jet_sv1_ntrkj);
   SET_BRANCH(jet_sv1_ntrkv);
   SET_BRANCH(jet_sv1_n2t);
   SET_BRANCH(jet_sv1_m);
@@ -414,11 +397,6 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_BRANCH(jet_jf_vtx_ntrk);
   SET_BRANCH(jet_jf_vtx_L3D);
   SET_BRANCH(jet_jf_vtx_sig3D);
-
-  SET_BRANCH(jet_mv2c00);
-  SET_BRANCH(jet_mv2c10);
-  SET_BRANCH(jet_mv2c20);
-  SET_BRANCH(jet_mv2c100);
 
   // try {
   // jet_ntrk is defined from the size of a vector later
@@ -526,32 +504,13 @@ Jet Jets::getJet(size_t pos) const {
 
 
   // high level                   // high level
-  // ip2d, ip3d                   // ip2d, ip3d
-  COPY(jet_ip2d_pb);
-  COPY(jet_ip2d_pc);
-  COPY(jet_ip2d_pu);
-  COPY(jet_ip3d_pb);
-  COPY(jet_ip3d_pc);
-  COPY(jet_ip3d_pu);
-  // FIXME: the opt framework dumper doesn't save this variable unless
-  // we save the full track info. We should really just unify the GA
-  // tracks with the "normal" tracks in the ntuple writer so this
-  // isn't a problem.
-  if (jet_ip3d_ntrk->size() <= pos) {
-    o.jet_ip3d_ntrk = -1;
-  } else {
-    COPY(jet_ip3d_ntrk);
-  }
-  // ipmp
-  if (m_ipmp_valid) {
-  COPY(jet_ipmp_pb);
-  COPY(jet_ipmp_pc);
-  COPY(jet_ipmp_pu);
-  COPY(jet_ipmp_ptau);
-  }
+#define ACTION(var) o.jet_ ## var = CHECK_AT(*jet_ ## var, pos)
+  ACTION(sm_mu_pt);
+  ACTION(ip3d_ntrk);
+#include "btag_direct_copy_vars.hh"
+#undef ACTION
 
   // sv1                          // sv1
-  COPY(jet_sv1_ntrkj);
   COPY(jet_sv1_ntrkv);
   COPY(jet_sv1_n2t);
   o.jet_sv1_m = jet_sv1_m->at(pos)*MeV;
@@ -580,12 +539,6 @@ Jet Jets::getJet(size_t pos) const {
   COPY(jet_jf_vtx_ntrk);
   COPY_MULTV(jet_jf_vtx_L3D, mm); // TODO: check this
   COPY(jet_jf_vtx_sig3D);
-
-  // MV2                          // MV2
-  COPY(jet_mv2c00);
-  COPY(jet_mv2c10);
-  COPY(jet_mv2c20);
-  COPY(jet_mv2c100);
 
   if (m_tracks_valid) {
     // track counts

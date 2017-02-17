@@ -51,7 +51,6 @@ BTagHists::BTagHists():
 void BTagHists::fill(const Jet& jet, double weight) {
 #define BYNAME(name) name.fill(jet.jet_ ## name, weight)
   BYNAME(mv2c10);
-  BYNAME(mv2c20);
 
   BYNAME(ip3d_pu);
   BYNAME(ip3d_pc);
