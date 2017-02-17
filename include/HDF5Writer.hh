@@ -143,16 +143,12 @@ namespace h5 {
     outfloat_t pt;
     outfloat_t eta;
 
-    // ip2d
-    outfloat_t ip2d_pu;
-    outfloat_t ip2d_pc;
-    outfloat_t ip2d_pb;
-
-    // ip3d
-    outfloat_t ip3d_pu;
-    outfloat_t ip3d_pc;
-    outfloat_t ip3d_pb;
     int ip3d_ntrk;
+
+    outfloat_t mu_pt; // not used, just to check if sm_mu is there
+#define ACTION(var) outfloat_t var
+#include "btag_direct_copy_vars.hh"
+#undef ACTION
 
     // Jetfitter
     outfloat_t jf_dr;
@@ -168,21 +164,6 @@ namespace h5 {
     outfloat_t jf_dphi;
     // int jf_VTXsize;
 
-    // ipmp
-    outfloat_t ipmp_pu;
-    outfloat_t ipmp_pc;
-    outfloat_t ipmp_pb;
-    outfloat_t ipmp_ptau;
-
-    // SM tagger
-    outfloat_t sm_mu_pt;        // not used
-    outfloat_t sm_dR;
-    outfloat_t sm_mombalsignif;
-    outfloat_t sm_mu_d0;
-    outfloat_t sm_pTrel;
-    outfloat_t sm_qOverPratio;
-    outfloat_t sm_scatneighsignif;
-
     // sv1
     outfloat_t sv1_dR;
     outfloat_t sv1_efc;
@@ -194,9 +175,6 @@ namespace h5 {
     outfloat_t sv1_normdist;
 
     int sv1_Nvtx;
-
-    // MV2
-    outfloat_t mv2c10;
 
     // labeling
     int truthflav;

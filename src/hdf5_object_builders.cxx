@@ -151,14 +151,14 @@ void set_defaults_to_nan(h5::HighLevelBTag& btag) {
     NAN_VAL(pb);
 #undef NAN_VAL
   }
-  if (btag.sm_mu_pt <= 0) {
+  if (btag.mu_pt <= 0) {
 #define NAN_VAL(name) btag.name = NAN
-    NAN_VAL(sm_dR);
-    NAN_VAL(sm_mombalsignif);
-    NAN_VAL(sm_mu_d0);
-    NAN_VAL(sm_pTrel);
-    NAN_VAL(sm_qOverPratio);
-    NAN_VAL(sm_scatneighsignif);
+    NAN_VAL(mu_dR);
+    NAN_VAL(mu_mombalsignif);
+    NAN_VAL(mu_d0);
+    NAN_VAL(mu_pTrel);
+    NAN_VAL(mu_qOverPratio);
+    NAN_VAL(mu_scatneighsignif);
 #undef NAN_VAL
   }
 

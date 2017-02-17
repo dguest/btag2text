@@ -366,6 +366,8 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   }
 
 #define ACTION(name) m_chain->SetBranch("jet_" #name, &jet_ ## name)
+  ACTION(mu_pt);
+  ACTION(ip3d_ntrk);
 #include "btag_direct_copy_vars.hh"
 #undef ACTION
 
@@ -505,7 +507,7 @@ Jet Jets::getJet(size_t pos) const {
 
   // high level                   // high level
 #define ACTION(var) o.jet_ ## var = CHECK_AT(*jet_ ## var, pos)
-  ACTION(sm_mu_pt);
+  ACTION(mu_pt);
   ACTION(ip3d_ntrk);
 #include "btag_direct_copy_vars.hh"
 #undef ACTION

@@ -76,7 +76,7 @@ struct Jet
 
   // high level
 #define ACTION(var) double jet_ ## var
-  ACTION(sm_mu_pt);
+  ACTION(mu_pt);
 #include "btag_direct_copy_vars.hh"
 #undef ACTION
 
@@ -386,10 +386,10 @@ private:
   std::vector<float>* jet_ip3d_pc;
   std::vector<float>* jet_ip3d_pu;
 
-  std::vector<double>* jet_ipmp_pb;
-  std::vector<double>* jet_ipmp_pc;
-  std::vector<double>* jet_ipmp_pu;
-  std::vector<double>* jet_ipmp_ptau;
+  std::vector<double>* jet_rnnip_pb;
+  std::vector<double>* jet_rnnip_pc;
+  std::vector<double>* jet_rnnip_pu;
+  std::vector<double>* jet_rnnip_ptau;
   // sv1
   std::vector<int>* jet_sv1_ntrkv;
   std::vector<int>* jet_sv1_n2t;
@@ -403,13 +403,13 @@ private:
   std::vector<std::vector<float> >* jet_sv1_vtx_y;
   std::vector<std::vector<float> >* jet_sv1_vtx_z;
   // SMT
-  std::vector<float>* jet_sm_mu_pt;
-  std::vector<float>* jet_sm_dR;
-  std::vector<float>* jet_sm_mombalsignif;
-  std::vector<float>* jet_sm_mu_d0;
-  std::vector<float>* jet_sm_pTrel;
-  std::vector<float>* jet_sm_qOverPratio;
-  std::vector<float>* jet_sm_scatneighsignif;
+  std::vector<float>* jet_mu_pt;
+  std::vector<float>* jet_mu_dR;
+  std::vector<float>* jet_mu_mombalsignif;
+  std::vector<float>* jet_mu_d0;
+  std::vector<float>* jet_mu_pTrel;
+  std::vector<float>* jet_mu_qOverPratio;
+  std::vector<float>* jet_mu_scatneighsignif;
   // jetfitter
   std::vector<float>* jet_jf_m;
   std::vector<float>* jet_jf_efc;
