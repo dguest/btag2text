@@ -143,11 +143,30 @@ namespace h5 {
     outfloat_t pt;
     outfloat_t eta;
 
+    // ip2d
+    outfloat_t ip2d_pu;
+    outfloat_t ip2d_pc;
+    outfloat_t ip2d_pb;
+
     // ip3d
     outfloat_t ip3d_pu;
     outfloat_t ip3d_pc;
     outfloat_t ip3d_pb;
     int ip3d_ntrk;
+
+    // Jetfitter
+    outfloat_t jf_dr;
+    outfloat_t jf_efc;
+    outfloat_t jf_m;
+    int jf_n2t;
+    int jf_ntrkAtVx;
+    int jf_nvtx;
+    int jf_nvtx1t;
+    outfloat_t jf_sig3d;
+    // not used in DL1
+    outfloat_t jf_deta;
+    outfloat_t jf_dphi;
+    // int jf_VTXsize;
 
     // ipmp
     outfloat_t ipmp_pu;
@@ -155,29 +174,25 @@ namespace h5 {
     outfloat_t ipmp_pb;
     outfloat_t ipmp_ptau;
 
-    // sv1
-    int sv1_Nvtx;
-    int sv1_ntrkv;
-    int sv1_n2t;
-    outfloat_t sv1_m;
-    outfloat_t sv1_efc;
-    outfloat_t sv1_normdist;
-    outfloat_t sv1_dR;
-    outfloat_t sv1_Lxy;
-    outfloat_t sv1_Lxyz;
+    // SM tagger
+    outfloat_t sm_dR;
+    outfloat_t sm_mombalsignif;
+    outfloat_t sm_mu_d0;
+    outfloat_t sm_pTrel;
+    outfloat_t sm_qOverPratio;
+    outfloat_t sm_scatneighsignif;
 
-    // Jetfitter
-    outfloat_t jf_m;
-    outfloat_t jf_efc;
-    outfloat_t jf_deta;
-    outfloat_t jf_dphi;
-    outfloat_t jf_dr;
-    outfloat_t jf_sig3d;
-    int jf_nvtx;
-    int jf_ntrkAtVx;
-    int jf_nvtx1t;
-    int jf_n2t;
-    int jf_VTXsize;
+    // sv1
+    outfloat_t sv1_dR;
+    outfloat_t sv1_efc;
+    outfloat_t sv1_Lxyz;
+    outfloat_t sv1_Lxy;
+    outfloat_t sv1_m;
+    int sv1_n2t;
+    int sv1_ntrkv;
+    outfloat_t sv1_normdist;
+
+    // int sv1_Nvtx;
 
     // MV2
     outfloat_t mv2c10;
