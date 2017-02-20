@@ -43,6 +43,11 @@ struct Jet
   float jet_E;
   float jet_m;
 
+  // calibrated kinematics (not used in b-tagging, but used in selection)
+  float jet_pt_calibrated;
+  float jet_eta_calibrated;
+  float jet_phi_calibrated;
+
   // cleaning
   float jet_JVT;
 
@@ -348,6 +353,10 @@ private:
   std::vector<float>* jet_phi;
   std::vector<float>* jet_E;
   std::vector<float>* jet_m;
+
+  std::vector<float>* jet_pt_orig;
+  std::vector<float>* jet_eta_orig;
+  std::vector<float>* jet_phi_orig;
 
   // cleaning
   std::vector<float>* jet_JVT;

@@ -337,6 +337,10 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_BRANCH(jet_E);
   SET_BRANCH(jet_m);
 
+  SET_BRANCH(jet_pt_orig);
+  SET_BRANCH(jet_eta_orig);
+  SET_BRANCH(jet_phi_orig);
+
   SET_BRANCH(jet_JVT);
 
   // flavor label
@@ -471,9 +475,16 @@ Jet Jets::getJet(size_t pos) const {
   o.PVz = PVz*mm;
 
   // kinematics                   // kinematics
-  o.jet_pt = jet_pt->at(pos)*MeV;
-  COPY(jet_eta);
-  COPY(jet_phi);
+  o.jet_pt_calibrated = jet_pt->at(pos)*MeV;
+  o.jet_eta_calibrated = jet_eta->at(pos);
+  o.jet_phi_calibrated = jet_phi->at(pos);
+  o.jet_E = jet_E->at(pos)*MeV;
+  o.jet_m = jet_m->at(pos)*MeV;
+
+  // uncalibrated kinematics
+  o.jet_pt = jet_pt_orig->at(pos)*MeV;
+  o.jet_eta = jet_eta_orig->at(pos);
+  o.jet_phi = jet_phi_orig->at(pos);
   o.jet_E = jet_E->at(pos)*MeV;
   o.jet_m = jet_m->at(pos)*MeV;
 
