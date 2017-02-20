@@ -29,10 +29,13 @@ std::vector<h5::Cluster> get_clusters(const Jet& jet) {
   return clusters;
 }
 
-std::vector<h5::Track> get_tracks(const Jet& jet) {
+std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
   std::vector<h5::Track> tracks;
   for (const auto& track_vx: build_tracks(jet)) {
     const auto& track = track_vx.track;
+    if (sel == TrackSelection::IP3D_ONLY) {
+      if (track.ip3d_grade < 0) continue;
+    }
     h5::Track tk;
     tk.pt = track.pt;
     tk.deta = track.eta - jet.jet_eta;

@@ -76,7 +76,8 @@ int main(int argc, char* argv[]) {
       if (! select_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       std::vector<h5::Cluster> clusters = get_clusters(jet);
-      std::vector<h5::Track> tracks = get_tracks(jet);
+      std::vector<h5::Track> tracks = get_tracks(
+        jet, TrackSelection::IP3D_ONLY);
       if (cluster_ds) cluster_ds->add_jet(clusters);
       if (track_ds) track_ds->add_jet(tracks);
       jet_ds.add_jet(get_btagging(jet));

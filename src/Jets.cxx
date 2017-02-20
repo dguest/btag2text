@@ -429,12 +429,12 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   try {
     SET_TRACK_BRANCH(ip_d0sig);
     SET_TRACK_BRANCH(ip_z0sig);
-    // SET_TRACK_BRANCH(ip3d_grade);
   } catch (MissingBranchError& err) {
     m_chain->SetBranch(track_prefix + "ip3d_d0sig", &jet_trk_ip_d0sig);
     m_chain->SetBranch(track_prefix + "ip3d_z0sig", &jet_trk_ip_z0sig);
     m_lifetime_signed_ip = true;
   }
+  SET_TRACK_BRANCH(ip3d_grade);
 
   SET_TRACK_BRANCH(nInnHits);
   SET_TRACK_BRANCH(nNextToInnHits);
@@ -580,7 +580,7 @@ Jet Jets::getJet(size_t pos) const {
       vec_copysign(o.jet_trk_ip_d0sig, o.jet_trk_ip_d0);
       vec_copysign(o.jet_trk_ip_z0sig, o.jet_trk_ip_z0);
     }
-    // COPY(jet_trk_ip3d_grade);
+    COPY(jet_trk_ip3d_grade);
     // COPY(jet_trk_jf_Vertex);
 
     COPY(jet_trk_nInnHits);
@@ -666,7 +666,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
                           phi_mpi_pi(jet.jet_phi, track.phi));
     // COPY(algo);
     // COPY(orig);
-
+    COPY(ip3d_grade);
     COPY(chi2);
     COPY(ndf);
     COPY(nInnHits);
@@ -691,7 +691,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(d0sig);
     COPY(z0sig);
 #undef COPY
-    // track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
+    track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
     setDerived(track, jet);
 
     // now copy the jetfitter vertices

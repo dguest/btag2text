@@ -460,7 +460,7 @@ private:
   std::vector<std::vector<float> >* jet_trk_ip_z0;
   std::vector<std::vector<float> >* jet_trk_ip_d0sig;
   std::vector<std::vector<float> >* jet_trk_ip_z0sig;
-  // std::vector<std::vector<int> >* jet_trk_ip3d_grade;
+  std::vector<std::vector<int> >* jet_trk_ip3d_grade;
 
   std::vector<std::vector<int> >* jet_trk_nInnHits;
   std::vector<std::vector<int> >* jet_trk_nNextToInnHits;
