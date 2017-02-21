@@ -89,7 +89,7 @@ function get-input-file() {
 }
 
 # Get the dsid and the file number from a rucio dataset
-DS_RE='s/[^\d]*\.([0-9]{6})\..*/\1/'
+DS_RE='s/^.*\.([0-9]{6})\..*/\1/'
 IDX_RE='s/.*\._([0-9]{6})\.root.*/\1/'
 function get-output-name() {
     local INPUT_DIR=$(dirname $1)
@@ -103,6 +103,10 @@ function get-output-name() {
 function get-output-name-from-dir() {
     local INPUT_DIR=$1
     local DS=$(echo $INPUT_DIR | sed -r $DS_RE)
+    if ! [[ $DS ]] ; then
+        echo "ERROR: no DSID found" >&2
+        return 1
+    fi
     echo d${DS}_j${SLURM_ARRAY_TASK_ID}
 }
 
