@@ -7,7 +7,7 @@ ROOT_DIR_LIST=root-dirs.txt
 ROOT_DIR=root
 
 _usage() {
-    echo "usage: ${0##*/} [-h] [options]"
+    echo "usage: ${0##*/} [-h] (-s|-w) [options]"
 }
 _help() {
     _usage
@@ -18,11 +18,16 @@ Submit batch jobs to write hdf5 files for fat jet studies
 Will produce a list of root files in the current directory, then
 submit one job for each.
 
+Required: (one of these modes)
+ -s: "standard" tracks + HL tagging discriminant mode
+ -w: "wide" or "fat" jet mode, include subjets, clusters, tracks
+
 Options:
  -h: get help
  -r <root dir>: where the files are, (default: $ROOT_DIR)
  -f <file list>: name for root directory list, (default: $ROOT_DIR_LIST)
  -t: test run, produce list of input files but don't submit
+
 
 EOF
 }
@@ -30,22 +35,41 @@ EOF
 # __________________________________________________________________
 # top level run script
 
-RUN_SCRIPT=btag-batch-run-fatwrite.sh
+# prefix the submit command with this (i.e. to test without submitting)
 PREFIX=''
+# the script to call in batch submission
+RUN_SCRIPT=''
 WALLTIME=04:00:00
 
-while getopts ":hr:tf:" opt $@; do
+# guard on setting the run mode twice
+function _set_mode() {
+    if [[ $RUN_SCRIPT ]] ; then
+        _usage
+        echo "ERROR: tried to reset mode (with \"-$opt\")" >&2; exit 1
+    fi
+    RUN_SCRIPT=$1
+}
+
+while getopts ":hr:tf:sw" opt $@; do
     case $opt in
         h) _help; exit 1;;
         r) ROOT_DIR=${OPTARG} ;;
         t) PREFIX=echo ;;
         f) ROOT_DIR_LIST=${OPTARG} ;;
+        w) _set_mode btag-batch-run-fatwrite.sh ;;
+        s) _set_mode btag-batch-run-standardwrite.sh ;;
         # handle errors
         \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :) _usage; echo "Missing argument for -$OPTARG" >&2; exit 1;;
         *) _usage; echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
     esac
 done
+
+if [[ ! $RUN_SCRIPT ]]; then
+    _usage
+    echo "Error: no run mode given" >&2
+    exit 1
+fi
 
 # -- find the run scripts --
 # TODO: simplify this, we can just require an absolute path
