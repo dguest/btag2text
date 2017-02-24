@@ -32,6 +32,14 @@ const std::string DESCRIPTION = (
   "Dump information for jets to HDF5"
   );
 
+namespace {
+  // sort tracks
+  bool by_decreasing_abs_d0sig(h5::Track& t1, h5::Track& t2){
+    return std::abs(t1.d0sig) > std::abs(t2.d0sig);
+  }
+}
+
+
 // _____________________________________________________________________
 // main function
 
@@ -78,6 +86,9 @@ int main(int argc, char* argv[]) {
       std::vector<h5::Cluster> clusters = get_clusters(jet);
       std::vector<h5::Track> tracks = get_tracks(
         jet, TrackSelection::IP3D_ONLY);
+
+      std::sort(tracks.begin(), tracks.end(), by_decreasing_abs_d0sig);
+
       if (cluster_ds) cluster_ds->add_jet(clusters);
       if (track_ds) track_ds->add_jet(tracks);
       jet_ds.add_jet(get_btagging(jet));

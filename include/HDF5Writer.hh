@@ -119,6 +119,10 @@ namespace h5 {
     outfloat_t z0;
     outfloat_t d0sig;
     outfloat_t z0sig;
+    outfloat_t d0_ls;
+    outfloat_t z0_ls;
+    outfloat_t d0sig_ls;
+    outfloat_t z0sig_ls;
     outfloat_t chi2;
     outfloat_t ndf;
 

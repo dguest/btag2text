@@ -317,9 +317,7 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   m_vrtrkjet(chain, "vrtrkjet"),
   m_moments(chain),
   m_clusters_valid(true),
-  m_ipmp_valid(true),
-  m_tracks_valid(true),
-  m_lifetime_signed_ip(false)
+  m_tracks_valid(true)
 {
 #define SET_BRANCH(variable) m_chain->SetBranch(#variable, &variable)
   // event
@@ -424,16 +422,15 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_TRACK_BRANCH(d0);
   SET_TRACK_BRANCH(z0);
   SET_TRACK_BRANCH(ip_d0);
-  // SET_BRANCH(jet_trk_ip3d_d02D);
   SET_TRACK_BRANCH(ip_z0);
-  try {
-    SET_TRACK_BRANCH(ip_d0sig);
-    SET_TRACK_BRANCH(ip_z0sig);
-  } catch (MissingBranchError& err) {
-    m_chain->SetBranch(track_prefix + "ip3d_d0sig", &jet_trk_ip_d0sig);
-    m_chain->SetBranch(track_prefix + "ip3d_z0sig", &jet_trk_ip_z0sig);
-    m_lifetime_signed_ip = true;
-  }
+  SET_TRACK_BRANCH(ip_d0sig);
+  SET_TRACK_BRANCH(ip_z0sig);
+
+  SET_TRACK_BRANCH(ip3d_d0);
+  SET_TRACK_BRANCH(ip3d_z0);
+  SET_TRACK_BRANCH(ip3d_d0sig);
+  SET_TRACK_BRANCH(ip3d_z0sig);
+
   SET_TRACK_BRANCH(ip3d_grade);
 
   SET_TRACK_BRANCH(nInnHits);
@@ -574,14 +571,17 @@ Jet Jets::getJet(size_t pos) const {
     // TODO: check these units
     COPY_MULTV(jet_trk_d0, mm); // Units?
     COPY_MULTV(jet_trk_z0, mm); // Units?
-    o.jet_trk_ip_d0 = multiply<float>(jet_trk_ip_d0->at(pos), mm);
+
+    COPY_MULTV(jet_trk_ip_d0, mm); // Units?
     COPY_MULTV(jet_trk_ip_z0, mm); // Units?
     COPY(jet_trk_ip_d0sig);
     COPY(jet_trk_ip_z0sig);
-    if (m_lifetime_signed_ip) {
-      vec_copysign(o.jet_trk_ip_d0sig, o.jet_trk_ip_d0);
-      vec_copysign(o.jet_trk_ip_z0sig, o.jet_trk_ip_z0);
-    }
+
+    COPY_MULTV(jet_trk_ip3d_d0, mm); // Units?
+    COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
+    COPY(jet_trk_ip3d_d0sig);
+    COPY(jet_trk_ip3d_z0sig);
+
     COPY(jet_trk_ip3d_grade);
     // COPY(jet_trk_jf_Vertex);
 
@@ -692,6 +692,12 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
 #undef COPY
     // special copy for ip3d vars
 #define COPY(par) track.par = CHECK_AT(jet.jet_trk_ip_ ## par, trkn)
+    COPY(d0);
+    COPY(z0);
+    COPY(d0sig);
+    COPY(z0sig);
+#undef COPY
+#define COPY(par) track.par ## _ls = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
     COPY(d0);
     COPY(z0);
     COPY(d0sig);

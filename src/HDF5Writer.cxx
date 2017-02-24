@@ -185,6 +185,10 @@ namespace {
     INSERT(z0);
     INSERT(d0sig);
     INSERT(z0sig);
+    INSERT(d0_ls);
+    INSERT(z0_ls);
+    INSERT(d0sig_ls);
+    INSERT(z0sig_ls);
     INSERT(chi2);
     INSERT(ndf);
 
@@ -221,6 +225,10 @@ namespace {
     cl.z0 = 0;
     cl.d0sig = 0;
     cl.z0sig = 0;
+    cl.d0_ls = 0;
+    cl.z0_ls = 0;
+    cl.d0sig_ls = 0;
+    cl.z0sig_ls = 0;
     cl.chi2 = 0;
     cl.ndf = 0;
 

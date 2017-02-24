@@ -132,10 +132,15 @@ struct Jet
   std::vector<float> jet_trk_d0;
   std::vector<float> jet_trk_z0;
   std::vector<float> jet_trk_ip_d0;
-  // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
   std::vector<float> jet_trk_ip_z0;
   std::vector<float> jet_trk_ip_d0sig;
   std::vector<float> jet_trk_ip_z0sig;
+
+  std::vector<float> jet_trk_ip3d_d0;
+  std::vector<float> jet_trk_ip3d_z0;
+  std::vector<float> jet_trk_ip3d_d0sig;
+  std::vector<float> jet_trk_ip3d_z0sig;
+
   std::vector<int> jet_trk_ip3d_grade;
   // std::vector<int> jet_trk_jf_Vertex;
 
@@ -216,6 +221,12 @@ struct Track
   float z0;
   float d0sig;
   float z0sig;
+
+  // NOTE: these _are_ lifetime signed
+  float d0_ls;
+  float z0_ls;
+  float d0sig_ls;
+  float z0sig_ls;
 
   // quality info
   float chi2;
@@ -460,10 +471,13 @@ private:
   std::vector<std::vector<float> >* jet_trk_d0;
   std::vector<std::vector<float> >* jet_trk_z0;
   std::vector<std::vector<float> >* jet_trk_ip_d0;
-  // std::vector<std::vector<float> >* jet_trk_ip3d_d02D;
   std::vector<std::vector<float> >* jet_trk_ip_z0;
   std::vector<std::vector<float> >* jet_trk_ip_d0sig;
   std::vector<std::vector<float> >* jet_trk_ip_z0sig;
+  std::vector<std::vector<float> >* jet_trk_ip3d_d0;
+  std::vector<std::vector<float> >* jet_trk_ip3d_z0;
+  std::vector<std::vector<float> >* jet_trk_ip3d_d0sig;
+  std::vector<std::vector<float> >* jet_trk_ip3d_z0sig;
   std::vector<std::vector<int> >* jet_trk_ip3d_grade;
 
   std::vector<std::vector<int> >* jet_trk_nInnHits;
@@ -488,9 +502,7 @@ private:
 
   // turn some branches off if they aren't valid
   bool m_clusters_valid;
-  bool m_ipmp_valid;
   bool m_tracks_valid;
-  bool m_lifetime_signed_ip;
 };
 
 // ______________________________________________________________________

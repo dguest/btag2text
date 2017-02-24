@@ -54,6 +54,10 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
     COPY(z0);
     COPY(d0sig);
     COPY(z0sig);
+    COPY(d0_ls);
+    COPY(z0_ls);
+    COPY(d0sig_ls);
+    COPY(z0sig_ls);
     COPY(chi2);
     COPY(ndf);
 #undef COPY
