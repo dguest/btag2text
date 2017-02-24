@@ -1,10 +1,7 @@
-Example Text File Dumper for H->bb
-==================================
+Preprocessor For Flavor Tagging Data
+====================================
 
-This is a minimal set of code to dump b-tagging ntuples which are
-stored in ROOT into a text file. I've taken the liberty of removing a
-lot of extra programs (which may be important later) so that this is
-as simple as possible.
+This is a collection of code to process flavor tagging ROOT ntuples into inputs for machine learning studies.
 
 Installing
 ----------
@@ -13,44 +10,20 @@ This code depends on:
 
  - ROOT6
  - Boost (for ProgramOptions)
+ - HDF5
 
 To install, after you've cloned this repository, you should be be able
 to simply type `make`. The executable binaries should be built in
 `bin`.
 
-Running
--------
+Specific uses
+-------------
 
-You'll need some ntuples that describe either signal or background to
-get started. Once you have them, you can run
+Some specific use cases are documented on github wikis. For example
+see [running for Hbb tagging][1] and [running for single btagging][2].
 
-```sh
-./bin/btag-dump-jets-fatjets {path-to-data-file} | head -n 10
-```
-
-where `{path-to-data-file}` points to a data file. This will print out
-the first 10 jets from the file as text. Each line should be valid
-json, so it can be parsed one line at a time with a standard json
-parser.
-
-In practice it sometimes makes more sense to store this in a gzipped
-text file:
-
-```sh
-./bin/btag-dump-jets-fatjets {path-to-data-file} | gzip - > output_file.txt.gz
-```
-
-Note that most executable scripts also have help, try running them
-with the `-h` option.
-
-To get a key for the variables, run
-
-```sh
-./bin/btag-dump-jet-labels-fatjets-terse
-```
-
-For more explanation as to what these variables are, see
-`docs/FATJETS.md`.
+[1]: https://github.com/dguest/btag2text/wiki/Running-for-H--bb-Tagging
+[2]: https://github.com/dguest/btag2text/wiki/Running-for-single-btagging
 
 Code Organization
 -----------------
