@@ -152,6 +152,8 @@ struct Jet
   std::vector<int> jet_trk_nSCTHoles;
   std::vector<int> jet_trk_nsharedSCTHits;
   std::vector<int> jet_trk_expectBLayerHit;
+  std::vector<int> jet_trk_expectInnermostPixelLayerHit;
+  std::vector<int> jet_trk_expectNextToInnermostPixelLayerHit;
 
   // --- derived quantities ---
   // track counting
@@ -232,6 +234,8 @@ struct Track
   int nSCTHoles; // number of sct hits
   int nsharedSCTHits; // number of shared sct hits
   int expectBLayerHit; // is a b-layer hit expected?
+  int expectInnermostPixelLayerHit;
+  int expectNextToInnermostPixelLayerHit;
 
   // IP3D-like proxy for DL
   float dphi_jet;
@@ -475,6 +479,8 @@ private:
   std::vector<std::vector<int> >* jet_trk_nSCTHoles;
   std::vector<std::vector<int> >* jet_trk_nsharedSCTHits;
   std::vector<std::vector<int> >* jet_trk_expectBLayerHit;
+  std::vector<std::vector<int> >* jet_trk_expectInnermostPixelLayerHit;
+  std::vector<std::vector<int> >* jet_trk_expectNextToInnermostPixelLayerHit;
 
   // std::vector<std::vector<int> >* jet_trk_jf_Vertex;
 

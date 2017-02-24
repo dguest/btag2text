@@ -449,6 +449,8 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_TRACK_BRANCH(nSCTHoles);
   SET_TRACK_BRANCH(nsharedSCTHits);
   SET_TRACK_BRANCH(expectBLayerHit);
+  SET_TRACK_BRANCH(expectInnermostPixelLayerHit);
+  SET_TRACK_BRANCH(expectNextToInnermostPixelLayerHit);
   // SET_TRACK_BRANCH(jf_Vertex);
 #undef SET_TRACK_BRANCH
 
@@ -596,6 +598,8 @@ Jet Jets::getJet(size_t pos) const {
     COPY(jet_trk_nSCTHoles);
     COPY(jet_trk_nsharedSCTHits);
     COPY(jet_trk_expectBLayerHit);
+    COPY(jet_trk_expectInnermostPixelLayerHit);
+    COPY(jet_trk_expectNextToInnermostPixelLayerHit);
   }
 
 #undef COPY
@@ -682,6 +686,8 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(nSCTHoles);
     COPY(nsharedSCTHits);
     COPY(expectBLayerHit);
+    COPY(expectInnermostPixelLayerHit);
+    COPY(expectNextToInnermostPixelLayerHit);
 
 #undef COPY
     // special copy for ip3d vars
