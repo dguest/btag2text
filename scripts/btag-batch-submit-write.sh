@@ -5,6 +5,7 @@ set -eu
 # default options
 ROOT_DIR_LIST=root-dirs.txt
 ROOT_DIR=root
+WALLTIME=08:00:00
 
 _usage() {
     echo "usage: ${0##*/} [-h] (-s|-w) [options]"
@@ -27,6 +28,7 @@ Options:
  -r <root dir>: where the files are, (default: $ROOT_DIR)
  -f <file list>: name for root directory list, (default: $ROOT_DIR_LIST)
  -t: test run, produce list of input files but don't submit
+ -T <walltime>: Maximum run time, formatted as HH:MM:SS
 
 
 EOF
@@ -39,7 +41,6 @@ EOF
 PREFIX=''
 # the script to call in batch submission
 RUN_SCRIPT=''
-WALLTIME=04:00:00
 
 # guard on setting the run mode twice
 function _set_mode() {
@@ -50,7 +51,7 @@ function _set_mode() {
     RUN_SCRIPT=$1
 }
 
-while getopts ":hr:tf:sw" opt $@; do
+while getopts ":hr:tf:swT:" opt $@; do
     case $opt in
         h) _help; exit 1;;
         r) ROOT_DIR=${OPTARG} ;;
@@ -58,6 +59,7 @@ while getopts ":hr:tf:sw" opt $@; do
         f) ROOT_DIR_LIST=${OPTARG} ;;
         w) _set_mode btag-batch-run-fatwrite.sh ;;
         s) _set_mode btag-batch-run-standardwrite.sh ;;
+        T) WALLTIME=${OPTARG} ;;
         # handle errors
         \?) _usage; echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :) _usage; echo "Missing argument for -$OPTARG" >&2; exit 1;;
