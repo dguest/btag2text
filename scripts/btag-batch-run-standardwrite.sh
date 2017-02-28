@@ -23,7 +23,7 @@ fi
 INPUT_DIR=$(get-input-file $IN_FILE_FILE)
 OUTPUT_FILE=$(get-output-name-from-dir $INPUT_DIR)
 
-echo "running on $INPUT_DIR"
+echo "running on $INPUT_DIR at $(date)"
 mkdir -p $OUTPUT_DIR
 OUTPUT_PATH=${OUTPUT_DIR}/$OUTPUT_FILE.h5
 
@@ -39,5 +39,5 @@ btag-write-jets-standard $INPUT_FILES -o $OUTPUT_PATH $OPTS &
 PID=$!
 trap "kill -TERM $PID; wait $PID; echo killed! >&2" TERM
 wait $PID
-echo "done"
+echo "done at $(date)"
 
