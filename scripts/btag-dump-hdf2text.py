@@ -48,8 +48,7 @@ def _run():
         tracks = h5file['tracks']
         tvars = [v for v in tracks.dtype.names if v != 'mask']
     if args.dump_variables:
-        sys.stdout.write('jets: {}\ntracks: {}\n'.format(
-            ', '.join(jvars), ', '.join(tvars)))
+        sys.stdout.write(dumps(list(jvars) + [[tvars] + ['...'] ]) + '\n')
         exit()
 
     if args.jet_variables != ALL:
