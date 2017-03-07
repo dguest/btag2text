@@ -136,7 +136,7 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   // labeling
   ACTION(truthflav);
   ACTION(LabDr_HadF);
-
+  btag.hadron_charge = jet.hadron_charge;
 #undef ACTION
   set_defaults_to_nan(btag);
   return btag;

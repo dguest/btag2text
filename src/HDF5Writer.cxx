@@ -324,6 +324,8 @@ namespace {
     // labeling
     ACTION(truthflav);
     ACTION(LabDr_HadF);
+    // TODO: get this working
+    // ACTION(hadron_charge);
 
 #undef ACTION
   }

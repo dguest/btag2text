@@ -54,6 +54,7 @@ struct Jet
   // flavor label
   int jet_truthflav;
   int jet_LabDr_HadF;
+  int hadron_charge;
 
   // cluster and calo
   std::vector<float> jet_cluster_pt                  ;
@@ -351,6 +352,7 @@ public:
   size_t size() const;
   double eventWeight() const;
 private:
+  int get_hadron_charge(size_t index) const;
   SmartChain* m_chain;
   Subjets m_trkjet;
   Subjets m_vrtrkjet;
@@ -381,6 +383,12 @@ private:
   // flavor label
   std::vector<int>* jet_truthflav;
   std::vector<int>* jet_LabDr_HadF;
+
+  // hadron charge
+  std::vector<std::vector<float> >* jet_bH_pt;
+  std::vector<std::vector<int> >* jet_bH_pdgId;
+  std::vector<std::vector<float> >* jet_cH_pt;
+  std::vector<std::vector<int> >* jet_cH_pdgId;
 
   // cluster and calo
   std::vector<std::vector<float> >* jet_cluster_pt                  ;

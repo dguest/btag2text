@@ -192,7 +192,7 @@ namespace h5 {
     // labeling
     int truthflav;
     int LabDr_HadF;
-
+    int hadron_charge;
 
   };
   template<> H5::DataType get_type<HighLevelBTag>();

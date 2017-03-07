@@ -16,6 +16,7 @@
 #define CHECK_AT(var, number) checked(var, number, #var)
 
 namespace {
+
   template<typename T>
   T checked(const std::vector<T>& vec, int num, const std::string& err) {
     try {
@@ -345,6 +346,11 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_BRANCH(jet_truthflav);
   SET_BRANCH(jet_LabDr_HadF);
 
+  SET_BRANCH(jet_bH_pt);
+  SET_BRANCH(jet_bH_pdgId);
+  SET_BRANCH(jet_cH_pt);
+  SET_BRANCH(jet_cH_pdgId);
+
   // cluster and calo
   try {
   SET_BRANCH(jet_cluster_pt                 );
@@ -493,6 +499,7 @@ Jet Jets::getJet(size_t pos) const {
   // flavor label                 // flavor label
   COPY(jet_truthflav);
   COPY(jet_LabDr_HadF);
+  o.hadron_charge = get_hadron_charge(pos);
 
   // cluster
   if (m_clusters_valid) {
@@ -644,6 +651,23 @@ Jet Jets::getJet(size_t pos) const {
 };
 double Jets::eventWeight() const {
   return mc_event_weight;
+}
+
+int Jets::get_hadron_charge(size_t index) const {
+  // TODO: fix this function
+  return 0;
+  int pdgid = 0;
+  if (jet_bH_pt->at(index).at(0) > 0) {
+    pdgid = jet_bH_pdgId->at(index).at(0);
+    // std::cout << "bhadron: " << pdgid << std::endl;
+  } else if (jet_cH_pt->at(index).at(0) > 0) {
+    pdgid = jet_cH_pdgId->at(index).at(0);
+    // std::cout << "chadron: " << pdgid << std::endl;
+  } else {
+    // std::cout << "nodron! " << std::endl;
+    return 0;
+  }
+  return std::copysign(1, pdgid);
 }
 
 
