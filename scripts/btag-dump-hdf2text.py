@@ -4,7 +4,9 @@
 file. Also supports dumping a subset of track / jet variables, which
 you specify with the flags below.
 """
-_help_dump='Dump list of variable names rather than the values'
+_help_dump = 'Dump list of variable names rather than the values'
+_help_batch_size = 'number of events to process per batch'
+_help_offset = 'start at this batch (zero-based)'
 
 import argparse
 import h5py
@@ -24,6 +26,12 @@ def _get_args():
     parser.add_argument('-t', '--track-variables', **opts)
     parser.add_argument('-d', '--dump-variables', action='store_true',
                         help=_help_dump)
+    parser.add_argument('-b', '--batch-size',
+                        type=int,
+                        help=_help_batch_size)
+    parser.add_argument('-o', '--offset',
+                        type=int, default=0,
+                        help=_help_offset)
     return parser.parse_args()
 
 def _get_tracks(tracks, tvars):
@@ -57,7 +65,13 @@ def _run():
     if args.track_variables != ALL:
         tvars = args.track_variables
 
-    for entry in range(n_entries):
+    if args.batch_size:
+        start = args.batch_size * args.offset
+        end = min(args.batch_size * (args.offset + 1), n_entries)
+    else:
+        start = 0
+        end = n_entries
+    for entry in range(start, end):
         jet_vars = [np.asscalar(jets[entry][v]) for v in jvars]
         if tvars:
             track_vars = _get_tracks(tracks[entry,:], tvars)
