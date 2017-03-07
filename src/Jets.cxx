@@ -412,6 +412,7 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_TRACK_BRANCH(eta);
   SET_TRACK_BRANCH(theta);
   SET_TRACK_BRANCH(phi);
+  SET_TRACK_BRANCH(charge);
   // SET_TRACK_BRANCH(dr);
   SET_TRACK_BRANCH(chi2);
   SET_TRACK_BRANCH(ndf);
@@ -561,6 +562,7 @@ Jet Jets::getJet(size_t pos) const {
     COPY(jet_trk_eta);
     COPY(jet_trk_theta);
     COPY(jet_trk_phi);
+    COPY(jet_trk_charge);
     // COPY(jet_trk_dr);
     COPY(jet_trk_chi2);
     COPY(jet_trk_ndf);
@@ -666,6 +668,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(eta);
     COPY(theta);
     COPY(phi);
+    COPY(charge);
     track.dr = std::hypot(jet.jet_eta - track.eta,
                           phi_mpi_pi(jet.jet_phi, track.phi));
     // COPY(algo);

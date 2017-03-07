@@ -43,6 +43,7 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
     tk.pt = track.pt;
     tk.deta = deta;
     tk.dphi = dphi;
+    tk.charge = track.charge;
 
     tk.dr = std::hypot(deta, dphi);
     tk.ptfrac = track.pt / jet.jet_pt;

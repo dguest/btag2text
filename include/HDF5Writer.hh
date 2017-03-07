@@ -109,6 +109,7 @@ namespace h5 {
     outfloat_t pt;
     outfloat_t deta;
     outfloat_t dphi;
+    outfloat_t charge;
 
     outfloat_t dr;
     outfloat_t ptfrac;
