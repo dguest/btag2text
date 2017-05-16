@@ -109,6 +109,7 @@ h5::HighLevelBTag get_btagging(const Jet& jet) {
   ACTION(eta);
 
   ACTION(ip3d_ntrk);
+  ACTION(mu_pt);
 #include "btag_direct_copy_vars.hh"
 
   ACTION(sv1_Nvtx);
@@ -166,6 +167,19 @@ void set_defaults_to_nan(h5::HighLevelBTag& btag) {
   }
   if (btag.ip3d_ntrk == 0) {
 #define NAN_VAL(name) btag.ip3d_ ## name = NAN
+    NAN_VAL(pu);
+    NAN_VAL(pc);
+    NAN_VAL(pb);
+#undef NAN_VAL
+#define NAN_VAL(name) btag.rnnip_ ## name = NAN
+    NAN_VAL(pu);
+    NAN_VAL(pc);
+    NAN_VAL(pb);
+    NAN_VAL(ptau);
+#undef NAN_VAL
+  }
+  if (btag.ip2d_pu < 0) {
+#define NAN_VAL(name) btag.ip2d_ ## name = NAN
     NAN_VAL(pu);
     NAN_VAL(pc);
     NAN_VAL(pb);
