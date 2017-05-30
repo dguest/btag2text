@@ -175,7 +175,7 @@ namespace {
     INSERT(pt);
     INSERT(deta);
     INSERT(dphi);
-    INSERT(charge);
+    // INSERT(charge);
 
     INSERT(dr);
     INSERT(ptfrac);
@@ -218,7 +218,7 @@ namespace {
     cl.pt = 0;
     cl.deta = 0;
     cl.dphi = 0;
-    cl.charge = 0;
+    // cl.charge = 0;
 
     cl.dr = 0;
     cl.ptfrac = 0;

@@ -122,7 +122,7 @@ struct Jet
   std::vector<float> jet_trk_eta;
   std::vector<float> jet_trk_theta;
   std::vector<float> jet_trk_phi;
-  std::vector<float> jet_trk_charge;
+  // std::vector<float> jet_trk_charge;
   // std::vector<float> jet_trk_dr;
   std::vector<float> jet_trk_chi2;
   std::vector<float> jet_trk_ndf;
@@ -470,7 +470,7 @@ private:
   std::vector<std::vector<float> >* jet_trk_eta;
   std::vector<std::vector<float> >* jet_trk_theta;
   std::vector<std::vector<float> >* jet_trk_phi;
-  std::vector<std::vector<float> >* jet_trk_charge;
+  // std::vector<std::vector<float> >* jet_trk_charge;
   // std::vector<std::vector<float> >* jet_trk_dr;
   std::vector<std::vector<float> >* jet_trk_chi2;
   std::vector<std::vector<float> >* jet_trk_ndf;

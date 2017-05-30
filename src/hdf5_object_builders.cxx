@@ -43,7 +43,7 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
     tk.pt = track.pt;
     tk.deta = deta;
     tk.dphi = dphi;
-    tk.charge = track.charge;
+    // tk.charge = track.charge;
 
     tk.dr = std::hypot(deta, dphi);
     tk.ptfrac = track.pt / jet.jet_pt;
@@ -171,12 +171,12 @@ void set_defaults_to_nan(h5::HighLevelBTag& btag) {
     NAN_VAL(pc);
     NAN_VAL(pb);
 #undef NAN_VAL
-#define NAN_VAL(name) btag.rnnip_ ## name = NAN
-    NAN_VAL(pu);
-    NAN_VAL(pc);
-    NAN_VAL(pb);
-    NAN_VAL(ptau);
-#undef NAN_VAL
+// #define NAN_VAL(name) btag.rnnip_ ## name = NAN
+//     NAN_VAL(pu);
+//     NAN_VAL(pc);
+//     NAN_VAL(pb);
+//     NAN_VAL(ptau);
+// #undef NAN_VAL
   }
   if (btag.ip2d_pu < 0) {
 #define NAN_VAL(name) btag.ip2d_ ## name = NAN
