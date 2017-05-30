@@ -90,7 +90,7 @@ FatJetHists::FatJetHists(int n_subjets):
   m_subjets(n_subjets, true),
   m_subjets_btag(n_subjets),
   m_fatjet(),
-  m_mv2_min({{"mv2_min", 2000, MV2_LOW, MV2_HIGH}}),
+  m_mv2_min({{"mv2_min", 10000, MV2_LOW, MV2_HIGH}}),
   m_n_one_cluster(0)
 {
 }
