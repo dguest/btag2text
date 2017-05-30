@@ -114,7 +114,7 @@ namespace h5 {
     outfloat_t dr;
     outfloat_t ptfrac;
 
-    int grade;
+    // int grade;
 
     outfloat_t d0;
     outfloat_t z0;
@@ -141,8 +141,8 @@ namespace h5 {
     int numberOfSCTSharedHits;
 
     int expectBLayerHit;
-    int expectInnermostPixelLayerHit;
-    int expectNextToInnermostPixelLayerHit;
+    // int expectInnermostPixelLayerHit;
+    // int expectNextToInnermostPixelLayerHit;
 
     bool mask;
   };

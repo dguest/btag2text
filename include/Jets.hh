@@ -138,12 +138,12 @@ struct Jet
   std::vector<float> jet_trk_ip_d0sig;
   std::vector<float> jet_trk_ip_z0sig;
 
-  std::vector<float> jet_trk_ip3d_d0;
-  std::vector<float> jet_trk_ip3d_z0;
-  std::vector<float> jet_trk_ip3d_d0sig;
-  std::vector<float> jet_trk_ip3d_z0sig;
+  // std::vector<float> jet_trk_ip3d_d0;
+  // std::vector<float> jet_trk_ip3d_z0;
+  // std::vector<float> jet_trk_ip3d_d0sig;
+  // std::vector<float> jet_trk_ip3d_z0sig;
 
-  std::vector<int> jet_trk_ip3d_grade;
+  // std::vector<int> jet_trk_ip3d_grade;
   // std::vector<int> jet_trk_jf_Vertex;
 
   std::vector<int> jet_trk_nInnHits;
@@ -159,8 +159,8 @@ struct Jet
   std::vector<int> jet_trk_nSCTHoles;
   std::vector<int> jet_trk_nsharedSCTHits;
   std::vector<int> jet_trk_expectBLayerHit;
-  std::vector<int> jet_trk_expectInnermostPixelLayerHit;
-  std::vector<int> jet_trk_expectNextToInnermostPixelLayerHit;
+  // std::vector<int> jet_trk_expectInnermostPixelLayerHit;
+  // std::vector<int> jet_trk_expectNextToInnermostPixelLayerHit;
 
   // --- derived quantities ---
   // track counting
@@ -234,7 +234,7 @@ struct Track
   // quality info
   float chi2;
   float ndf;
-  int ip3d_grade;
+  // int ip3d_grade;
   int nInnHits; // number of innermost pixel layer hits
   int nNextToInnHits; // number of next-to-innermost pixel layer hits
   int nBLHits; // number of b-layer hits
@@ -248,8 +248,8 @@ struct Track
   int nSCTHoles; // number of sct hits
   int nsharedSCTHits; // number of shared sct hits
   int expectBLayerHit; // is a b-layer hit expected?
-  int expectInnermostPixelLayerHit;
-  int expectNextToInnermostPixelLayerHit;
+  // int expectInnermostPixelLayerHit;
+  // int expectNextToInnermostPixelLayerHit;
 
   // IP3D-like proxy for DL
   float dphi_jet;
@@ -287,7 +287,7 @@ private:
 
   // track counts
   std::vector<std::vector<int> >* ntrk;
-  std::vector<std::vector<int> >* ip3d_ntrk;
+  // std::vector<std::vector<int> >* ip3d_ntrk;
 
   // ip2d, ip3d
   std::vector<std::vector<float> >* ip3d_pb;
@@ -409,7 +409,7 @@ private:
   std::vector<std::vector<float> >* jet_cluster_first_eng_dens      ;
 
   // track counts
-  std::vector<int>* jet_ip3d_ntrk;
+  // std::vector<int>* jet_ip3d_ntrk;
 
   // high level
   // ip2d, ip3d
@@ -485,11 +485,11 @@ private:
   std::vector<std::vector<float> >* jet_trk_ip_z0;
   std::vector<std::vector<float> >* jet_trk_ip_d0sig;
   std::vector<std::vector<float> >* jet_trk_ip_z0sig;
-  std::vector<std::vector<float> >* jet_trk_ip3d_d0;
-  std::vector<std::vector<float> >* jet_trk_ip3d_z0;
-  std::vector<std::vector<float> >* jet_trk_ip3d_d0sig;
-  std::vector<std::vector<float> >* jet_trk_ip3d_z0sig;
-  std::vector<std::vector<int> >* jet_trk_ip3d_grade;
+  // std::vector<std::vector<float> >* jet_trk_ip3d_d0;
+  // std::vector<std::vector<float> >* jet_trk_ip3d_z0;
+  // std::vector<std::vector<float> >* jet_trk_ip3d_d0sig;
+  // std::vector<std::vector<float> >* jet_trk_ip3d_z0sig;
+  // std::vector<std::vector<int> >* jet_trk_ip3d_grade;
 
   std::vector<std::vector<int> >* jet_trk_nInnHits;
   std::vector<std::vector<int> >* jet_trk_nNextToInnHits;
@@ -504,8 +504,8 @@ private:
   std::vector<std::vector<int> >* jet_trk_nSCTHoles;
   std::vector<std::vector<int> >* jet_trk_nsharedSCTHits;
   std::vector<std::vector<int> >* jet_trk_expectBLayerHit;
-  std::vector<std::vector<int> >* jet_trk_expectInnermostPixelLayerHit;
-  std::vector<std::vector<int> >* jet_trk_expectNextToInnermostPixelLayerHit;
+  // std::vector<std::vector<int> >* jet_trk_expectInnermostPixelLayerHit;
+  // std::vector<std::vector<int> >* jet_trk_expectNextToInnermostPixelLayerHit;
 
   // std::vector<std::vector<int> >* jet_trk_jf_Vertex;
 

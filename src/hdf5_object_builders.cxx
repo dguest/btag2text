@@ -34,7 +34,8 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
   for (const auto& track_vx: build_tracks(jet)) {
     const auto& track = track_vx.track;
     if (sel == TrackSelection::IP3D_ONLY) {
-      if (track.ip3d_grade < 0) continue;
+      assert(false);
+      // if (track.ip3d_grade < 0) continue;
     }
     double deta = track.eta - jet.jet_eta;
     double dphi = phi_mpi_pi(track.phi, jet.jet_phi);
@@ -48,7 +49,7 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
     tk.dr = std::hypot(deta, dphi);
     tk.ptfrac = track.pt / jet.jet_pt;
 
-    tk.grade = track.ip3d_grade;
+    // tk.grade = track.ip3d_grade;
 
 #define COPY(var) tk.var = track.var
     COPY(d0);
@@ -79,8 +80,8 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
 #undef COPY
 #define COPY(var) tk.var = track.var
     COPY(expectBLayerHit);
-    COPY(expectInnermostPixelLayerHit);
-    COPY(expectNextToInnermostPixelLayerHit);
+    // COPY(expectInnermostPixelLayerHit);
+    // COPY(expectNextToInnermostPixelLayerHit);
 #undef COPY
 
     tk.mask = false;

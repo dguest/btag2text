@@ -180,7 +180,7 @@ namespace {
     INSERT(dr);
     INSERT(ptfrac);
 
-    INSERT(grade);
+    // INSERT(grade);
 
     INSERT(d0);
     INSERT(z0);
@@ -206,8 +206,8 @@ namespace {
     INSERT(numberOfSCTHoles);
     INSERT(numberOfSCTSharedHits);
     INSERT(expectBLayerHit);
-    INSERT(expectInnermostPixelLayerHit);
-    INSERT(expectNextToInnermostPixelLayerHit);
+    // INSERT(expectInnermostPixelLayerHit);
+    // INSERT(expectNextToInnermostPixelLayerHit);
 
     INSERT(mask);
 #undef INSERT
@@ -248,8 +248,8 @@ namespace {
     cl.numberOfSCTSharedHits = 0;
 
     cl.expectBLayerHit = 0;
-    cl.expectInnermostPixelLayerHit = 0;
-    cl.expectNextToInnermostPixelLayerHit = 0;
+    // cl.expectInnermostPixelLayerHit = 0;
+    // cl.expectNextToInnermostPixelLayerHit = 0;
 
     cl.mask = true;
     return cl;

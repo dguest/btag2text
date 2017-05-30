@@ -164,7 +164,7 @@ void Subjets::init_branches(SmartChain& chain, const std::string& name) {
   SET_BRANCH(m);
 
   SET_BRANCH(ntrk);
-  SET_BRANCH(ip3d_ntrk);
+  // SET_BRANCH(ip3d_ntrk);
 
   // SET_BRANCH(ip2d_pb);
   // SET_BRANCH(ip2d_pc);
@@ -223,7 +223,7 @@ Jet Subjets::getJet(size_t jet, size_t subjet) const {
 
   // track counts
   COPY(ntrk);
-  COPY(ip3d_ntrk);
+  // COPY(ip3d_ntrk);
 
   // track variables
   COPY(ip3d_pb);
@@ -375,7 +375,7 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
 
 #define ACTION(name) m_chain->SetBranch("jet_" #name, &jet_ ## name)
   ACTION(mu_pt);
-  ACTION(ip3d_ntrk);
+  // ACTION(ip3d_ntrk);
 #include "btag_direct_copy_vars.hh"
 #undef ACTION
 
@@ -433,12 +433,12 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_TRACK_BRANCH(ip_d0sig);
   SET_TRACK_BRANCH(ip_z0sig);
 
-  SET_TRACK_BRANCH(ip3d_d0);
-  SET_TRACK_BRANCH(ip3d_z0);
-  SET_TRACK_BRANCH(ip3d_d0sig);
-  SET_TRACK_BRANCH(ip3d_z0sig);
+  // SET_TRACK_BRANCH(ip3d_d0);
+  // SET_TRACK_BRANCH(ip3d_z0);
+  // SET_TRACK_BRANCH(ip3d_d0sig);
+  // SET_TRACK_BRANCH(ip3d_z0sig);
 
-  SET_TRACK_BRANCH(ip3d_grade);
+  // SET_TRACK_BRANCH(ip3d_grade);
 
   SET_TRACK_BRANCH(nInnHits);
   SET_TRACK_BRANCH(nNextToInnHits);
@@ -453,8 +453,8 @@ Jets::Jets(SmartChain& chain, const std::string& track_prefix):
   SET_TRACK_BRANCH(nSCTHoles);
   SET_TRACK_BRANCH(nsharedSCTHits);
   SET_TRACK_BRANCH(expectBLayerHit);
-  SET_TRACK_BRANCH(expectInnermostPixelLayerHit);
-  SET_TRACK_BRANCH(expectNextToInnermostPixelLayerHit);
+  // SET_TRACK_BRANCH(expectInnermostPixelLayerHit);
+  // SET_TRACK_BRANCH(expectNextToInnermostPixelLayerHit);
   // SET_TRACK_BRANCH(jf_Vertex);
 #undef SET_TRACK_BRANCH
 
@@ -526,7 +526,7 @@ Jet Jets::getJet(size_t pos) const {
   // high level                   // high level
 #define ACTION(var) o.jet_ ## var = CHECK_AT(*jet_ ## var, pos)
   ACTION(mu_pt);
-  ACTION(ip3d_ntrk);
+  // ACTION(ip3d_ntrk);
 #include "btag_direct_copy_vars.hh"
 #undef ACTION
 
@@ -586,12 +586,12 @@ Jet Jets::getJet(size_t pos) const {
     COPY(jet_trk_ip_d0sig);
     COPY(jet_trk_ip_z0sig);
 
-    COPY_MULTV(jet_trk_ip3d_d0, mm); // Units?
-    COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
-    COPY(jet_trk_ip3d_d0sig);
-    COPY(jet_trk_ip3d_z0sig);
+    // COPY_MULTV(jet_trk_ip3d_d0, mm); // Units?
+    // COPY_MULTV(jet_trk_ip3d_z0, mm); // Units?
+    // COPY(jet_trk_ip3d_d0sig);
+    // COPY(jet_trk_ip3d_z0sig);
 
-    COPY(jet_trk_ip3d_grade);
+    // COPY(jet_trk_ip3d_grade);
     // COPY(jet_trk_jf_Vertex);
 
     COPY(jet_trk_nInnHits);
@@ -607,8 +607,8 @@ Jet Jets::getJet(size_t pos) const {
     COPY(jet_trk_nSCTHoles);
     COPY(jet_trk_nsharedSCTHits);
     COPY(jet_trk_expectBLayerHit);
-    COPY(jet_trk_expectInnermostPixelLayerHit);
-    COPY(jet_trk_expectNextToInnermostPixelLayerHit);
+    // COPY(jet_trk_expectInnermostPixelLayerHit);
+    // COPY(jet_trk_expectNextToInnermostPixelLayerHit);
   }
 
 #undef COPY
@@ -697,7 +697,7 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
                           phi_mpi_pi(jet.jet_phi, track.phi));
     // COPY(algo);
     // COPY(orig);
-    COPY(ip3d_grade);
+    // COPY(ip3d_grade);
     COPY(chi2);
     COPY(ndf);
     COPY(nInnHits);
@@ -713,8 +713,8 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(nSCTHoles);
     COPY(nsharedSCTHits);
     COPY(expectBLayerHit);
-    COPY(expectInnermostPixelLayerHit);
-    COPY(expectNextToInnermostPixelLayerHit);
+    // COPY(expectInnermostPixelLayerHit);
+    // COPY(expectNextToInnermostPixelLayerHit);
 
 #undef COPY
     // special copy for ip3d vars
@@ -725,12 +725,12 @@ std::vector<TrkUnit> build_tracks(const Jet& jet){
     COPY(z0sig);
 #undef COPY
 #define COPY(par) track.par ## _ls = CHECK_AT(jet.jet_trk_ip3d_ ## par, trkn)
-    COPY(d0);
-    COPY(z0);
-    COPY(d0sig);
-    COPY(z0sig);
+    // COPY(d0);
+    // COPY(z0);
+    // COPY(d0sig);
+    // COPY(z0sig);
 #undef COPY
-    track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
+    // track.ip3d_grade = CHECK_AT(jet.jet_trk_ip3d_grade, trkn);
     setDerived(track, jet);
 
     // now copy the jetfitter vertices
@@ -802,7 +802,7 @@ std::map<std::string, double> get_map(const Jet& jet) {
   ADD(phi);
   ADD(m);
   ADD(ntrk);
-  ADD(ip3d_ntrk);
+  // ADD(ip3d_ntrk);
   ADD(ip3d_pb);
   ADD(ip3d_pc);
   ADD(ip3d_pu);

@@ -41,7 +41,7 @@ private:
   // quality info
   Histogram chi2;
   Histogram ndf;
-  Histogram ip3d_grade;
+  // Histogram ip3d_grade;
   Histogram nInnHits;
   Histogram nNextToInnHits;
   Histogram nBLHits;
@@ -124,7 +124,7 @@ TrackHists::TrackHists():
   RANGE(dphi_jet, -0.5, 0.5),
   RANGE(chi2, 0, 100),
   COUNT(ndf, 100),
-  COUNT(ip3d_grade, 20),
+  // COUNT(ip3d_grade, 20),
   COUNT(nInnHits, 5),
   COUNT(nNextToInnHits, 5),
   COUNT(nBLHits, 4),
@@ -156,7 +156,7 @@ void TrackHists::fill(const Track& track, double weight) {
   // quality info
   BYNAME(chi2);
   BYNAME(ndf);
-  BYNAME(ip3d_grade);
+  // BYNAME(ip3d_grade);
   BYNAME(nInnHits);
   BYNAME(nNextToInnHits);
   BYNAME(nBLHits);
@@ -187,7 +187,7 @@ void TrackHists::save(H5::CommonFG& out) const {
   // quality info
   BYNAME(chi2);
   BYNAME(ndf);
-  BYNAME(ip3d_grade);
+  // BYNAME(ip3d_grade);
   BYNAME(nInnHits);
   BYNAME(nNextToInnHits);
   BYNAME(nBLHits);
