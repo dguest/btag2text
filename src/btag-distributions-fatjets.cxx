@@ -21,6 +21,9 @@
 #include <iostream>
 #include <sstream>
 
+const double MV2_HIGH = 1.00001;
+const double MV2_LOW = -MV2_HIGH;
+
 const std::string DESCRIPTION = "build distributions for fat jets";
 
 class FatJetHists
@@ -35,6 +38,7 @@ private:
   std::vector<BTagHists> m_subjets_btag;
   JetHists m_fatjet;
   SubstructureHists m_substruct;
+  Histogram m_mv2_min;
   int m_n_one_cluster;
 };
 
@@ -86,6 +90,7 @@ FatJetHists::FatJetHists(int n_subjets):
   m_subjets(n_subjets, true),
   m_subjets_btag(n_subjets),
   m_fatjet(),
+  m_mv2_min(range("mv2_min", MV2_LOW, MV2_HIGH)),
   m_n_one_cluster(0)
 {
 }
@@ -108,6 +113,11 @@ void FatJetHists::fill(const Jet& jet, double weight) {
   } else {
     m_n_one_cluster++;
   }
+  if (subjets.size() >= 2) {
+    double mv2_1 = subjets.at(0).jet_mv2c10;
+    double mv2_2 = subjets.at(1).jet_mv2c10;
+    m_mv2_min.fill(std::min(mv2_1, mv2_2), weight);
+  }
 }
 
 void FatJetHists::save(H5::CommonFG& out) const {
@@ -120,6 +130,7 @@ void FatJetHists::save(H5::CommonFG& out) const {
     m_subjets.at(jet_idx).save(subjet);
     m_subjets_btag.at(jet_idx).save(subjet);
   }
+  m_mv2_min.write_to(fatjet, "mv2c10_min");
 }
 void FatJetHists::save(H5::CommonFG& out, std::string subdir) const {
   H5::Group group(out.createGroup(subdir));
