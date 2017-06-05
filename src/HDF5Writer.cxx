@@ -223,6 +223,8 @@ namespace {
     cl.dr = 0;
     cl.ptfrac = 0;
 
+    cl.grade = 0;
+
     cl.d0 = 0;
     cl.z0 = 0;
     cl.d0sig = 0;
