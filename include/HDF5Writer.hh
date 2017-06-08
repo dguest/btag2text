@@ -258,7 +258,7 @@ namespace h5 {
     }
     auto dummy = get_empty<T>();
     jet.resize(_max_length, dummy);
-    _buffer.insert(_buffer.begin(), jet.begin(), jet.end());
+    _buffer.insert(_buffer.end(), jet.begin(), jet.end());
   }
   template <typename T>
   void Writer<T>::flush() {
