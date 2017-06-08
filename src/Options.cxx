@@ -51,7 +51,8 @@ Options get_opts(int argc, char* argv[],
 }
 
 WriterOptions get_writer_opts(int argc, char* argv[],
-                              const std::string& description) {
+                              const std::string& description,
+                              unsigned opt_flags) {
   namespace po = boost::program_options;
   WriterOptions opts;
   std::string usage = "usage: " + std::string(argv[0]) + " <files...>"
@@ -72,7 +73,10 @@ WriterOptions get_writer_opts(int argc, char* argv[],
      "Number of tracks to write out (no container if zero)")
     ("cluster-size,c", po::value(&opts.cluster_size)->default_value(0),
      "Number of clusters to write out (no container if zero)");
-
+  if (opt_flags & opt::reweight_file) {
+    opt.add_options()("reweight-file,r", po::value(&opts.rw_file),
+                      "file to reweight this distribution by pt");
+  }
 
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);

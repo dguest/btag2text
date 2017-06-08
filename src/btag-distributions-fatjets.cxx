@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
   double sum_event_weights = 0;
 
-  Distribution* pt_rw = 0;
+  Distribution* pt_rw = nullptr;
   if (opts.rw_file.size() > 0) {
     H5::H5File rw_file(opts.rw_file, H5F_ACC_RDONLY);
     pt_rw = new Distribution(rw_file.openDataSet("signal_weights"));
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
-      if (pt_rw) weight *= pt_rw->get({{"jet_pt", jet.jet_pt}});
+      if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
       hists.fill(jet, weight);
       auto clusters = build_clusters(jet);
       images.fill(clusters, jet, weight);

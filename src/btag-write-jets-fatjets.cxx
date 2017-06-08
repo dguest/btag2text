@@ -2,7 +2,7 @@
 #include "Jets.hh"
 #include "hdf5_object_builders.hh"
 #include "SmartChain.hh"
-// #include "FlavorPtEtaDistributions.hh"
+#include "FlavorPtEtaDistributions.hh"
 #include "HDF5Writer.hh"
 #include "constants.hh"
 #include "unshittify.hh"
@@ -43,8 +43,11 @@ int main(int argc, char* argv[]) {
   std::signal(SIGINT, signal_handler);
   std::signal(SIGTERM, signal_handler);
 
-  // load info
-  const auto opts = get_writer_opts(argc, argv, DESCRIPTION);
+  // load configuration
+  const auto opts = get_writer_opts(argc, argv, DESCRIPTION,
+                                    opt::reweight_file);
+
+  // load input files
   SmartChain chain(get_tree(opts.input_files.at(0)));
   for (const auto& in: opts.input_files) {
     chain.add(in);
@@ -53,6 +56,14 @@ int main(int argc, char* argv[]) {
   int n_entries = chain.GetEntries();
   if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
 
+  // (maybe) get reweighting histogram
+  Distribution* pt_rw = nullptr;
+  if (opts.rw_file.size() > 0) {
+    H5::H5File rw_file(opts.rw_file, H5F_ACC_RDONLY);
+    pt_rw = new Distribution(rw_file.openDataSet("signal_weights"));
+  }
+
+  // setup outputs
   size_t n_chunk = opts.chunk_size;
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   h5::Writer<h5::Cluster>* cluster_ds(nullptr);
@@ -68,6 +79,7 @@ int main(int argc, char* argv[]) {
   h5::Writer1d<h5::FatJet> jet_ds(out_file, "jets", n_chunk);
   h5::Writer1d<btag_t> subjet1(out_file, "subjet1", n_chunk);
   h5::Writer1d<btag_t> subjet2(out_file, "subjet2", n_chunk);
+  h5::Writer1d<btag_t> subjet3(out_file, "subjet3", n_chunk);
 
   for (int iii = 0; iii < n_entries; iii++) {
     if (g_kill_signal == SIGINT || g_kill_signal == SIGTERM) break;
@@ -77,6 +89,7 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
+      if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
       std::vector<h5::Cluster> clusters = get_clusters(jet);
       std::vector<h5::Track> tracks = get_tracks(jet, TrackSelection::ALL);
       if (cluster_ds) cluster_ds->add_jet(clusters);
@@ -88,6 +101,8 @@ int main(int argc, char* argv[]) {
                       get_subjet_btagging(subs.at(0)): btag_t());
       subjet2.add_jet(subs.size() > 1 ?
                       get_subjet_btagging(subs.at(1)): btag_t());
+      subjet3.add_jet(subs.size() > 2 ?
+                      get_subjet_btagging(subs.at(2)): btag_t());
     }
   }
   if (cluster_ds) {
@@ -105,4 +120,6 @@ int main(int argc, char* argv[]) {
   subjet1.close();
   subjet2.flush();
   subjet2.close();
+  subjet3.flush();
+  subjet3.close();
 }

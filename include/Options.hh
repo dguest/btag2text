@@ -27,6 +27,7 @@ struct WriterOptions
   size_t chunk_size;
   size_t track_size;
   size_t cluster_size;
+  std::string rw_file;
 };
 std::ostream& operator<<(std::ostream&, const Options&);
 struct StreamOptions
@@ -39,7 +40,8 @@ Options get_opts(int argc, char* argv[],
                  const std::string& description,
                  unsigned flags = 0);
 WriterOptions get_writer_opts(int argc, char* argv[],
-                              const std::string& description);
+                              const std::string& description,
+                              unsigned flags = 0);
 StreamOptions get_stream_opts(int argc, char* argv[],
                               const std::string& description);
 
