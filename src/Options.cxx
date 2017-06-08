@@ -9,7 +9,8 @@ std::ostream& operator<<(std::ostream& in, const Options& opt) {
 }
 
 Options get_opts(int argc, char* argv[],
-                        const std::string& description) {
+                 const std::string& description,
+                 unsigned opt_flags) {
   namespace po = boost::program_options;
   Options opts;
   std::string usage = "usage: " + std::string(argv[0]) + " <files...>"
@@ -24,6 +25,11 @@ Options get_opts(int argc, char* argv[],
     ("weight,w", po::value(&opts.weight)->default_value(1.0),
      "weights for this file")
     ("verbose,v", po::bool_switch(&opts.verbose), "extra output");
+
+  if (opt_flags & opt::reweight_file) {
+    opt.add_options()("reweight-file,r", po::value(&opts.rw_file),
+                      "file to reweight this distribution by pt");
+  }
 
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);

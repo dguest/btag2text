@@ -14,6 +14,7 @@
 
 #include "ndhist/Histogram.hh"
 #include "ndhist/Exceptions.hh"
+#include "ndhist/Distribution.hh"
 
 #include "H5Cpp.h"
 #include "TROOT.h"
@@ -48,7 +49,7 @@ private:
 int main(int argc, char* argv[]) {
   unshittify();
   // command parsing
-  const auto opts = get_opts(argc, argv, DESCRIPTION);
+  const auto opts = get_opts(argc, argv, DESCRIPTION, opt::reweight_file);
   if (opts.verbose) std::cout << opts << std::endl;
   // running
   SmartChain chain(get_tree(opts.input_files.at(0)));
@@ -60,6 +61,12 @@ int main(int argc, char* argv[]) {
   if (opts.verbose) std::cout << "entires: " << n_entries << std::endl;
   double sum_event_weights = 0;
 
+  Distribution* pt_rw = 0;
+  if (opts.rw_file.size() > 0) {
+    H5::H5File rw_file(opts.rw_file, H5F_ACC_RDONLY);
+    pt_rw = new Distribution(rw_file.openDataSet("signal_weights"));
+  }
+
   FatJetHists hists(2);
   ClusterImages images(125*GeV);
   for (int iii = 0; iii < n_entries; iii++) {
@@ -70,6 +77,7 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
+      if (pt_rw) weight *= pt_rw->get({{"jet_pt", jet.jet_pt}});
       hists.fill(jet, weight);
       auto clusters = build_clusters(jet);
       images.fill(clusters, jet, weight);
