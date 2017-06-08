@@ -53,7 +53,7 @@ namespace h5 {
   HighLevelSubjetBTag::HighLevelSubjetBTag():
     btag(),
     dphi_fatjet(0), deta_fatjet(0), dr_fatjet(0),
-    mask(true)
+    mask(false)
   {
   }
 
@@ -162,7 +162,7 @@ namespace {
     cl.deta = 0;
     cl.dphi = 0;
     cl.energy = 0;
-    cl.mask = true;
+    cl.mask = false;
     return cl;
   }
 
@@ -223,6 +223,8 @@ namespace {
     cl.dr = 0;
     cl.ptfrac = 0;
 
+    cl.grade = 0;
+
     cl.d0 = 0;
     cl.z0 = 0;
     cl.d0sig = 0;
@@ -251,7 +253,7 @@ namespace {
     // cl.expectInnermostPixelLayerHit = 0;
     // cl.expectNextToInnermostPixelLayerHit = 0;
 
-    cl.mask = true;
+    cl.mask = false;
     return cl;
   }
 

@@ -23,7 +23,7 @@ std::vector<h5::Cluster> get_clusters(const Jet& jet) {
     cl.deta = cluster.eta - jet.jet_eta;
     cl.dphi = cluster.dphi_jet;
     cl.energy = cluster.e;
-    cl.mask = false;
+    cl.mask = true;
     clusters.push_back(cl);
   }
   return clusters;
@@ -84,7 +84,7 @@ std::vector<h5::Track> get_tracks(const Jet& jet, TrackSelection sel) {
     // COPY(expectNextToInnermostPixelLayerHit);
 #undef COPY
 
-    tk.mask = false;
+    tk.mask = true;
     tracks.push_back(tk);
   }
   return tracks;
@@ -98,7 +98,7 @@ h5::HighLevelSubjetBTag get_subjet_btagging(const Jet& jet) {
   btag.deta_fatjet = jet.deta_fatjet;
   btag.dr_fatjet = std::hypot(jet.dphi_fatjet, jet.deta_fatjet);
 
-  btag.mask = false;
+  btag.mask = true;
 
   return btag;
 }
