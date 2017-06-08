@@ -67,7 +67,7 @@ GEN_OBJ_PATHS  += $(TDICT_PATHS)
 
 # _______________________________________________________________
 # minimalist version
-WRITE_PREFIX := btag-write-
+WRITE_PREFIX := btag-write-THIS_TO_DISABLE
 ALL_WRITERS  := $(filter $(OUTPUT)/$(WRITE_PREFIX)%,$(ALL_EXE_PATHS))
 WRITE_OBJ    := Options Jets SmartChain
 WRITE_OBJ    += select_jet math get_tree unshittify
