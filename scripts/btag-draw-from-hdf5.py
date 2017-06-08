@@ -12,7 +12,7 @@ import numpy as np
 def get_args():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('input_file')
-    parser.add_argument('-n', '--nevents', default=100000)
+    parser.add_argument('-n', '--nevents', default=100000, type=int)
     parser.add_argument('-o', '--output-dir', default='plots')
     return parser.parse_args()
 
