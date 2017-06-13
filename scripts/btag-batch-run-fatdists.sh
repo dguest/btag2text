@@ -24,25 +24,28 @@ echo "running on $INPUT_FILE"
 mkdir -p $OUTPUT_DIR
 OUTPUT_PATH=${OUTPUT_DIR}/$OUTPUT_FILE.h5
 
+# xsec stuff
 XSEC_FILE=$PY_DIR/../data/xsec.txt
 if [[ ! -f $XSEC_FILE ]] ; then
     echo "ERROR: no xsec file found" >&2
     exit 1
 fi
-RW_FILE=reweight.h5
-if [[ ! -f $RW_FILE ]] ; then
-    echo "ERROR: no reweighting file found!" >&2
-    exit 1
-fi
 DSID=$(echo $OUTPUT_FILE | sed -r 's/d([0-9]*).*/\1/')
-RW_APP=''
 if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE); then
     echo "WARNING: no cross section data found, quitting"
     exit 1
 fi
+
+# rw stuff
+RW_FILE=reweight.h5
+RW_APP=''
 if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
-    RW_APP="-r ${RW_FILE}"
-    echo "using reweighting: ${RW_FILE}"
+    if [[ ! -f $RW_FILE ]] ; then
+        echo "WARNING: no reweighting file found!"
+    else
+        RW_APP="-r ${RW_FILE}"
+        echo "using reweighting: ${RW_FILE}"
+    fi
 fi
 echo "weighted by $WEIGHT"
 btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}
