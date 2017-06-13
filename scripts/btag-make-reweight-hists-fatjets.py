@@ -21,11 +21,11 @@ def _get_args():
 def run():
     args = _get_args()
     with File(args.input, 'r') as h5in:
-        numerator = Hist(h5in['/hists/qcd/fatjet/pt'])
-        denominator = Hist(h5in['/hists/signal/fatjet/pt'])
-    rw_hist = copy.deepcopy(denominator)
+        num = Hist(h5in['/hists/qcd/fatjet/pt'])
+        denom = Hist(h5in['/hists/signal/fatjet/pt'])
+    rw_hist = copy.deepcopy(denom)
     nonzero = rw_hist.hist != 0
-    rw_hist.hist = numerator.hist[nonzero] / denominator.hist[nonzero]
+    rw_hist.hist[nonzero] = num.hist[nonzero] / denom.hist[nonzero]
     with File(args.output, 'w') as h5out:
         rw_hist.write(h5out, 'signal_weights')
 
