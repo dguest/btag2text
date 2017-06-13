@@ -39,9 +39,10 @@ RW_APP=''
 if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE); then
     echo "WARNING: no cross section data found, quitting"
     exit 1
-    if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
-        RW_APP="-r ${RW_FILE}"
-    fi
+fi
+if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
+    RW_APP="-r ${RW_FILE}"
+    echo "using reweighting: ${RW_FILE}"
 fi
 echo "weighted by $WEIGHT"
 btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}

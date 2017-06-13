@@ -14,8 +14,8 @@ const double cm = 10*mm;
 
 // various other constants
 const double D0_THRESHOLD = 1.8; // track counting significance
-const double PT_REWEIGHT_MAX = 1000*GeV;
-const int PT_REWEIGHT_NBINS = 100;
+const double PT_REWEIGHT_MAX = 3000*GeV;
+const int PT_REWEIGHT_NBINS = 300;
 
 // used by the macros that define plots
 const int N_BINS = 200;
