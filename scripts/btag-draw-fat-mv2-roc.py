@@ -42,7 +42,7 @@ def _reg(arr):
 def _eff(arr):
     return arr / arr.max()
 
-MIN_EFF = 0.5
+MIN_EFF = 0.1
 def run():
     args = _get_args()
     with File(args.input, 'r') as h5in:
@@ -56,13 +56,13 @@ def run():
 
     print('plotting')
     high_eff = eff > MIN_EFF
-    with Canvas(os.path.join(args.output_dir, f'thing{args.ext}')) as can:
+    with Canvas(os.path.join(args.output_dir, f'mv2-min-roc{args.ext}')) as can:
         can.ax.plot(eff[high_eff], rej[high_eff], label='min mv2')
         can.ax.set_yscale('log')
         can.ax.set_xlabel(r'$b$ efficiency')
         can.ax.set_ylabel(r'qcd rejection')
         can.ax.grid(True)
-        can.ax.set_xlim(0.5, 1.0)
+        can.ax.set_xlim(0.1, 1.0)
         can.ax.legend(framealpha=0)
 
 if __name__ == '__main__':
