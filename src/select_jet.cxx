@@ -30,5 +30,7 @@ bool select_fat_jet(const Jet& jet) {
   if (std::isnan(jet.jet_pt)) return false;
   if (jet.jet_pt < 200*GeV) return false;
   if (std::abs(jet.jet_eta) > 2.5) return false;
+  bool in_window = (76*GeV < jet.jet_m) && (jet.jet_m < 146*GeV);
+  if (!in_window) return false;
   return true;
 }
