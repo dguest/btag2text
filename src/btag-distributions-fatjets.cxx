@@ -70,6 +70,7 @@ int main(int argc, char* argv[]) {
   FatJetHists hists(2);
   ClusterImages images(125*GeV);
   Histogram log_mc_weights(200, -10, 10, "log10");
+  Histogram log_weights(200, -10, 10, "log10");
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     sum_event_weights += jets.eventWeight();
@@ -80,6 +81,7 @@ int main(int argc, char* argv[]) {
       log_mc_weights.fill(std::log10(jet.mc_event_weight));
       double weight = opts.weight * jet.mc_event_weight;
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
+      log_weights.fill(std::log10(weight));
       hists.fill(jet, weight);
       auto clusters = build_clusters(jet);
       images.fill(clusters, jet, weight);
@@ -93,6 +95,7 @@ int main(int argc, char* argv[]) {
   H5::Group hist(out_file.createGroup(HIST));
   hists.save(hist);
   log_mc_weights.write_to(hist, "log_mc_weights");
+  log_weights.write_to(hist, "log_weights");
   images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
   write_attr(out_file, "sum_event_weights", sum_event_weights);
