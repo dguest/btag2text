@@ -90,9 +90,10 @@ int main(int argc, char* argv[]) {
   using namespace grp;
   H5::H5File out_file(opts.output_file, H5F_ACC_TRUNC);
   // hists
-  hists.save(out_file, HIST);
+  H5::Group hist(out_file.createGroup(HIST));
+  hists.save(hist);
+  log_mc_weights.write_to(hist, "log_mc_weights");
   images.save(out_file, IMAGE);
-  log_mc_weights.write_to(out_file, "log_mc_weights");
   write_attr(out_file, "n_entries", n_entries);
   write_attr(out_file, "sum_event_weights", sum_event_weights);
 }
