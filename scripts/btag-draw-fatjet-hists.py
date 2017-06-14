@@ -52,6 +52,9 @@ def _draw_hists(hist_dict, output_dir, var='pt', log=False, ext='.pdf'):
     print("drawing {}".format(name))
     with Canvas(name) as can:
         draw1d(can, hists, log=log)
+        if log:
+            can.ax.set_yscale('symlog', linthreshy=0.1)
+            can.ax.set_ylim(0, can.ax.get_ylim()[1])
         can.ax.legend(framealpha=0)
 
 def extended_variable_iter(proc_vars):
