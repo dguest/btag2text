@@ -7,6 +7,7 @@
 
 namespace opt {
   const unsigned reweight_file = 0x1 >> 0;
+  const unsigned max_weight = 0x1 >> 1;
 }
 
 struct Options
@@ -16,6 +17,7 @@ struct Options
   double weight;
   bool verbose;
   std::string rw_file;
+  double max_weight;
 };
 
 struct WriterOptions

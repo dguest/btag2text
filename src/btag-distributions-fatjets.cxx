@@ -49,7 +49,8 @@ private:
 int main(int argc, char* argv[]) {
   unshittify();
   // command parsing
-  const auto opts = get_opts(argc, argv, DESCRIPTION, opt::reweight_file);
+  const auto opts = get_opts(argc, argv, DESCRIPTION,
+                             opt::reweight_file | opt::max_weight);
   if (opts.verbose) std::cout << opts << std::endl;
   // running
   SmartChain chain(get_tree(opts.input_files.at(0)));
@@ -80,6 +81,7 @@ int main(int argc, char* argv[]) {
       if (! select_fat_jet(jet) ) continue;
       log_mc_weights.fill(std::log10(jet.mc_event_weight));
       double weight = opts.weight * jet.mc_event_weight;
+      if (weight > opts.max_weight) continue;
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
       log_weights.fill(std::log10(weight));
       hists.fill(jet, weight);

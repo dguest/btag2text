@@ -30,6 +30,11 @@ Options get_opts(int argc, char* argv[],
     opt.add_options()("reweight-file,r", po::value(&opts.rw_file),
                       "file to reweight this distribution by pt");
   }
+  if (opt_flags & opt::max_weight) {
+    opt.add_options()(
+      "max-weight,m", po::value(&opts.max_weight)->default_value(INFINITY),
+      "remove events with higher weights");
+  }
 
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);
