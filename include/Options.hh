@@ -6,8 +6,8 @@
 #include <ostream>
 
 namespace opt {
-  const unsigned reweight_file = 0x1 >> 0;
-  const unsigned max_weight = 0x1 >> 1;
+  const unsigned reweight_file = 0x1 << 0;
+  const unsigned max_weight = 0x1 << 1;
 }
 
 struct Options
