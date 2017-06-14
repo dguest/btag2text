@@ -46,6 +46,8 @@ if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
         RW_APP="-r ${RW_FILE}"
         echo "using reweighting: ${RW_FILE}"
     fi
+else
+    RW_APP="-m 5e4"
 fi
 echo "weighted by $WEIGHT"
 btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}
