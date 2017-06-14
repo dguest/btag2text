@@ -75,14 +75,19 @@ int main(int argc, char* argv[]) {
   for (int iii = 0; iii < n_entries; iii++) {
     chain.GetEntry(iii);
     sum_event_weights += jets.eventWeight();
+
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
-      if (! select_fat_jet(jet) ) continue;
-      log_mc_weights.fill(std::log10(jet.mc_event_weight));
+
+      // jet selection
+      if (! select_standard_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
-      if (weight > opts.max_weight) continue;
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
+      if (weight > opts.max_weight) continue;
+
+      // fill histograms
+      log_mc_weights.fill(std::log10(jet.mc_event_weight));
       log_weights.fill(std::log10(weight));
       hists.fill(jet, weight);
       auto clusters = build_clusters(jet);

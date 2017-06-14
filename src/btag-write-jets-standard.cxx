@@ -9,6 +9,7 @@
 #include "select_jet.hh"
 #include "math.hh"
 #include "get_tree.hh"
+#include "sort_functions.hh"
 
 #include "H5Cpp.h"
 
@@ -32,12 +33,6 @@ const std::string DESCRIPTION = (
   "Dump information for jets to HDF5"
   );
 
-namespace {
-  // sort tracks
-  bool by_decreasing_abs_d0sig(h5::Track& t1, h5::Track& t2){
-    return std::abs(t1.d0sig) > std::abs(t2.d0sig);
-  }
-}
 
 
 // _____________________________________________________________________
@@ -87,7 +82,8 @@ int main(int argc, char* argv[]) {
       std::vector<h5::Track> tracks = get_tracks(
         jet, TrackSelection::IP3D_ONLY);
 
-      std::sort(tracks.begin(), tracks.end(), by_decreasing_abs_d0sig);
+      std::sort(tracks.begin(), tracks.end(), sort::by_decreasing_abs_d0sig);
+      std::sort(clusters.begin(), clusters.end(), sort::by_decreasing_pt);
 
       if (cluster_ds) cluster_ds->add_jet(clusters);
       if (track_ds) track_ds->add_jet(tracks);

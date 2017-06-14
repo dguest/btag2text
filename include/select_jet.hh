@@ -5,5 +5,6 @@ struct Jet;
 
 bool select_jet(const Jet&);
 bool select_fat_jet(const Jet&);
+bool select_standard_fat_jet(const Jet&);
 
 #endif

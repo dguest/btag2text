@@ -9,6 +9,7 @@
 #include "select_jet.hh"
 #include "math.hh"
 #include "get_tree.hh"
+#include "sort_functions.hh"
 
 #include "H5Cpp.h"
 
@@ -44,8 +45,9 @@ int main(int argc, char* argv[]) {
   std::signal(SIGTERM, signal_handler);
 
   // load configuration
-  const auto opts = get_writer_opts(argc, argv, DESCRIPTION,
-                                    opt::reweight_file);
+  const auto opts = get_opts(argc, argv, DESCRIPTION,
+                             opt::reweight_file | opt::writer |
+                             opt::max_weight);
 
   // load input files
   SmartChain chain(get_tree(opts.input_files.at(0)));
@@ -84,14 +86,22 @@ int main(int argc, char* argv[]) {
   for (int iii = 0; iii < n_entries; iii++) {
     if (g_kill_signal == SIGINT || g_kill_signal == SIGTERM) break;
     chain.GetEntry(iii);
+
     int n_jets = jets.size();
     for (int jjj = 0; jjj < n_jets; jjj++) {
       auto jet = jets.getJet(jjj);
+
+      // jet selection
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
+      if (weight > opts.max_weight) continue;
+
+      // build vectors and fill output arrays
       std::vector<h5::Cluster> clusters = get_clusters(jet);
       std::vector<h5::Track> tracks = get_tracks(jet, TrackSelection::ALL);
+      std::sort(tracks.begin(), tracks.end(), sort::by_decreasing_abs_d0sig);
+      std::sort(clusters.begin(), clusters.end(), sort::by_decreasing_pt);
       if (cluster_ds) cluster_ds->add_jet(clusters);
       if (track_ds) track_ds->add_jet(tracks);
       h5::FatJet hjet = get_fat_jet(jet, weight);
