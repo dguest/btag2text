@@ -43,11 +43,11 @@ if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
     if [[ ! -f $RW_FILE ]] ; then
         echo "WARNING: no reweighting file found!"
     else
-        RW_APP="-r ${RW_FILE}"
+        RW_APP="--reweight-file ${RW_FILE}"
         echo "using reweighting: ${RW_FILE}"
     fi
 else
-    RW_APP="-m 5e4"
+    RW_APP="--max-weight 5e4"
 fi
 echo "weighted by $WEIGHT"
 btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}
