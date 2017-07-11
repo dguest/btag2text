@@ -36,19 +36,6 @@ if ! WEIGHT=$(echo $DSID | $PY_DIR/btag-get-xsec.py $XSEC_FILE); then
     exit 1
 fi
 
-# rw stuff
-RW_FILE=reweight.h5
-RW_APP=''
-if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
-    if [[ ! -f $RW_FILE ]] ; then
-        echo "WARNING: no reweighting file found!"
-    else
-        RW_APP="--reweight-file ${RW_FILE}"
-        echo "using reweighting: ${RW_FILE}"
-    fi
-else
-    RW_APP="--max-weight 5e4"
-fi
 echo "weighted by $WEIGHT"
-btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}
+btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT
 
