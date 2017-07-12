@@ -37,14 +37,16 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False,
                 sl = slice(start_idx, end_idx)
                 sj1 = h5file['subjet1'][sl]
                 sj2 = h5file['subjet2'][sl]
+                fatjet = h5file['jets'][sl]
                 mv2c10_min = np.minimum(sj1['mv2c10'], sj2['mv2c10'])
+                weight = fatjet['weight']
+                valid = sj1['mask'] & sj2['mask']
                 if papercuts:
-                    fatjet = h5file['jets'][sl]
                     pt, mass = fatjet['pt'], fatjet['mass']
-                    valid = (250 < pt) & (pt < 400)
+                    valid &= (250 < pt) & (pt < 400)
                     valid &= (76 < mass) & (mass < 146)
-                    mv2c10_min[~valid] = 0
-                hist, _ = np.histogram(mv2c10_min, bins=edges)
+                mv2c10_min[~valid] = 0
+                hist, _ = np.histogram(mv2c10_min, weights=weight, bins=edges)
                 dist += hist
     return dist
 
