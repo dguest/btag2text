@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from h5py import File
 from ndhist.mpl import Canvas
 import numpy as np
-import os
+import os, sys
 
 def get_args():
     d = "default: %(default)s"
@@ -19,9 +19,11 @@ def get_args():
     parser.add_argument('-o', '--output-dir', default='plots')
     parser.add_argument('-e', '--ext', default='.pdf', help=d)
     parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('-c', '--paper-cuts', action='store_true')
     return parser.parse_args()
 
-def get_dist(file_list, batch_size, nbins=10000, verbose=False):
+def get_dist(file_list, batch_size, nbins=10000, verbose=False,
+             papercuts=False):
     dist = np.zeros(nbins)
     edges = np.linspace(-1, 1, nbins+1)
     for fname in file_list:
@@ -30,10 +32,18 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False):
             for start_idx in range(0, n_entries, batch_size):
                 end_idx = start_idx + batch_size
                 if verbose:
-                    print(f'{fname}, slice {start_idx}--{end_idx}')
-                sj1 = h5file['subjet1'][start_idx:end_idx]
-                sj2 = h5file['subjet2'][start_idx:end_idx]
+                    sys.stderr.write(
+                        f'{fname}, slice {start_idx}--{end_idx}\n')
+                sl = slice(start_idx, end_idx)
+                sj1 = h5file['subjet1'][sl]
+                sj2 = h5file['subjet2'][sl]
                 mv2c10_min = np.minimum(sj1['mv2c10'], sj2['mv2c10'])
+                if papercuts:
+                    fatjet = h5file['jets'][sl]
+                    pt, mass = fatjet['pt'], fatjet['mass']
+                    valid = (250 < pt) & (pt < 400)
+                    valid &= (76 < mass) & (mass < 146)
+                    mv2c10_min[~valid] = 0
                 hist, _ = np.histogram(mv2c10_min, bins=edges)
                 dist += hist
     return dist
@@ -41,7 +51,8 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False):
 MIN_EFF = 0.1
 def run():
     args = get_args()
-    opts = dict(batch_size = args.batch_size, verbose=args.verbose)
+    opts = dict(batch_size = args.batch_size, verbose=args.verbose,
+                papercuts=args.paper_cuts)
     signal = get_dist(args.signal, **opts)
     background = get_dist(args.background, **opts)
     eff = _eff(_cumsum(signal))
@@ -50,7 +61,8 @@ def run():
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir)
 
-    print('plotting')
+    if args.verbose:
+        sys.stderr.write('plotting\n')
     high_eff = eff > MIN_EFF
 
     roc_out_path = os.path.join(args.output_dir, f'mv2-min-roc{args.ext}')
