@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 """
-Draw the minimum MV2 roc curve for an h->bb sample
+Build minimum MV2 roc curve for an h->bb sample
 """
 
 from argparse import ArgumentParser
 from h5py import File
-from ndhist.mpl import Canvas
 import numpy as np
-import os, sys
+import os, sys, json
 
 def get_args():
     d = "default: %(default)s"
@@ -16,8 +15,7 @@ def get_args():
     parser.add_argument('-s', '--signal', nargs='+')
     parser.add_argument('-b', '--background', nargs='+')
     parser.add_argument('-n', '--batch-size', default=100000, type=int)
-    parser.add_argument('-o', '--output-dir', default='plots')
-    parser.add_argument('-e', '--ext', default='.pdf', help=d)
+    parser.add_argument('-p', '--points', default=1000, type=int, help=d)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--paper-cuts', action='store_true')
     return parser.parse_args()
@@ -50,32 +48,17 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False,
                 dist += hist
     return dist
 
-MIN_EFF = 0.1
 def run():
     args = get_args()
     opts = dict(batch_size = args.batch_size, verbose=args.verbose,
-                papercuts=args.paper_cuts)
+                papercuts=args.paper_cuts, nbins=args.points)
     signal = get_dist(args.signal, **opts)
     background = get_dist(args.background, **opts)
     eff = _eff(_cumsum(signal))
     rej = _rej(_cumsum(background))
+    jstring = json.dumps({'eff': eff.tolist(), 'rej': rej.tolist()}, indent=2)
+    sys.stdout.write(jstring + '\n')
 
-    if not os.path.isdir(args.output_dir):
-        os.makedirs(args.output_dir)
-
-    if args.verbose:
-        sys.stderr.write('plotting\n')
-    high_eff = eff > MIN_EFF
-
-    roc_out_path = os.path.join(args.output_dir, f'mv2-min-roc{args.ext}')
-    with Canvas(roc_out_path) as can:
-        can.ax.plot(eff[high_eff], rej[high_eff], label='min mv2')
-        can.ax.set_yscale('log')
-        can.ax.set_xlabel(r'$b$ efficiency')
-        can.ax.set_ylabel(r'qcd rejection')
-        can.ax.grid(True)
-        can.ax.set_xlim(0.1, 1.0)
-        can.ax.legend(framealpha=0)
 
 # utility stuff
 def _cumsum(ds):
