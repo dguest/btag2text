@@ -43,7 +43,7 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False,
                     pt, mass = fatjet['pt'], fatjet['mass']
                     valid &= (250 < pt) & (pt < 400)
                     valid &= (76 < mass) & (mass < 146)
-                mv2c10_min[~valid] = 0
+                mv2c10_min[~valid] = -1
                 hist, _ = np.histogram(mv2c10_min, weights=weight, bins=edges)
                 dist += hist
     return dist
