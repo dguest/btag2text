@@ -35,6 +35,8 @@ def run():
     if args.verbose:
         sys.stderr.write('plotting\n')
     high_eff = eff >= MIN_EFF
+    if np.count_nonzero(high_eff) < 10:
+        high_eff = np.ones(eff.shape, dtype=bool)
 
     roc_out_path = os.path.join(args.output_dir, f'mv2-min-roc{args.ext}')
     with Canvas(roc_out_path) as can:

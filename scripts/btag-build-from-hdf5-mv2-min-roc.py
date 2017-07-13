@@ -38,12 +38,14 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False,
                 fatjet = h5file['jets'][sl]
                 mv2c10_min = np.minimum(sj1['mv2c10'], sj2['mv2c10'])
                 weight = fatjet['weight']
-                valid = sj1['mask'] & sj2['mask']
+                not_bad = sj1['mask'] & sj2['mask']
+                mv2c10_min[~not_bad] = -1
                 if papercuts:
                     pt, mass = fatjet['pt'], fatjet['mass']
-                    valid &= (250 < pt) & (pt < 400)
+                    valid = (250 < pt) & (pt < 400)
                     valid &= (76 < mass) & (mass < 146)
-                mv2c10_min[~valid] = -1
+                    mv2c10_min = mv2c10_min[valid]
+                    weight = weight[valid]
                 hist, _ = np.histogram(mv2c10_min, weights=weight, bins=edges)
                 dist += hist
     return dist
@@ -56,7 +58,9 @@ def run():
     background = get_dist(args.background, **opts)
     eff = _eff(_cumsum(signal))
     rej = _rej(_cumsum(background))
-    jstring = json.dumps({'eff': eff.tolist(), 'rej': rej.tolist()}, indent=2)
+    valid = np.isfinite(rej)
+    out_dict = {'eff': eff[valid].tolist(), 'rej': rej[valid].tolist()}
+    jstring = json.dumps(out_dict, indent=2)
     sys.stdout.write(jstring + '\n')
 
 
