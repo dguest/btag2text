@@ -16,12 +16,13 @@ def get_args():
     parser.add_argument('-b', '--background', nargs='+')
     parser.add_argument('-n', '--batch-size', default=100000, type=int)
     parser.add_argument('-p', '--points', default=1000, type=int, help=d)
+    parser.add_argument('-m', '--max-weight', default=5e4, type=float)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--paper-cuts', action='store_true')
     return parser.parse_args()
 
 def get_dist(file_list, batch_size, nbins=10000, verbose=False,
-             papercuts=False):
+             papercuts=False, max_weight=5e4):
     dist = np.zeros(nbins)
     edges = np.linspace(-1, 1, nbins+1)
     for fname in file_list:
@@ -32,20 +33,26 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False,
                 if verbose:
                     sys.stderr.write(
                         f'{fname}, slice {start_idx}--{end_idx}\n')
+
                 sl = slice(start_idx, end_idx)
                 sj1 = h5file['subjet1'][sl]
                 sj2 = h5file['subjet2'][sl]
                 fatjet = h5file['jets'][sl]
                 mv2c10_min = np.minimum(sj1['mv2c10'], sj2['mv2c10'])
                 weight = fatjet['weight']
+
+                # jet with missing subjet is called background
                 not_bad = sj1['mask'] & sj2['mask']
                 mv2c10_min[~not_bad] = -1
+
+                valid = (weight < max_weight)
                 if papercuts:
                     pt, mass = fatjet['pt'], fatjet['mass']
-                    valid = (250 < pt) & (pt < 400)
+                    valid &= (250 < pt) & (pt < 400)
                     valid &= (76 < mass) & (mass < 146)
-                    mv2c10_min = mv2c10_min[valid]
-                    weight = weight[valid]
+                mv2c10_min = mv2c10_min[valid]
+                weight = weight[valid]
+
                 hist, _ = np.histogram(mv2c10_min, weights=weight, bins=edges)
                 dist += hist
     return dist
