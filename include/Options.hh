@@ -9,6 +9,7 @@ namespace opt {
   const unsigned reweight_file = 0x1 << 0;
   const unsigned max_weight = 0x1 << 1;
   const unsigned writer = 0x1 << 2;
+  const unsigned lwtnn = 0x1 << 3;
 }
 
 struct Options
@@ -22,6 +23,7 @@ struct Options
   size_t cluster_size;
   std::string rw_file;
   double max_weight;
+  std::string network_file;
   Options();
 };
 

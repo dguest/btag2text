@@ -39,6 +39,8 @@ GEN_OBJ_PATHS := $(GEN_OBJ:%=$(BUILD)/%)
 # --- all top level (added further down)
 ALL_TOP_LEVEL := # blank, more will be added below
 
+LOCAL_LIBS :=
+
 # _______________________________________________________________
 # Add Top Level Objects
 
@@ -118,6 +120,12 @@ WRITER_LIBS  := $(LIBS)
 NDHIST       := ndhist/lib/libndhist.so
 LIBS         += $(shell $(CURDIR)/ndhist/bin/ndhist-config --libs)
 CXXFLAGS     += $(shell $(CURDIR)/ndhist/bin/ndhist-config --cflags)
+LOCAL_LIBS   += $(NDHIST)
+
+# --- add lwtnn
+LWTNN        := lwtnn/lib/liblwtnn.so
+CXXFLAGS     += -I$(CURDIR)/lwtnn/include
+LOCAL_LIBS   += $(LWTNN)
 
 # --- add eigen
 ifdef EIGEN_INCLUDE_PATH
@@ -138,6 +146,11 @@ $(NDHIST):
 	@$(MAKE) -C ndhist
 	@echo " -- done building ndhist -- "
 
+$(LWTNN):
+	@echo " -- building lwtnn -- "
+	@$(MAKE) -C lwtnn
+	@echo " -- done building lwtnn -- "
+
 plotting:
 	@echo "installing plotting scripts"
 	@./ndhist-python/ndhist-install-python install
@@ -157,7 +170,7 @@ $(OUTPUT)/$(WRITE_PREFIX)%: $(WRITE_OBJ_PATHS) $(WRITE_OBJ_PFX)%.o
 
 # build general executables
 EXEC_OBJ_PFX := $(BUILD)/$(EXE_PREFIX)
-$(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(EXEC_OBJ_PFX)%.o $(NDHIST)
+$(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(EXEC_OBJ_PFX)%.o $(LOCAL_LIBS)
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
 	@$(CXX) -o $@ $(filter-out $(NDHIST),$^) $(LIBS) $(LDFLAGS)

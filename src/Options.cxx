@@ -49,6 +49,11 @@ Options get_opts(int argc, char* argv[],
       ("cluster-size,c", po::value(&opts.cluster_size)->default_value(0),
        "Number of clusters to write out (no container if zero)");
   }
+  if (opt_flags & opt::lwtnn) {
+    opt.add_options()
+      ("network-file,n", po::value(&opts.network_file),
+        "lwtnn file to read in");
+  }
 
   po::positional_options_description pos_opts;
   pos_opts.add("files", -1);

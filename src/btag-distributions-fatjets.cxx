@@ -16,6 +16,8 @@
 #include "ndhist/Exceptions.hh"
 #include "ndhist/Distribution.hh"
 
+#include "LwtnnWrapper.hh"
+
 #include "H5Cpp.h"
 #include "TROOT.h"
 
@@ -49,8 +51,9 @@ private:
 int main(int argc, char* argv[]) {
   unshittify();
   // command parsing
-  const auto opts = get_opts(argc, argv, DESCRIPTION,
-                             opt::reweight_file | opt::max_weight);
+  const auto opts = get_opts(
+    argc, argv, DESCRIPTION,
+    opt::reweight_file | opt::max_weight | opt::lwtnn);
   if (opts.verbose) std::cout << opts << std::endl;
   // running
   SmartChain chain(get_tree(opts.input_files.at(0)));
@@ -67,6 +70,9 @@ int main(int argc, char* argv[]) {
     H5::H5File rw_file(opts.rw_file, H5F_ACC_RDONLY);
     pt_rw = new Distribution(rw_file.openDataSet("signal_weights"));
   }
+
+  LwtnnWrapper network(opts.network_file);
+  Histogram lwtnn_output(10000, 0, 1);
 
   FatJetHists hists(2);
   ClusterImages images(125*GeV);
@@ -86,6 +92,8 @@ int main(int argc, char* argv[]) {
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
       if (weight > opts.max_weight) continue;
 
+      if (network) lwtnn_output.fill(network.compute(jet), weight);
+
       // fill histograms
       log_mc_weights.fill(std::log10(jet.mc_event_weight));
       log_weights.fill(std::log10(weight));
@@ -103,6 +111,7 @@ int main(int argc, char* argv[]) {
   hists.save(hist);
   log_mc_weights.write_to(hist, "log_mc_weights");
   log_weights.write_to(hist, "log_weights");
+  if (network) lwtnn_output.write_to(hist, "classifier_output");
   images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
   write_attr(out_file, "sum_event_weights", sum_event_weights);
