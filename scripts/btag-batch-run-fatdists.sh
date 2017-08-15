@@ -49,6 +49,16 @@ if echo $DSID | $PY_DIR/btag-get-xsec.py -s $XSEC_FILE; then
 else
     RW_APP="--max-weight 5e4"
 fi
+
+OPTS="$INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}"
+
+# Add NN file
+NN_FILE=lwtnn-network.json
+if [[ -f $NN_FILE ]]; then
+    echo "using NN file ${NN_FILE}"
+    OPTS+=" --network-file ${NN_FILE}"
+fi
+
 echo "weighted by $WEIGHT"
-btag-distributions-fatjets $INPUT_FILE -o $OUTPUT_PATH -w $WEIGHT ${RW_APP}
+btag-distributions-fatjets ${OPTS}
 
