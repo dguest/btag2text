@@ -23,6 +23,7 @@ public:
 private:
   lwt::LightweightNeuralNetwork* m_lwtnn;
   std::string m_output_name;
+  size_t m_n_inputs;
 };
 
 #endif

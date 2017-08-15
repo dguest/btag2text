@@ -8,10 +8,8 @@ namespace {
   H5::CompType get_jet_type();
 
   H5::CompType get_cluster_type();
-  h5::Cluster get_empty_cluster();
 
   H5::CompType get_track_type();
-  h5::Track get_empty_track();
 
   H5::EnumType get_bool_type();
 
@@ -106,6 +104,59 @@ namespace h5 {
     return get_high_level_subjet_btag_type();
   }
 
+
+  h5::Cluster get_empty_cluster() {
+    h5::Cluster cl;
+    cl.pt = 0;
+    cl.deta = 0;
+    cl.dphi = 0;
+    cl.energy = 0;
+    cl.mask = false;
+    return cl;
+  }
+
+  h5::Track get_empty_track() {
+    h5::Track cl;
+    cl.pt = 0;
+    cl.deta = 0;
+    cl.dphi = 0;
+    // cl.charge = 0;
+
+    cl.dr = 0;
+    cl.ptfrac = 0;
+
+    cl.d0 = 0;
+    cl.z0 = 0;
+    cl.d0sig = 0;
+    cl.z0sig = 0;
+    cl.d0_ls = 0;
+    cl.z0_ls = 0;
+    cl.d0sig_ls = 0;
+    cl.z0sig_ls = 0;
+    cl.chi2 = 0;
+    cl.ndf = 0;
+
+    cl.numberOfInnermostPixelLayerHits = 0;
+    cl.numberOfNextToInnermostPixelLayerHits = 0;
+    cl.numberOfBLayerHits = 0;
+    cl.numberOfBLayerSharedHits = 0;
+    cl.numberOfBLayerSplitHits = 0;
+    cl.numberOfPixelHits = 0;
+    cl.numberOfPixelHoles = 0;
+    cl.numberOfPixelSharedHits = 0;
+    cl.numberOfPixelSplitHits = 0;
+    cl.numberOfSCTHits = 0;
+    cl.numberOfSCTHoles = 0;
+    cl.numberOfSCTSharedHits = 0;
+
+    cl.expectBLayerHit = 0;
+    // cl.expectInnermostPixelLayerHit = 0;
+    // cl.expectNextToInnermostPixelLayerHit = 0;
+
+    cl.mask = false;
+    return cl;
+  }
+
   // packing utility
   H5::DataType packed(H5::DataType in) {
     // TODO: Figure out why a normal copy constructor doesn't work here.
@@ -116,6 +167,9 @@ namespace h5 {
   }
 
 }
+
+
+
 
 namespace {
   H5::CompType get_jet_type() {
@@ -156,16 +210,6 @@ namespace {
 #undef INSERT
     return type;
   }
-  h5::Cluster get_empty_cluster() {
-    h5::Cluster cl;
-    cl.pt = 0;
-    cl.deta = 0;
-    cl.dphi = 0;
-    cl.energy = 0;
-    cl.mask = false;
-    return cl;
-  }
-
 
   H5::CompType get_track_type() {
     auto ftype = h5::get_type<h5::outfloat_t>();
@@ -212,47 +256,6 @@ namespace {
     INSERT(mask);
 #undef INSERT
     return type;
-  }
-  h5::Track get_empty_track() {
-    h5::Track cl;
-    cl.pt = 0;
-    cl.deta = 0;
-    cl.dphi = 0;
-    // cl.charge = 0;
-
-    cl.dr = 0;
-    cl.ptfrac = 0;
-
-    cl.d0 = 0;
-    cl.z0 = 0;
-    cl.d0sig = 0;
-    cl.z0sig = 0;
-    cl.d0_ls = 0;
-    cl.z0_ls = 0;
-    cl.d0sig_ls = 0;
-    cl.z0sig_ls = 0;
-    cl.chi2 = 0;
-    cl.ndf = 0;
-
-    cl.numberOfInnermostPixelLayerHits = 0;
-    cl.numberOfNextToInnermostPixelLayerHits = 0;
-    cl.numberOfBLayerHits = 0;
-    cl.numberOfBLayerSharedHits = 0;
-    cl.numberOfBLayerSplitHits = 0;
-    cl.numberOfPixelHits = 0;
-    cl.numberOfPixelHoles = 0;
-    cl.numberOfPixelSharedHits = 0;
-    cl.numberOfPixelSplitHits = 0;
-    cl.numberOfSCTHits = 0;
-    cl.numberOfSCTHoles = 0;
-    cl.numberOfSCTSharedHits = 0;
-
-    cl.expectBLayerHit = 0;
-    // cl.expectInnermostPixelLayerHit = 0;
-    // cl.expectNextToInnermostPixelLayerHit = 0;
-
-    cl.mask = false;
-    return cl;
   }
 
   H5::EnumType get_bool_type() {

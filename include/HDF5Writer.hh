@@ -103,6 +103,7 @@ namespace h5 {
   };
   template<> H5::DataType get_type<Cluster>();
   template<> Cluster get_empty<Cluster>();
+  h5::Cluster get_empty_cluster();
 
   // track struct and associated template specialization
   struct Track {
@@ -148,6 +149,7 @@ namespace h5 {
   };
   template<> H5::DataType get_type<Track>();
   template<> Track get_empty<Track>();
+  h5::Track get_empty_track();
 
   // struct for high level b-tagger variables
   struct HighLevelBTag {
