@@ -126,6 +126,8 @@ LOCAL_LIBS   += $(NDHIST)
 LWTNN        := lwtnn/lib/liblwtnn.so
 CXXFLAGS     += -I$(CURDIR)/lwtnn/include
 LOCAL_LIBS   += $(LWTNN)
+LIBS         += -L$(dir $(CURDIR)/$(LWTNN)) -llwtnn
+LIBS         += -Wl,-rpath,$(dir $(CURDIR)/$(LWTNN))
 
 # --- add eigen
 ifdef EIGEN_INCLUDE_PATH
@@ -173,7 +175,7 @@ EXEC_OBJ_PFX := $(BUILD)/$(EXE_PREFIX)
 $(OUTPUT)/$(EXE_PREFIX)%: $(GEN_OBJ_PATHS) $(EXEC_OBJ_PFX)%.o $(LOCAL_LIBS)
 	@mkdir -p $(OUTPUT)
 	@echo "linking $^ --> $@"
-	@$(CXX) -o $@ $(filter-out $(NDHIST),$^) $(LIBS) $(LDFLAGS)
+	@$(CXX) -o $@ $(filter-out $(LOCAL_LIBS),$^) $(LIBS) $(LDFLAGS)
 	@cp -f $(DICT)/*.pcm $(OUTPUT)
 
 
