@@ -32,7 +32,7 @@ const std::string DESCRIPTION = "build distributions for fat jets";
 class FatJetHists
 {
 public:
-  FatJetHists(int n_subjets);
+  FatJetHists(int n_subjets, std::string);
   void fill(const Jet& jet, double weight = 1);
   void save(H5::CommonFG& out) const;
   void save(H5::CommonFG& out, std::string subdir) const;
@@ -43,6 +43,9 @@ private:
   SubstructureHists m_substruct;
   Histogram m_mv2_min;
   int m_n_one_cluster;
+
+  LwtnnWrapper m_network;
+  Histogram m_lwtnn_output;
 };
 
 // _____________________________________________________________________
@@ -71,10 +74,9 @@ int main(int argc, char* argv[]) {
     pt_rw = new Distribution(rw_file.openDataSet("signal_weights"));
   }
 
-  LwtnnWrapper network(opts.network_file);
-  Histogram lwtnn_output(10000, 0, 1);
 
-  FatJetHists hists(2);
+  FatJetHists hists(2, opts.network_file);
+  FatJetHists uncut_hists(2, opts.network_file);
   ClusterImages images(125*GeV);
   Histogram log_mc_weights(200, -10, 10, "log10");
   Histogram log_weights(200, -10, 10, "log10");
@@ -87,12 +89,14 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
 
       // jet selection
-      if (! select_standard_fat_jet(jet) ) continue;
+      if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
       if (weight > opts.max_weight) continue;
 
-      if (network) lwtnn_output.fill(network.compute(jet), weight);
+      uncut_hists.fill(jet, weight);
+      
+      if (! select_standard_fat_jet(jet) ) continue;
 
       // fill histograms
       log_mc_weights.fill(std::log10(jet.mc_event_weight));
@@ -109,20 +113,22 @@ int main(int argc, char* argv[]) {
   // hists
   H5::Group hist(out_file.createGroup(HIST));
   hists.save(hist);
+  uncut_hists.save(hist, "uncut");
   log_mc_weights.write_to(hist, "log_mc_weights");
   log_weights.write_to(hist, "log_weights");
-  if (network) lwtnn_output.write_to(hist, "classifier_output");
   images.save(out_file, IMAGE);
   write_attr(out_file, "n_entries", n_entries);
   write_attr(out_file, "sum_event_weights", sum_event_weights);
 }
 
-FatJetHists::FatJetHists(int n_subjets):
+FatJetHists::FatJetHists(int n_subjets, std::string network_file):
   m_subjets(n_subjets, true),
   m_subjets_btag(n_subjets),
   m_fatjet(),
   m_mv2_min({{"mv2_min", 10000, MV2_LOW, MV2_HIGH}}),
-  m_n_one_cluster(0)
+  m_n_one_cluster(0),
+  m_network(network_file),
+  m_lwtnn_output({{"julians_classifier", 10000, 0, 1}})
 {
 }
 void FatJetHists::fill(const Jet& jet, double weight) {
@@ -139,6 +145,8 @@ void FatJetHists::fill(const Jet& jet, double weight) {
     }
   }
   m_fatjet.fill(jet, weight);
+  if (m_network) m_lwtnn_output.fill(m_network.compute(jet), weight);
+
   if (jet.jet_cluster_pt.size() > 1) {
     m_substruct.fill(jet.moments, weight);
   } else {
@@ -162,6 +170,7 @@ void FatJetHists::save(H5::CommonFG& out) const {
     m_subjets_btag.at(jet_idx).save(subjet);
   }
   m_mv2_min.write_to(fatjet, "mv2c10_min");
+  if (m_network) m_lwtnn_output.write_to(fatjet, "dnn_output");
 }
 void FatJetHists::save(H5::CommonFG& out, std::string subdir) const {
   H5::Group group(out.createGroup(subdir));
