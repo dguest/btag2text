@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
       if (weight > opts.max_weight) continue;
 
       uncut_hists.fill(jet, weight);
-      
+
       if (! select_standard_fat_jet(jet) ) continue;
 
       // fill histograms
