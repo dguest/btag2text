@@ -45,19 +45,27 @@ def _eff(arr):
 MIN_EFF = 0.1
 def run():
     args = _get_args()
+    plots = {}
     with File(args.input, 'r') as h5in:
-        def get_cumsum(sample):
-            return _cumsum(h5in['hists'][sample]['fatjet']['mv2c10_min'])
-        eff = _eff(get_cumsum('signal'))
-        rej = _reg(get_cumsum('qcd'))
+        for thing in ['classifier_output', 'fatjet/mv2c10_min']:
+            def get_cumsum(sample):
+                return _cumsum(h5in['hists'][sample][thing])
+            eff = _eff(get_cumsum('signal'))
+            rej = _reg(get_cumsum('qcd'))
+            plots[thing] = {'eff': eff, 'rej': rej}
 
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir)
 
+    plot(args, plots)
+
+def plot(args, plots):
     print('plotting')
-    high_eff = eff > MIN_EFF
-    with Canvas(os.path.join(args.output_dir, f'mv2-min-roc{args.ext}')) as can:
-        can.ax.plot(eff[high_eff], rej[high_eff], label='min mv2')
+    with Canvas(os.path.join(args.output_dir, f'roc{args.ext}')) as can:
+        for name, dots in plots.items():
+            eff, rej = dots['eff'], dots['rej']
+            high_eff = eff > MIN_EFF
+            can.ax.plot(eff[high_eff], rej[high_eff], label=name)
         can.ax.set_yscale('log')
         can.ax.set_xlabel(r'$b$ efficiency')
         can.ax.set_ylabel(r'qcd rejection')
