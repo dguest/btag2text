@@ -6,6 +6,7 @@ Get cross sections via pipe
 
 from argparse import ArgumentParser
 import sys
+from cross_sections import CrossSections
 
 def _get_args():
     parser = ArgumentParser(description=__doc__)
@@ -20,34 +21,6 @@ def input_itr():
     for line in sys.stdin:
         yield from (int(x) for x in line.split())
 
-class CrossSections:
-    def __init__(self, file_name, lumi_fb=20):
-        self.datasets = {}
-        self.lumi_fb = lumi_fb
-        with open(file_name) as infile:
-            for rawline in infile:
-                self._add_line(rawline)
-
-    def _add_line(self, rawline):
-        line = rawline.strip()
-        if not line or line.startswith('#'):
-            return
-        shortname, dsid_s, xsec_nb_s, filteff_s, evts_s = line.split()
-        self.datasets[int(dsid_s)] = {
-            'xsec_fb': float(xsec_nb_s) * 1e6,
-            'filteff': float(filteff_s),
-            'nevt': float('nan') if evts_s == '?' else float(evts_s),
-            'shortname': shortname}
-
-    def get_weight(self, dsid):
-        rec = self.datasets[dsid]
-        return self.lumi_fb * rec['xsec_fb'] * rec['filteff'] / rec['nevt']
-
-    def is_signal(self, dsid):
-        rec = self.datasets[dsid]
-        if rec['shortname'].startswith('JZ'):
-            return False
-        return True
 
 def run():
     args = _get_args()

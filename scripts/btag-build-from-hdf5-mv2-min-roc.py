@@ -8,17 +8,20 @@ from argparse import ArgumentParser
 from h5py import File
 import numpy as np
 import os, sys, json
+from cross_sections import CrossSections, get_dsid
 
 def get_args():
     d = "default: %(default)s"
     parser = ArgumentParser(description=__doc__)
+    parser.add_argument('input_files', nargs='*')
     parser.add_argument('-s', '--signal', nargs='+')
     parser.add_argument('-b', '--background', nargs='+')
     parser.add_argument('-n', '--batch-size', default=100000, type=int)
     parser.add_argument('-p', '--points', default=1000, type=int, help=d)
-    parser.add_argument('-m', '--max-weight', default=5e4, type=float)
+    parser.add_argument('-m', '--max-weight', default=5e4, type=float, help=d)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--paper-cuts', action='store_true')
+    parser.add_argument('-o', '--output-file')
     return parser.parse_args()
 
 def get_dist(file_list, batch_size, nbins=10000, verbose=False,
@@ -35,9 +38,11 @@ def get_dist(file_list, batch_size, nbins=10000, verbose=False,
                         f'{fname}, slice {start_idx}--{end_idx}\n')
 
                 sl = slice(start_idx, end_idx)
-                sj1 = h5file['subjet1'][sl]
-                sj2 = h5file['subjet2'][sl]
-                fatjet = h5file['jets'][sl]
+                subjet_vars = ['mv2c10']
+                subjet_idx = (sl, 'mv2c10', 'mask')
+                sj1 = h5file['subjet1'][subjet_idx]
+                sj2 = h5file['subjet2'][subjet_idx]
+                fatjet = h5file['jets'][sl, 'weight', 'mass', 'pt']
                 mv2c10_min = np.minimum(sj1['mv2c10'], sj2['mv2c10'])
                 weight = fatjet['weight']
 
@@ -61,8 +66,26 @@ def run():
     args = get_args()
     opts = dict(batch_size = args.batch_size, verbose=args.verbose,
                 papercuts=args.paper_cuts, nbins=args.points)
-    signal = get_dist(args.signal, **opts)
-    background = get_dist(args.background, **opts)
+
+    sig_from_xsec = []
+    bg_from_xsec = []
+    xsecs = CrossSections()
+    for infile in args.input_files:
+        if xsecs.is_signal(get_dsid(infile)):
+            sig_from_xsec.append(infile)
+        else:
+            bg_from_xsec.append(infile)
+
+    sig_files = args.signal or sig_from_xsec
+    bg_files = args.background or bg_from_xsec
+
+    signal = get_dist(sig_files, **opts)
+    background = get_dist(bg_files, **opts)
+    if args.output_file:
+        with File(args.output_file, 'w') as h5file:
+            h5file.create_dataset('signal', data=signal)
+            h5file.create_dataset('background', data=background)
+
     eff = _eff(_cumsum(signal))
     rej = _rej(_cumsum(background))
     valid = np.isfinite(rej)
