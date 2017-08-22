@@ -287,7 +287,7 @@ private:
 
   // track counts
   std::vector<std::vector<int> >* ntrk;
-  // std::vector<std::vector<int> >* ip3d_ntrk;
+  std::vector<std::vector<int> >* ip3d_ntrk;
 
   // ip2d, ip3d
   std::vector<std::vector<float> >* ip3d_pb;

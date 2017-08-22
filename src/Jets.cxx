@@ -164,7 +164,7 @@ void Subjets::init_branches(SmartChain& chain, const std::string& name) {
   SET_BRANCH(m);
 
   SET_BRANCH(ntrk);
-  // SET_BRANCH(ip3d_ntrk);
+  SET_BRANCH(ip3d_ntrk);
 
   // SET_BRANCH(ip2d_pb);
   // SET_BRANCH(ip2d_pc);
@@ -223,7 +223,7 @@ Jet Subjets::getJet(size_t jet, size_t subjet) const {
 
   // track counts
   COPY(ntrk);
-  // COPY(ip3d_ntrk);
+  COPY(ip3d_ntrk);
 
   // track variables
   COPY(ip3d_pb);
