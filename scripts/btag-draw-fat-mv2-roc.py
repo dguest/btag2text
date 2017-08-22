@@ -43,11 +43,13 @@ def _eff(arr):
     return arr / arr.max()
 
 MIN_EFF = 0.1
+PLOTS=['fatjet/dnn_output', 'fatjet/mv2c10_min',
+       'uncut/fatjet/dnn_output', 'uncut/fatjet/mv2c10_min']
 def run():
     args = _get_args()
     plots = {}
     with File(args.input, 'r') as h5in:
-        for thing in ['classifier_output', 'fatjet/mv2c10_min']:
+        for thing in PLOTS:
             def get_cumsum(sample):
                 return _cumsum(h5in['hists'][sample][thing])
             eff = _eff(get_cumsum('signal'))
