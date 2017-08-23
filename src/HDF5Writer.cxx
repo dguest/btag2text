@@ -180,6 +180,7 @@ namespace {
     H5_INSERT(type, jet_t, pt);
     H5_INSERT(type, jet_t, eta);
     H5_INSERT(type, jet_t, mass);
+    H5_INSERT(type, jet_t, discriminant);
 #define H5_INSERT_SUB(MEMBER)                                         \
     h5::insert(type, #MEMBER,                                         \
                offsetof(jet_t, moments) +                             \

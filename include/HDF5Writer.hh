@@ -89,6 +89,8 @@ namespace h5 {
     outfloat_t weight;
     outfloat_t mass;
 
+    outfloat_t discriminant;
+
     SubstructureMoments moments;
   };
   template<> H5::DataType get_type<FatJet>();

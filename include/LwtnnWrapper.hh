@@ -7,6 +7,7 @@ struct Jet;
 
 namespace lwt {
   class LightweightNeuralNetwork;
+  class NanReplacer;
 }
 
 class LwtnnWrapper
@@ -22,6 +23,7 @@ public:
   double compute(const Jet&) const;
 private:
   lwt::LightweightNeuralNetwork* m_lwtnn;
+  lwt::NanReplacer* m_replacer;
   std::string m_output_name;
   size_t m_n_inputs;
 };

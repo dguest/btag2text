@@ -11,6 +11,8 @@
 #include "get_tree.hh"
 #include "sort_functions.hh"
 
+#include "LwtnnWrapper.hh"
+
 #include "H5Cpp.h"
 
 #include <iostream>
@@ -47,7 +49,7 @@ int main(int argc, char* argv[]) {
   // load configuration
   const auto opts = get_opts(argc, argv, DESCRIPTION,
                              opt::reweight_file | opt::writer |
-                             opt::max_weight);
+                             opt::max_weight | opt::lwtnn);
 
   // load input files
   SmartChain chain(get_tree(opts.input_files.at(0)));
@@ -64,6 +66,8 @@ int main(int argc, char* argv[]) {
     H5::H5File rw_file(opts.rw_file, H5F_ACC_RDONLY);
     pt_rw = new Distribution(rw_file.openDataSet("signal_weights"));
   }
+
+  LwtnnWrapper network(opts.network_file);
 
   // setup outputs
   size_t n_chunk = opts.chunk_size;
@@ -92,6 +96,7 @@ int main(int argc, char* argv[]) {
       auto jet = jets.getJet(jjj);
 
       // jet selection
+      double nn_score = network ? network.compute(jet) : 0;
       if (! select_fat_jet(jet) ) continue;
       double weight = opts.weight * jet.mc_event_weight;
       if (pt_rw) weight *= pt_rw->get({{"pt", jet.jet_pt}});
@@ -105,6 +110,7 @@ int main(int argc, char* argv[]) {
       if (cluster_ds) cluster_ds->add_jet(clusters);
       if (track_ds) track_ds->add_jet(tracks);
       h5::FatJet hjet = get_fat_jet(jet, weight);
+      hjet.discriminant = nn_score;
       jet_ds.add_jet(hjet);
       const auto& subs = jet.vrtrkjets;
       subjet1.add_jet(subs.size() > 0 ?
